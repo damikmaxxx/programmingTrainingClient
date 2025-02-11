@@ -1,0 +1,16 @@
+/* В файле CSS модуля */
+.CodeMirror {
+    height: auto;
+    font-size: 13px;
+    flex: 1;
+    border-radius: 15px;
+    width: 100%; /* Устанавливаем ширину 100% */
+    display: flex;
+    flex-direction: column; /* Или row, в зависимости от твоего layout */
+    min-height: 400px; /* Если хочешь, чтобы родитель занял всю высоту экрана */
+  }
+/* .codeContainer{
+    flex: 1;
+    display: flex;
+    margin-bottom: 20px;
+} */

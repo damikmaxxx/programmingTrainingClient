@@ -1,0 +1,85 @@
+/* ProjectSolution.module.css */
+.projectSolutions {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .stars{
+
+    /* #a91056 */
+    /* #e83e8c */
+    /* #a9103f */
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    border-radius: 10px;
+    transition: .3s;
+    width: 60px;
+  }
+  .stars img{
+    width:25px;
+    height: 25px;
+  }
+  .solutionCard {
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .solutionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+
+  }
+  
+  .author {
+    font-weight: bold;
+    color: white;
+  }
+  
+  .likeButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #666;
+  }
+  
+  .likeButton.liked {
+    color: #ff4757;
+  }
+  
+  .solutionCode {
+    background-color: #282c34;
+    color: #abb2bf;
+    padding: 12px;
+    border-radius: 4px;
+    overflow-x: auto;
+  }
+  
+  .commentsSection {
+    margin-top: 16px;
+  }
+  
+  .comment {
+    margin-bottom: 8px;
+    padding: 8px;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+  }
+  
+  .commentTextarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+  }

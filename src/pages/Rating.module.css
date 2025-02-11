@@ -1,0 +1,64 @@
+.ratingItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    position: relative;
+    padding:10px;
+}
+
+.ratingItem:nth-child(1){
+
+ 
+    background: #B8860B;
+    color: black;
+    font-weight: bold;
+}
+
+.ratingItem:nth-child(2){
+    background: #71797E;
+
+    color: black;
+    font-weight: bold;
+}
+.ratingItem:nth-child(3) {
+    background: #8B5A2B;
+    color: black;
+    font-weight: bold;
+}
+
+.ratingItem:last-child {
+    border-bottom: none;
+}
+
+.ratingItem .userHeader span {
+    font-size: 18px;
+    margin-left: 10px;
+}
+
+.ratingItem .userHeader img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+}
+
+.rating {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 500px;
+    border-radius: 20px;
+}
+
+.ratingItem a {
+    text-decoration: none;
+    color: white;
+}
+
+
+/* Базовый стиль имени */
+.userName {
+    font-size: 18px;
+    margin-left: 10px;
+}
+

@@ -1,0 +1,18 @@
+/* AccordionDropdown.module.css */
+.dropdownContent {
+    background: var(--dark-primary-color);
+    -webkit-box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+    -moz-box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+    box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+    z-index: 1000;
+    max-height: 0px; /* Изначально скрыто */
+    overflow: hidden; /* Скрываем содержимое, пока не откроем */
+    position: absolute;
+    transition: max-height 0.3s;
+  }
+  
+  .dropdownContentOpen {
+    max-height: 400px; /* Открытое состояние */
+
+  }
+  

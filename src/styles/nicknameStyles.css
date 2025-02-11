@@ -1,0 +1,123 @@
+/* Neon Blue */
+.neon_blue_nickname {
+    color: #00aaff;
+    text-shadow: 0 0 5px #00aaff, 0 0 10px #0077cc;
+}
+
+/* Cyber Red */
+.cyber_red_nickname {
+    color: #ff3131;
+    text-shadow: 0 0 5px #ff3131, 0 0 10px #cc0000;
+}
+
+/* Glowing Green */
+.glowing_green_nickname {
+    color: #33ff33;
+    text-shadow: 0 0 5px #33ff33, 0 0 10px #009900;
+}
+
+/* Gold Shine */
+.gold_shine_nickname {
+    color: #ffd700;
+    text-shadow: 0 0 5px #ffd700, 0 0 10px #ffcc00;
+}
+
+/* Shadow Purple */
+.shadow_purple_nickname {
+    color: #8a2be2;
+    text-shadow: 0 0 5px #8a2be2, 0 0 10px #5a009d;
+}
+
+/* Electric Pink */
+.electric_pink_nickname {
+    color: #ff00ff;
+    text-shadow: 0 0 5px #ff00ff, 0 0 10px #cc00cc;
+}
+
+/* Frost White */
+.frost_white_nickname {
+    color: #ffffff;
+    text-shadow: 0 0 5px #ffffff, 0 0 10px #cccccc;
+}
+
+/* Fire Orange */
+.fire_orange_nickname {
+    color: #ff6600;
+    text-shadow: 0 0 5px #ff6600, 0 0 10px #cc4400;
+}
+
+/* Rainbow Animation */
+.rainbow_animation_nickname {
+    background-image: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
+    background-clip: text;
+    color: transparent;
+    animation: rainbow_animation 3s infinite linear;
+}
+
+@keyframes rainbow_animation {
+    0% {
+        filter: hue-rotate(0deg);
+    }
+
+    100% {
+        filter: hue-rotate(360deg);
+    }
+}
+
+.wave_underline_nickname {
+    position: relative;
+    display: inline-block;
+}
+
+.wave_underline_nickname:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: white;
+    bottom: 0;
+    left: 0;
+    animation: wave 3s infinite;
+}
+
+@keyframes wave {
+    0% {
+        transform: scaleX(1) translateY(0);
+    }
+
+    50% {
+        transform: scaleX(0) translateY(0px);
+    }
+
+    100% {
+        transform: scaleX(1) translateY(0);
+    }
+}
+
+.typing_text_nickname {
+    font-family: 'Courier New', Courier, monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 2px solid white;
+    width: 0;
+    animation: typing 3s steps(30) 1s forwards, blink 0.75s step-end infinite;
+  }
+  
+  @keyframes typing {
+    0% {
+        width: 0%;
+    }
+    100% {
+      width: 100%;
+    }
+  }
+  
+  @keyframes blink {
+    50% {
+      border-color: transparent;
+    }
+  }
+
+
+
+  

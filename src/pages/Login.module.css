@@ -1,0 +1,67 @@
+/* Login.module.css */
+
+.loginContainer {
+    padding: 20px;
+  }
+  
+  .loginForm {
+    color: #f1f1f1;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px;
+    margin: 40px auto;
+  }
+  
+  .fieldGroup {
+    margin-bottom: 20px;
+  }
+  
+  .label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .inputField {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0 5px;
+    border-radius: 4px;
+    border: 1px solid #444;
+    background-color: #3c3c3c;
+    color: #f1f1f1;
+  }
+  
+  .errorMessage {
+    color: #ff6b6b;
+    margin-top: 5px;
+    font-size: 14px;
+  }
+  
+  .submitButton {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .submitButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  
+  .registerLink {
+    margin-top: 10px;
+    display: block;
+    text-align: center;
+    color: #1e90ff;
+    text-decoration: none;
+  }
+  
+  .registerLink:hover {
+    text-decoration: underline;
+  }
+  

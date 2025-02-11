@@ -1,0 +1,54 @@
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    position: relative;
+    width: 100%;
+  }
+  
+  .tab {
+    cursor: pointer;
+    text-align: center;
+  }
+  
+  .taskTabs {
+    margin-bottom: 15px;
+  }
+  
+  .tab {
+    padding: 20px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  .tabsLine {
+    position: absolute;
+    flex: 1;
+    height: 2px;
+    left: 0px;
+    width: 100%;
+    bottom: 0px;
+    -webkit-transition: 0.2s;
+    transition: 0.3s;
+    background-color: var(--primary-color);
+  }
+  
+  .tabActive {
+    color: var(--primary-color);
+  }
+  
+  .tabHover {
+    color: var(--primary-color);
+  }
+  
+  .tabContent {
+    display: none;
+  }
+  
+  .tabContentActive {
+    display: block;
+  }
+  
+  .tabsContentScrolly {
+    overflow-y: scroll;
+  }
+  

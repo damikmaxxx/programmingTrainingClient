@@ -1,0 +1,330 @@
+import { searchElementsById, getIdFromDomElement } from "./utils.js";
+
+export class DOM_ELEMENTS_CONTROLLER {
+  constructor(elements, connections) {
+    this.elements = elements;
+    this.connections = connections;
+    this.dragging_mode = false;
+    this.editing_mode = false;
+    this.lineCreateConnection = { active: false, line: null };
+    this.useDOM = null;
+    this.MODE_SETTINGS = null;
+    this.startConnectionEl = null;
+  }
+  init() {
+    this.initDrag();
+    this.create();
+
+    this.modeSubscribers(() => {
+      this.update();
+    }, [this.MODE_HANDLER.CONSTANTS.DEFAULT,this.MODE_HANDLER.CONSTANTS.EDITING]);
+  }
+  createElement(el) {
+    let tempDiv = document.createElement("div");
+
+    tempDiv.innerHTML = el.html;
+    let newElement = tempDiv;
+    newElement.style.position = "absolute";
+    newElement.style.left = el.position.x + "px";
+    newElement.style.top = el.position.y + "px";
+    newElement.classList.add("element");
+    newElement.id = `element_${el.id}`;
+    this.useDOM("elements").appendChild(newElement);
+    el.width = newElement.offsetWidth;
+    el.height = newElement.offsetHeight;
+
+    const deleteButton = document.createElement("button");
+    deleteButton.innerHTML = "✖";
+    deleteButton.classList.add("element_delete-button");
+    newElement.appendChild(deleteButton);
+    deleteButton.addEventListener("click", () => {
+      this.deleteElement(el.id);
+    });
+
+    const createLineButton = document.createElement("button");
+    createLineButton.innerHTML = "L";
+    createLineButton.className = "element_create-line-button";
+    newElement.appendChild(createLineButton);
+    createLineButton.addEventListener("click", () => {
+      this.createBindingsLine(el.id);
+    });
+    const createBindScreen = document.createElement("div");
+    createBindScreen.className = "element_bind-screen";
+    newElement.appendChild(createBindScreen);
+    createBindScreen.addEventListener("click", () => {
+      this.finishConnection(el.id);
+    });
+
+
+  }
+  createConnection(from, to, params) {
+    if (!params) params = { arrow: false, brokenLine: true };
+    const now = new Date();
+    let id = now.getTime();
+
+    this.connections.push({id, from, to, params });
+    this.update();
+    console.log(this.connections)
+  }
+
+  create() {
+    this.elements.forEach((el) => {
+      this.createElement(el);
+    });
+
+    this.connections.forEach((con) => {
+      let from = this.elements.find((el) => el.id === con.from);
+      let to = this.elements.find((el) => el.id === con.to);
+      this.drawConnection(from, to, con.params,con.id);
+    });
+  }
+  update() {
+    this.elements.forEach((el) => {
+      this.elements = this.elements.map((el) => {
+        let element = searchElementsById(el.id);
+        el.position.x = Number(element.style.left.replace("px", ""));
+        el.position.y = Number(element.style.top.replace("px", ""));
+        if(this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.EDITING)) searchElementsById(el.id).classList.add("element--edit");
+        else searchElementsById(el.id).classList.remove("element--edit");
+        return el;
+      });
+    });
+    this.drawDeleteButtons();
+    const lines = document.querySelectorAll(".line");
+    lines.forEach((line) => line.remove());
+
+    this.connections.forEach((con) => {
+      let from = this.elements.find((el) => el.id === con.from);
+      let to = this.elements.find((el) => el.id === con.to);
+      this.drawConnection(from, to, con.params,con.id);
+    });
+  }
+  drawConnection(from, to, params,id) {
+    const x1 = from.position.x + from.width / 2;
+    const y1 = from.position.y + from.height / 2;
+    const x2 = to.position.x + to.width / 2;
+    const y2 = to.position.y + to.height / 2;
+    const gap = 50;
+    let adjustedX1, adjustedY1, adjustedX2, adjustedY2;
+
+    if (params.conectionSide) {
+      // SOON
+      return;
+    }
+
+    if (Math.abs(y2 - y1) > Math.abs(x2 - x1)) {
+      if (y2 > y1) {
+        adjustedY1 = from.position.y + from.height;
+        adjustedY2 = to.position.y + to.height / 2;
+        if (x2 > x1) adjustedX2 = to.position.x;
+        else adjustedX2 = to.position.x + to.width;
+      } else {
+        adjustedY1 = from.position.y;
+        adjustedY2 = to.position.y + to.height / 2;
+        if (x2 > x1) adjustedX2 = to.position.x;
+        else adjustedX2 = to.position.x + to.width;
+      }
+      adjustedX1 = x1;
+    } else {
+      if (x2 > x1) {
+        adjustedX1 = from.position.x + from.width;
+        adjustedX2 = to.position.x + to.width / 2;
+        if (y2 > y1) adjustedY2 = to.position.y;
+        else adjustedY2 = to.position.y + to.height;
+      } else {
+        adjustedX1 = from.position.x;
+        adjustedX2 = to.position.x + to.width / 2;
+        if (y2 > y1) adjustedY2 = to.position.y;
+        else adjustedY2 = to.position.y + to.height;
+      }
+      adjustedY1 = y1;
+    }
+    let midX, midY;
+    if (params.brokenLine) {
+      if (Math.abs(y2 - y1) > Math.abs(x2 - x1)) {
+        midX = adjustedX1;
+        this.drawLine(adjustedX1, adjustedY1, adjustedX1, adjustedY2,params,id);
+        if (adjustedY2 > adjustedY1) {
+          this.drawLine(adjustedX1, adjustedY2, adjustedX2, adjustedY2,params,id);
+        } else {
+          this.drawLine(adjustedX1, adjustedY2, adjustedX2, adjustedY2,params,id);
+        }
+      } else {
+        midY = adjustedY1;
+        this.drawLine(adjustedX1, adjustedY1, adjustedX2, adjustedY1,params,id);
+        if (adjustedX2 > adjustedX1) {
+          this.drawLine(adjustedX2, adjustedY1, adjustedX2, adjustedY2,params,id);
+        } else {
+          this.drawLine(adjustedX2, adjustedY1, adjustedX2, adjustedY2,params,id);
+        }
+      }
+    } else {
+      this.drawLine(adjustedX1, adjustedY1, adjustedX2, adjustedY2, params,id);
+    }
+  }
+  drawLine(x1, y1, x2, y2, params = {},id) {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const length = Math.sqrt(dx * dx + dy * dy);
+    const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+    const line = document.createElement("div");
+    line.classList.add("line");
+    if (params.arrow) line.classList.add("line_arrow");
+    line.id =  `line_${id}`;
+
+    this.useDOM("elements").appendChild(line);
+    line.style.width = `${length}px`;
+    line.style.transform = `rotate(${angle}deg)`;
+    line.style.left = `${x1}px`;
+    line.style.top = `${y1}px`;
+    if (this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.EDITING)) {
+      line.classList.add("line--delete");
+      line.addEventListener("click", () => {
+        this.connections = this.connections.filter(connection => connection.id !== id);
+        this.update();
+      });
+    }
+  }
+  drawDeleteButtons() {
+    this.useDOM("elements")
+      .querySelectorAll(".delete_button")
+      .forEach((element) => {
+        element.remove();
+      });
+    if (!this.editing_mode) return;
+  }
+  createBindingsLine(id) {
+    if (this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CREATING)) return;
+    this.MODE_HANDLER.SET_MODE(this.MODE_HANDLER.CONSTANTS.CONNECTING);
+
+    const element = this.elements.find((el) => el.id === id);
+
+    let handleMouseMove = (event) => {
+      const existingLine = document.getElementById("line-create-connection");
+      if (!this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CONNECTING)) {
+        if (existingLine) {
+          existingLine.remove();
+        }
+
+        const bindScreens = document.querySelectorAll(".element_bind-screen");
+        bindScreens.forEach((bindScreen) => {
+          bindScreen.classList.remove("active");
+        });
+
+        this.useDOM("screen").removeEventListener("mousemove", handleMouseMove);
+        return;
+      }
+      if (existingLine) {
+        existingLine.remove();
+      }
+      let x2 = event.clientX;
+      let y2 = event.clientY;
+      let x1 = element.position.x;
+      let y1 = element.position.y;
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const length = Math.sqrt(dx * dx + dy * dy);
+      const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+      const line = document.createElement("div");
+      line.classList.add("line");
+      line.classList.add("stripped-line");
+      line.setAttribute("id", "line-create-connection");
+      this.useDOM("elements").appendChild(line);
+      line.style.width = `${length}px`;
+      line.style.transform = `rotate(${angle}deg)`;
+      line.style.left = `${x1}px`;
+      line.style.top = `${y1}px`;
+    };
+    this.useDOM("screen").addEventListener("mousemove", handleMouseMove);
+    const bindScreens = document.querySelectorAll(".element_bind-screen");
+    bindScreens.forEach((bindScreen) => {
+      if (getIdFromDomElement(bindScreen.parentElement) !== id) {
+        bindScreen.classList.add("active");
+      }
+    });
+    this.startElementId = id;
+  }
+  finishConnection(id) {
+    console.log("asda", id);
+    if (!this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CONNECTING)) return;
+    if (this.startElementId === id) return;
+    console.log(this.startElementId, id);
+    this.createConnection(this.startElementId, id);
+
+    this.MODE_HANDLER.SET_MODE(this.MODE_HANDLER.CONSTANTS.COMMANDS.BACK);
+  }
+  initDrag() {
+    let offsetX, offsetY;
+    let activeTarget;
+    const onMouseDown = (event) => {
+      if (this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CONNECTING) ||
+          this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CREATING))
+        return;
+      activeTarget = event.target.closest(".element");
+      if (!activeTarget) return;
+
+      offsetX =
+        event.clientX - Number(activeTarget.style.left.replace("px", ""));
+      offsetY =
+        event.clientY - Number(activeTarget.style.top.replace("px", ""));
+      this.dragging_mode = true;
+      activeTarget.style.cursor = "grabbing";
+    };
+
+    const onMouseMove = (event) => {
+      if (!this.dragging_mode || !activeTarget) return;
+      const newX = event.clientX - offsetX;
+      const newY = event.clientY - offsetY;
+      activeTarget.style.left = `${newX}px`;
+      activeTarget.style.top = `${newY}px`;
+      this.update();
+    };
+
+    const onMouseUp = (event) => {
+      this.dragging_mode = false;
+      if (activeTarget) activeTarget.style.cursor = "grab";
+    };
+    this.useDOM("screen").addEventListener("mousedown", onMouseDown);
+    this.useDOM("screen").addEventListener("mousemove", onMouseMove);
+    this.useDOM("screen").addEventListener("mouseup", onMouseUp);
+    this.useDOM("screen").addEventListener("mouseleave", onMouseUp);
+  }
+  pushElement(objElement) {
+    const now = new Date();
+    objElement.id = now.getTime();
+    this.elements.push(objElement);
+    this.createElement(objElement);
+  }
+  deleteElement(id) {
+    this.elements = this.elements.filter((el) => el.id !== id);
+    searchElementsById(id).remove();
+    this.connections = this.connections.filter(
+      (connection) => connection.from !== id && connection.to !== id
+    );
+    this.update();
+  }
+  deleteLine(from,to){
+
+  }
+
+
+  // ФУНКЦИИ ДЛЯ ВЗАИМОДЕЙСТВИЯ С ОСНОВНЫМ КОНТРОЛЛЕРОМ
+  getUseDOM(obj) {
+    this.useDOM = obj;
+  }
+  getModeSettings(obj) {
+    this.MODE_HANDLER = {
+      CONSTANTS: obj.constants,
+      SET_MODE: obj.setMode,
+      IS_MODE: obj.isMode,
+    };
+  }
+  getSubscribe(callback) {
+    this.modeSubscribers = callback;
+  }
+  getElementsAndConnections() {
+    return { elements: this.elements, connections: this.connections };
+  }
+}
