@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import styles from './Effect.module.css';
 
 const FireEffect = ({ speed = { x: 5, y: 10 }, life = 10,radius=50,particleCount = 100, children, className, ...props }) => {
-    console.log("asdad")
     const canvasRef = useRef(null);
     const containerRef = useRef(null);
     const animationRef = useRef(null);

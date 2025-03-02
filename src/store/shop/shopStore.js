@@ -96,7 +96,12 @@ export const useShopStore = create((set,get) => ({
       priceInCoin: 0,
       priceInStars: 20,
       component: FireEffect,
-      props: { color: "red", size: "large" }, // Пропсы для компонента FireEffect
+      props: {
+        speed: { x: 0, y: -50 }, 
+        life: 200,              
+        radius: 10,               
+        particleCount: 100        
+      }
     },
     {
       id: 2,
@@ -104,7 +109,12 @@ export const useShopStore = create((set,get) => ({
       priceInCoin: 0,
       priceInStars: 10,
       component: SnowEffect,
-      props: { color: "blue", size: "medium" }, // Пропсы для компонента SnowEffect
+      props: {
+        speed: { x: 0, y: 0.5 },  
+        life: 200,                 
+        radius: 5,               
+        particleCount: 10         
+      }
     },
     {
       id: 3,
@@ -112,10 +122,18 @@ export const useShopStore = create((set,get) => ({
       priceInCoin: 0,
       priceInStars: 25,
       component: LaserEffect,
-      props: { color: "green", size: "small" }, // Пропсы для компонента LaserEffect
+      props: {
+        speed: { x: 0.8, y: -1 },  
+        life: 200,                              
+        particleCount: 5,
+        length: 50, 
+        xOffset: -40, // Новый проп для смещения по X
+        yOffset: 20,  // Новый проп для смещения по Y         
+      }
     },
     // и так далее для других тем
   ],
+  
   // Функция для получения класса по имени стиля
   getStyleClassByName: (name) => {
     const effect = get().nicknameStyles.find((style) => style.name === name); // Используем get(), чтобы обратиться к состоянию

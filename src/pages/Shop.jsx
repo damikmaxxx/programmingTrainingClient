@@ -9,7 +9,6 @@ import ItemCounter from '../components/Shared/ItemCounter/ItemCounter.jsx';
 
 // Функция для отображения правильной цены и иконки в зависимости от типа
 const renderPriceAndIcon = (style) => {
-  console.log(style)
   if (style.priceInCoin > 0) {
     return <ItemCounter type="coin" count={style.priceInCoin} />;
   } else if (style.priceInStars > 0) {
@@ -22,7 +21,9 @@ const buyItem = (item) => {
   console.log(item);
 }
 
-
+const checkStyle = (item) => {
+  console.log(item);
+}
 const Shop = () => {
   const { nicknameStyles, profileStyle } = useShopStore();
   const tabs = [
@@ -131,7 +132,7 @@ const ProfileShopEffects = ({ profileStyle }) => {
           <div key={style.id} className="col-4">
             <div className={`${styles.shopItem} dark-primary-color`}>
               <div className={styles.shopItemName}>
-                <StyleComponent>
+                <StyleComponent {...style.props}>
                   <span className={style.className || ""}>ПРОФИЛЬ</span>
                 </StyleComponent>
               </div>
@@ -140,9 +141,14 @@ const ProfileShopEffects = ({ profileStyle }) => {
                 <div className={styles.shopItemPrice}>
                   Цена: {renderPriceAndIcon(style)}
                 </div>
-                <Button variant="small" onClick={() => buyItem(style)}>
-                  КУПИТЬ
-                </Button>
+                <span>
+                  <Button className='me-3' variant="small" onClick={() => buyItem(style)}>
+                    КУПИТЬ
+                  </Button>
+                  <Button variant="small" onClick={() => checkStyle(style)}>
+                    ПОСМОТРЕТЬ
+                  </Button>
+                </span>
               </div>
             </div>
           </div>

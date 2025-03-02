@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import styles from './Registration.module.css';
 import { authAPI } from '../api/index';
 
+// Схема валидации с использованием Yup
 const RegistrationSchema = Yup.object().shape({
   email: Yup.string()
     .email('Неверный формат email')
@@ -22,22 +23,17 @@ const RegistrationSchema = Yup.object().shape({
 
 const Registration = () => {
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
+    setSubmitting(true);
     try {
-      setSubmitting(true);
-  
-      console.log('Данные регистрации:', values);
-      const response = await authAPI.register(values);
-  
-      
-      console.log('Регистрация прошла успешно:', response);
-  
+      const { confirmPassword, ...registrationValues } = values;
+      console.log(registrationValues);
+      const response = await authAPI.register(registrationValues);
+      // console.log('Регистрация прошла успешно:', response);
     } catch (error) {
       console.error('Ошибка регистрации:', error.message);
-  
-      // Обработка ошибок, например, отображение ошибки в форме
-      setErrors({ submit: error.message }); // Устанавливаем ошибку в форму
+      setErrors({ submit: error.message });
     } finally {
-      setSubmitting(false); // Восстанавливаем возможность отправки формы
+      setSubmitting(false);
     }
   };
 
@@ -46,7 +42,7 @@ const Registration = () => {
       <Formik
         initialValues={{
           email: '',
-          nickname: '',
+          username: '',
           password: '',
           confirmPassword: '',
         }}
@@ -54,8 +50,7 @@ const Registration = () => {
         onSubmit={handleSubmit}
       >
         {({ isSubmitting }) => (
-          <Form className={styles.registrationForm + " dark-primary-color"}>
-
+          <Form className={`${styles.registrationForm} dark-primary-color`}>
             <div className={styles.fieldGroup}>
               <label htmlFor="email" className={styles.label}>
                 Email
@@ -75,18 +70,18 @@ const Registration = () => {
             </div>
 
             <div className={styles.fieldGroup}>
-              <label htmlFor="nickname" className={styles.label}>
-                Имя
+              <label htmlFor="username" className={styles.label}>
+                Имя пользователя
               </label>
               <Field
                 type="text"
-                name="nickname"
-                id="nickname"
+                name="username"
+                id="username"
                 placeholder="Ваше имя"
                 className={styles.inputField}
               />
               <ErrorMessage
-                name="nickname"
+                name="username"
                 component="div"
                 className={styles.errorMessage}
               />
@@ -136,7 +131,7 @@ const Registration = () => {
               Зарегистрироваться
             </button>
             <Link to="/login" className={styles.registerLink}>
-              Есть аккаунт ? Войти
+              Есть аккаунт? Войти
             </Link>
           </Form>
         )}

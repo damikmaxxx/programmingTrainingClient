@@ -3,7 +3,6 @@ import Header from './Header';
 import Footer from './Footer';
 
 const Layout = ({ children, noMainWrapper = false, dark = false, mainClear = false }) => {
-  console.log(children)
   return (
     <>
       <Header />
