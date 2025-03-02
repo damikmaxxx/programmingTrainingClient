@@ -15,7 +15,6 @@ const Tabs = ({ tabs = [], defaultActiveTab = tabs[0]?.id, children }) => {
 };
 
 const TabHeader = ({ tabs }) => {
-  console.log(tabs);
   const { activeTab, setActiveTab } = useContext(TabContext);
   const activeTabRef = useRef(null);
   const tabsLineRef = useRef(null);

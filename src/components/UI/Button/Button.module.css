@@ -54,3 +54,20 @@
     filter: brightness(.7);
     transform: scale(.98);
 }
+
+/* Стили для размера кнопки */
+.medium {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  
+  .large {
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+  
+  .small {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+  

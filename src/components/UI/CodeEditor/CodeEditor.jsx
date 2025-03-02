@@ -13,22 +13,25 @@ const languageMap = {
   python: python(),
 };
 
-const CodeEditor = ({ language = "javascript", initialCode = "" }) => {
+const CodeEditor = ({ language = "javascript", initialCode = "", height = "600px", isReadOnly = false }) => {
   const [value, setValue] = useState(initialCode);
 
   const onChange = useCallback((val) => {
-    setValue(val);
-  }, []);
+    if (!isReadOnly) {
+      setValue(val);
+    }
+  }, [isReadOnly]);
 
   return (
-    <div className={styles.codeContainer}> {/* Если нужно, добавь родительский класс */}
+    <div className={styles.codeContainer}>
       <CodeMirror
         value={value}
         theme={dracula}
         extensions={[languageMap[language]]}
         onChange={onChange}
         className={styles.CodeMirror}
-        height="600px"
+        height={height}
+        editable={!isReadOnly}
       />
     </div>
   );

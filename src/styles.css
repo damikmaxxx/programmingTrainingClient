@@ -2,6 +2,7 @@
 	margin: 0px;
 	padding: 0px;
 	box-sizing: border-box;
+	font-family: 'Montserrat', sans-serif;
 }
 
 :root {
@@ -22,7 +23,6 @@ html,
 body,#root {
 	min-height: 100vh;
 	margin: 0;
-	height: 100%; 
 	display: flex;
 	flex-direction: column;
 }
@@ -35,6 +35,11 @@ body,#root {
 main {
 	flex-grow: 1;
 	padding: 20px;
+	display: flex;
+	flex-direction: column;
+}
+main.main-clear{
+	padding:0px;
 }
 .main--dark{
 	background-color: var(--dark-bg-color);
@@ -42,13 +47,14 @@ main {
 }
 
 footer {
-	height: 100px;
+
 	background-color: var(--dark-primary-color);
 	font-size: 20px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	color: white;
+	height: 100px;
 }
 
 /* Для WebKit-браузеров (Chrome, Safari) */
@@ -71,7 +77,11 @@ footer {
 }
 
 
-
+.section-flex{
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+}
 
 
 /* //////////HEADER////////// */
@@ -111,6 +121,7 @@ header {
 	cursor: pointer;
 	width: 200px;
 	text-align: center;
+	font-weight: 600;
 }
 .header-user span{
 	margin-right: 10px;
@@ -132,6 +143,7 @@ header {
 	align-items: center;
 	margin-bottom:10px;
 	justify-content: center;
+	gap:20px;
 }
 .header-user-dropdown{
 	margin:10px;
@@ -476,6 +488,21 @@ header {
 	margin-bottom: 5px;
 }
 
+.js-skill{
+	color:#E8618C;
+	border:2px solid #E8618C;
+	border-radius: 20px;
+}
+.cpp-skill{
+	color:#636AE8;
+	border: 2px solid #636AE8;
+	border-radius: 20px;
+}
+.python-skill{
+	color:#DE3B40;
+	border:2px solid #DE3B40;
+	border-radius: 20px;
+}
 /* //////////TASK////////// */
 
 #task{
@@ -493,13 +520,17 @@ header {
 	background: var(--dark-primary-color);;
 	display: flex;
 	flex-direction: column;
+	overflow: scroll;
+	padding-bottom: 10px;
 
 }
-
-.task__block--height{
-	height: 780px;
-	max-height: 780px;
+.task__block__section{
+	margin-top:10px;
 }
+.task__block--height {
+	height: min(77vh, 1500px); /* Занимает 90% экрана, но не больше 1000px */
+  }
+  
 
 .item-Button-inv {
 	border: 2px solid blue;
@@ -520,7 +551,11 @@ header {
 .task__block__info{
 	overflow: scroll;
 }
-
+.task__block__solution{
+	overflow: scroll;
+	padding:0px 10px;
+	margin:10px 0px;
+}
 
 .button {
 	height: 46px;

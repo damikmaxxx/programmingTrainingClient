@@ -12,22 +12,33 @@ export class MAP_CONTROLLER {
       EDITING: "editing",
       CREATING: "creating",
       CONNECTING: "connecting",
-      COMMANDS:{
-        BACK: "back"
-      }
+      COMMANDS: {
+        BACK: "back",
+      },
     };
     this.MODE_HISTORY = [];
     this.activeMode = this.MODE_CONSTANTS.DEFAULT;
     this._DOM_ELEMENTS = DOM_ELEMENTS;
     this._ACTIVE_SCREEN = ACTIVE_SCREEN;
-    this.dom_controller.getUseDOM((obj) => this.useDOM(obj));
-    this.dom_controller.getModeSettings({"constants":this.MODE_CONSTANTS,"setMode":(mode)=>this.setMode(mode),"isMode":(mode)=>this.isMode(mode)});
-    this.dom_controller.getSubscribe((callback,modes)=>this.subscribeToUpdateModes(callback,modes));
     this.MAP_SETTINGS = {
-      transformX: map_settings.transformX || 0,
-      transformY: map_settings.transformY || 0,
+      X: map_settings.transformX || 0,
+      Y: map_settings.transformY || 0,
+      scale:map_settings.scale || 1,
     };
     this.SUBSCRIBERS_TO_UPDATE_MODE = [];
+
+
+    this.dom_controller.getUseDOM((obj) => this.useDOM(obj));
+    this.dom_controller.getModeSettings({
+      constants: this.MODE_CONSTANTS,
+      setMode: (mode) => this.setMode(mode),
+      isMode: (mode) => this.isMode(mode),
+    });
+    this.dom_controller.getModeSubscribe((callback, modes) =>
+      this.subscribeToUpdateModes(callback, modes)
+    );
+    this.dom_controller.getMapSettings(this.MAP_SETTINGS)
+
   }
   init() {
     this.dom_controller.init();
@@ -35,18 +46,8 @@ export class MAP_CONTROLLER {
     this.initToolsPanel();
   }
   initMoving() {
-    this.transformX = this.MAP_SETTINGS.transformX || 0;
-    this.transformY = this.MAP_SETTINGS.transformY || 0;
-
-    this.mouse = { x: 0, y: 0 };
-    this.scale = 1;
     const scaleFactor = 0.1;
-    let scale = 1;
-    let startPos = { x: 0, y: 0 };
-    const offset = {
-      x: 0,
-      y: 0,
-    };
+    let startPos = { x: this.MAP_SETTINGS.X, y: this.MAP_SETTINGS.Y };
     this._ACTIVE_SCREEN.addEventListener("mousedown", (event) => {
       if (event.button === 1 || event.button === 2) {
         this.setMode(this.MODE_CONSTANTS.MOVING);
@@ -59,8 +60,8 @@ export class MAP_CONTROLLER {
         let objElement = {
           html: document.getElementById("createBlockTextArea").value,
           position: {
-            x: event.clientX - offset.x,
-            y: event.clientY - offset.y,
+            x: event.clientX - this.MAP_SETTINGS.X,
+            y: event.clientY - this.MAP_SETTINGS.y,
           },
           params: { draggable: true },
         };
@@ -73,52 +74,48 @@ export class MAP_CONTROLLER {
         const deltaX = event.clientX - startPos.x;
         const deltaY = event.clientY - startPos.y;
 
-        offset.x += deltaX;
-        offset.y += deltaY;
-
-        this._DOM_ELEMENTS.style.translate = `${offset.x}px ${offset.y}px`;
+        this.MAP_SETTINGS.X += deltaX;
+        this.MAP_SETTINGS.Y += deltaY;
+        this._DOM_ELEMENTS.style.translate = `${this.MAP_SETTINGS.X}px ${this.MAP_SETTINGS.Y}px`;
 
         startPos = { x: event.clientX, y: event.clientY };
       }
     });
 
-    this._ACTIVE_SCREEN.addEventListener("mouseup", () => {
+    this._ACTIVE_SCREEN.addEventListener("mouseup", (event) => {
+      event.preventDefault(); 
       if (this.isMode(this.MODE_CONSTANTS.MOVING)) {
         this.setMode(this.MODE_CONSTANTS.COMMANDS.BACK);
       }
     });
     this._ACTIVE_SCREEN.addEventListener("wheel", (event) => {
-      this._DOM_ELEMENTS.style.transition = ".3s";
       const delta = Math.sign(-event.deltaY);
 
-      const scaleOld = scale;
-      scale *= Math.exp(delta * scaleFactor);
+      const scaleOld = this.MAP_SETTINGS.scale;
+      this.MAP_SETTINGS.scale *= Math.exp(delta * scaleFactor);
 
       const vptRect = this._ACTIVE_SCREEN.getBoundingClientRect();
       const cvsW = this._DOM_ELEMENTS.offsetWidth * scaleOld;
       const cvsH = this._DOM_ELEMENTS.offsetHeight * scaleOld;
-      const cvsX = (this._ACTIVE_SCREEN.offsetWidth - cvsW) / 2 + offset.x;
-      const cvsY = (this._ACTIVE_SCREEN.offsetHeight - cvsH) / 2 + offset.y;
+      const cvsX = (this._ACTIVE_SCREEN.offsetWidth - cvsW) / 2 + this.MAP_SETTINGS.X;
+      const cvsY = (this._ACTIVE_SCREEN.offsetHeight - cvsH) / 2 + this.MAP_SETTINGS.Y;
       const originX = event.x - vptRect.x - cvsX - cvsW / 2;
       const originY = event.y - vptRect.y - cvsY - cvsH / 2;
 
       const xOrg = originX / scaleOld;
       const yOrg = originY / scaleOld;
 
-      const xNew = xOrg * scale;
-      const yNew = yOrg * scale;
+      const xNew = xOrg * this.MAP_SETTINGS.scale;
+      const yNew = yOrg * this.MAP_SETTINGS.scale;
 
       const xDiff = originX - xNew;
       const yDiff = originY - yNew;
 
-      offset.x += xDiff;
-      offset.y += yDiff;
+      this.MAP_SETTINGS.X += xDiff;
+      this.MAP_SETTINGS.Y += yDiff;
 
-      this._DOM_ELEMENTS.style.scale = scale;
-      this._DOM_ELEMENTS.style.translate = `${offset.x}px ${offset.y}px`;
-      setTimeout(() => {
-        this._DOM_ELEMENTS.style.transition = "0s";
-      }, 300);
+      this._DOM_ELEMENTS.style.scale = this.MAP_SETTINGS.scale;
+      this._DOM_ELEMENTS.style.translate = `${this.MAP_SETTINGS.X}px ${this.MAP_SETTINGS.Y}px`;
     });
 
     document.addEventListener("contextmenu", (event) => event.preventDefault());
@@ -163,16 +160,17 @@ export class MAP_CONTROLLER {
     this.notifySubscribers();
     console.log(`Активный режим установлен: ${this.activeMode}`);
   }
-  // ПОДПИСКА НА ИЗМЕНЕНИЕ МОДОВ 
+  // ПОДПИСКА НА ИЗМЕНЕНИЕ МОДОВ
   subscribeToUpdateModes(callback, modes = []) {
-    if(typeof callback !== "function") return console.error("Подписчик должен быть функцией");
+    if (typeof callback !== "function")
+      return console.error("Подписчик должен быть функцией");
     const subscriber = { callback, modes };
     this.SUBSCRIBERS_TO_UPDATE_MODE.push(subscriber);
     return () => {
       this.SUBSCRIBERS_TO_UPDATE_MODE = this.SUBSCRIBERS_TO_UPDATE_MODE.filter(
-          (sub) => sub.callback !== callback
+        (sub) => sub.callback !== callback
       );
-  };
+    };
   }
   // УВЕДОМЛЕНИЕ ПОДПИСЧИКОВ ОБ ИЗМЕНЕНИИ МОДА
   notifySubscribers() {
@@ -198,7 +196,17 @@ export class MAP_CONTROLLER {
     return false;
   }
   // Выдача карты
-  getMap()  {
+  getMap() {
     return this.dom_controller.getElementsAndConnections();
+  }
+  addNewElement(obj) {
+    console.log(obj,this.MAP_SETTINGS.X,this.MAP_SETTINGS.Y)
+    obj.position.x -= this.MAP_SETTINGS.X;
+    obj.position.y -= this.MAP_SETTINGS.Y;
+    this.dom_controller.pushElement(obj);
+  }
+  subcribeUpdateElements(callback) {
+
+    return this.dom_controller.subcribeUpdateElements((obj) => callback(obj))
   }
 }

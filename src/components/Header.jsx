@@ -1,41 +1,42 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Button from './UI/Button/Button.jsx';
 import AccordionDropdown from './UI/AccordionDropdown/AccordionDropdown.jsx';
-
+import { useUserStore } from '../store/store.js';
+import ItemCounter from './Shared/ItemCounter/ItemCounter.jsx';
 function Header() {
-  const [searchActive, setSearchActive] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
   const tabsLineRef = useRef(null);
   const tabRefs = useRef({});
   const location = useLocation();
-  const [isAuth, setIsAuth] = useState(true); // Здесь нужно подставить актуальное состояние авторизации
   const [isTabValid,setIsTabValid] = useState(true);
   const navigate = useNavigate();
-  const handleSearchClick = () => {
-    setSearchActive(!searchActive);
-  };
+
+  const {isAuth,setAuth} = useUserStore();
 
   const handleTabClick = (tabId) => {
     setActiveTab(tabId);
   };
 
-  const tabs = [
+
+
+  const tabs = useMemo(() => [
     { name: "Проект", path: "/project/1", id: "project" },
     { name: "Все проекты", path: "/projects", id: "projects" },
     { name: "Карта", path: "/map", id: "map" },
     { name: "Рейтинг", path: "/rating", id: "rating" },
     { name: "Магазин", path: "/shop", id: "shop" },
-  ];
+  ], []);
+
+
 
   useEffect(() => {
-    console.log(tabs.some((tab) => tab.path === location.pathname))
     setIsTabValid(tabs.some((tab) => tab.path === location.pathname));
     const activeTabFromRoute = tabs.find(tab => tab.path === location.pathname);
     if (activeTabFromRoute) {
       setActiveTab(activeTabFromRoute.id);
     }
-  }, [location.pathname]);
+  }, [location.pathname,tabs]);
 
   useEffect(() => {
 
@@ -53,7 +54,7 @@ function Header() {
         tabsLineRef.current.style.width = `${width}px`;
       }
     }
-  }, [activeTab]);
+  }, [activeTab,tabs]);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -61,7 +62,6 @@ function Header() {
     setIsOpen(!isOpen);
   }
 
-  console.log(activeTab)
   return (
     <header>
       <div className="container">
@@ -100,11 +100,12 @@ function Header() {
                   <AccordionDropdown isOpen={isOpen} setIsOpen={setIsOpen}>
                     <div className="header-user-dropdown">
                     <div className='header-user__info'>
-                    <span>500 <img src="images/money.png" alt="" /></span>
-                    <span>5 <img src="images/star.svg" alt="" /></span>
+                    <ItemCounter type="coin"/>
+                    <ItemCounter type="star"/>
                     </div>
+
                     <Button onClick={() => navigate('/profile')}>Профиль</Button>
-                    <Button onClick={() => setIsAuth(false)}>Выход</Button>
+                    <Button onClick={() => setAuth(false)}>Выход</Button>
                     </div>
                   </AccordionDropdown>
                 </div>

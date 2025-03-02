@@ -1,0 +1,281 @@
+/* ProjectSolution.module.css */
+.projectSolutions {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+
+.solutionCard {
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.solutionHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  justify-content: space-between;
+
+}
+.solutionHeader_info{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.author {
+  font-weight: bold;
+  color: white;
+  font-size: 18px;
+}
+
+.likeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #666;
+}
+
+.likeButton.liked {
+  color: #ff4757;
+}
+
+.solutionCode {
+  background-color: #282c34;
+  color: #abb2bf;
+  padding: 12px;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+.comments {
+  height: 0px;
+  overflow: hidden;
+  transition: .4s;
+  
+
+}
+
+.commentsSectionShow{
+  margin-top: 15px;
+  height:auto;
+}
+.commentAuthor{
+  font-weight: 600;
+}
+.comment {
+  margin-bottom: 8px;
+  padding: 8px;
+  background:#282c34;
+  border-radius: 4px;
+}
+
+.commentTextarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+.comment{
+  display: flex;
+  align-items: center;
+  gap:10px;
+  width:100%;
+}
+.commentContainer{
+  width: 100%;
+  padding:0px 10px;
+}
+.commentAva img{
+  width:50px;
+  height: 50px;
+  border-radius:50%;
+}
+.commentHeader{
+  display: flex;
+  justify-content: space-between;
+}
+.showMoreComments{
+  text-align: center;
+  margin:10px 0px;
+  cursor: pointer;
+  transition: .3s;
+}
+.showMoreComments:hover{
+  color: var(--primary-color);
+}
+.solutionActions{
+  display: flex;
+  gap:25px;
+  margin-top: 10px;
+}
+.solutionActions span{
+  display: flex;
+  align-items: center;
+  gap:7px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.codeWrapper {
+  position: relative;
+  cursor: pointer;
+  transition: height 0.3s ease;
+
+  max-height: 90px;
+  overflow: hidden;
+  transition: .4s;
+}
+.codeWrapper:after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(32,35,42,0.6) 100%);
+  opacity: 1;
+  transition: .4s;
+}
+.codeWrapper.active{
+  max-height: 400px;
+}
+
+.codeWrapper.active:after{
+  opacity: 0;
+}
+
+.toggleIcon{
+  width:50px;
+  height:50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size:20px;
+  cursor: pointer;
+}
+
+
+.likedStars{
+  color:gold;
+}
+
+
+
+.newComment{
+	overflow: hidden;
+	position: relative;
+  display: flex;
+  width: 100%;
+  padding:8px;
+}
+.newComment_img{
+  margin-right: 15px;
+}
+.newComment_img img{
+  width:50px;
+  height: 50px;
+  border-radius: 50%;
+}
+/* .newComment__icon img{
+	position: absolute;
+	right:0;
+	top:calc(50% - 25px/2);
+	width: 25px;
+	height: 25px;
+	cursor: pointer;
+	transition: .4s;
+} */
+.newComment__input{
+	background: none;
+	border:none;
+	outline:none;
+	border-bottom: 1px solid white;
+	color:white;
+	transition: .4s;
+	padding:5px 5px;
+  width: 100%;
+  resize: none;
+}
+.newComment__input:focus{
+	border-bottom: 1px solid var(--primary-color);
+}
+.newComment__input__mask input{
+	width: 100%;
+	
+}
+.newComment__input__mask{
+	overflow: hidden;
+	width: 0px;
+	transition: .4s;
+}
+
+.newComment-active .search__icon img{
+	animation: moveRightLeft 0.8s ease-in-out forwards;;
+}
+.newComment-active .search__input__mask{
+
+	animation: searchInputActivity 0.8s ease-in-out forwards;;
+}
+
+.newComment__sendButton{
+  width:0px;
+
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.newComment__sendButton.active{
+  width: 100px;
+}
+
+.newComment__sendButton:hover{
+  color:var(--primary-color);
+}
+/* .search__glass{
+	opacity: 1;
+	transition: .4s;
+}
+.search__cross{
+	opacity: 0;
+	transition: .4s;
+}
+.search-active .search__glass{
+	opacity: 0;
+}
+.search-active .search__cross{
+	opacity: 1;
+}
+
+@keyframes moveRightLeft {
+	0% {
+		right: 0;
+	}
+	50% {
+		right:calc(100% - 25px);
+	}
+	100% {
+		right:0;
+	}
+}
+
+@keyframes searchInputActivity {
+	0% {
+		width: 0%;
+	}
+	50% {
+		width: 0%;
+	}
+	100% {
+		width: 100%;
+	}
+} */

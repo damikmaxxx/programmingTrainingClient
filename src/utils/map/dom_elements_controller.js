@@ -10,6 +10,8 @@ export class DOM_ELEMENTS_CONTROLLER {
     this.useDOM = null;
     this.MODE_SETTINGS = null;
     this.startConnectionEl = null;
+    this.SUBSCRIBERS_TO_UPDATE_ELEMENTS = [];
+    this.MAP_SETTINGS = {}
   }
   init() {
     this.initDrag();
@@ -104,15 +106,52 @@ export class DOM_ELEMENTS_CONTROLLER {
     const y1 = from.position.y + from.height / 2;
     const x2 = to.position.x + to.width / 2;
     const y2 = to.position.y + to.height / 2;
-    const gap = 50;
     let adjustedX1, adjustedY1, adjustedX2, adjustedY2;
 
-    if (params.conectionSide) {
+    if (params?.conectionSide) {
       // SOON
       return;
     }
+    if (Math.abs(y2 - y1) < 20 || Math.abs(x2 - x1) < 20){
+      if(y2 - y1 < 20 && y2 - y1 >= 0){
 
-    if (Math.abs(y2 - y1) > Math.abs(x2 - x1)) {
+        if(x2 - x1 >= 0){
+          adjustedY1 = from.position.y + from.height / 2;
+          adjustedX1 = from.position.x  + from.width;
+          adjustedY2 = to.position.y + to.height / 2;
+          adjustedX2 = to.position.x 
+          this.drawLine(adjustedX1, adjustedY1, adjustedX2, adjustedY2,params,id);
+        }
+        if(x2 - x1 < 0){
+          adjustedY1 = from.position.y + from.height / 2;
+          adjustedX1 = from.position.x;
+          adjustedY2 = to.position.y + to.height / 2;
+          adjustedX2 = to.position.x + to.width;
+          this.drawLine(adjustedX1, adjustedY1, adjustedX2, adjustedY2,params,id);
+        }
+      }
+      if(x2 - x1 < 20 && x2 - x1 >= 0){
+
+        if(y2 - y1 >= 0){
+  
+          adjustedY1 = from.position.y  + from.height;
+          adjustedX1 = from.position.x  + from.width/2;
+          adjustedY2 = to.position.y;
+          adjustedX2 = to.position.x   + from.width/2;
+          this.drawLine(adjustedX1, adjustedY1, adjustedX2, adjustedY2,params,id);
+        }
+        if(y2 - y1 < 0){
+          console.log("Asdad")
+          adjustedY1 = from.position.y;
+          adjustedX1 = from.position.x + from.width/2;
+          adjustedY2 = to.position.y + from.heigh
+          adjustedX2 = to.position.x  + from.width/2;
+          this.drawLine(adjustedX1, adjustedY1, adjustedX2, adjustedY2,params,id);
+        }
+      }
+      return
+    }
+    else if (Math.abs(y2 - y1) > Math.abs(x2 - x1)) {
       if (y2 > y1) {
         adjustedY1 = from.position.y + from.height;
         adjustedY2 = to.position.y + to.height / 2;
@@ -139,19 +178,20 @@ export class DOM_ELEMENTS_CONTROLLER {
       }
       adjustedY1 = y1;
     }
-    let midX, midY;
-    if (params.brokenLine) {
+    if (params?.brokenLine) {
+      let isArrow = params.arrow
+      params.arrow = false
       if (Math.abs(y2 - y1) > Math.abs(x2 - x1)) {
-        midX = adjustedX1;
         this.drawLine(adjustedX1, adjustedY1, adjustedX1, adjustedY2,params,id);
+        params.arrow = isArrow
         if (adjustedY2 > adjustedY1) {
           this.drawLine(adjustedX1, adjustedY2, adjustedX2, adjustedY2,params,id);
         } else {
           this.drawLine(adjustedX1, adjustedY2, adjustedX2, adjustedY2,params,id);
         }
       } else {
-        midY = adjustedY1;
         this.drawLine(adjustedX1, adjustedY1, adjustedX2, adjustedY1,params,id);
+        params.arrow = isArrow
         if (adjustedX2 > adjustedX1) {
           this.drawLine(adjustedX2, adjustedY1, adjustedX2, adjustedY2,params,id);
         } else {
@@ -260,23 +300,34 @@ export class DOM_ELEMENTS_CONTROLLER {
     let activeTarget;
     const onMouseDown = (event) => {
       if (this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CONNECTING) ||
-          this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CREATING))
+          this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CREATING) ||
+          this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.MOVING))
         return;
       activeTarget = event.target.closest(".element");
       if (!activeTarget) return;
-
+      const rect = activeTarget.getBoundingClientRect();
+      console.log(event.clientX,rect,activeTarget.style.left.replace("px", ""),activeTarget.style.top.replace("px", ""))
       offsetX =
         event.clientX - Number(activeTarget.style.left.replace("px", ""));
       offsetY =
         event.clientY - Number(activeTarget.style.top.replace("px", ""));
+      // const rect = activeTarget.getBoundingClientRect();
+      // console.log(rect)
+      // offsetX = event.clientX - rect.left;
+      // offsetY = event.clientY - rect.top;
       this.dragging_mode = true;
       activeTarget.style.cursor = "grabbing";
     };
 
     const onMouseMove = (event) => {
       if (!this.dragging_mode || !activeTarget) return;
-      const newX = event.clientX - offsetX;
-      const newY = event.clientY - offsetY;
+      // const newX = event.clientX - offsetX;
+      // const newY = event.clientY - offsetY;
+      const rect = activeTarget.getBoundingClientRect();
+      console.log(event.clientX,rect,activeTarget.style.left.replace("px", ""),activeTarget.style.top.replace("px", ""))
+      const newX = (event.clientX - offsetX)*this.MAP_SETTINGS.scale;
+      const newY = (event.clientY - offsetY)*this.MAP_SETTINGS.scale;
+      console.log(newX,newY)
       activeTarget.style.left = `${newX}px`;
       activeTarget.style.top = `${newY}px`;
       this.update();
@@ -292,10 +343,12 @@ export class DOM_ELEMENTS_CONTROLLER {
     this.useDOM("screen").addEventListener("mouseleave", onMouseUp);
   }
   pushElement(objElement) {
-    const now = new Date();
-    objElement.id = now.getTime();
+    if (!objElement.id) {
+      objElement.id = Date.now();
+    }
     this.elements.push(objElement);
     this.createElement(objElement);
+    this.notifySubcribeUpdateElements()
   }
   deleteElement(id) {
     this.elements = this.elements.filter((el) => el.id !== id);
@@ -304,11 +357,8 @@ export class DOM_ELEMENTS_CONTROLLER {
       (connection) => connection.from !== id && connection.to !== id
     );
     this.update();
+    this.notifySubcribeUpdateElements()
   }
-  deleteLine(from,to){
-
-  }
-
 
   // ФУНКЦИИ ДЛЯ ВЗАИМОДЕЙСТВИЯ С ОСНОВНЫМ КОНТРОЛЛЕРОМ
   getUseDOM(obj) {
@@ -321,10 +371,30 @@ export class DOM_ELEMENTS_CONTROLLER {
       IS_MODE: obj.isMode,
     };
   }
-  getSubscribe(callback) {
-    this.modeSubscribers = callback;
-  }
   getElementsAndConnections() {
     return { elements: this.elements, connections: this.connections };
+  }
+  getModeSubscribe(callback) {
+    this.modeSubscribers = callback;
+  }
+  getMapSettings(settings){
+    this.MAP_SETTINGS = settings
+  }
+  subcribeUpdateElements(callback) {
+    if (typeof callback !== "function") {
+      console.error("Подписчик должен быть функцией");
+      return;
+    }
+
+    this.SUBSCRIBERS_TO_UPDATE_ELEMENTS.push(callback);
+
+    return () => {
+      this.SUBSCRIBERS_TO_UPDATE_ELEMENTS =
+        this.SUBSCRIBERS_TO_UPDATE_ELEMENTS.filter((sub) => sub !== callback);
+    };
+  }
+
+  notifySubcribeUpdateElements() {
+    this.SUBSCRIBERS_TO_UPDATE_ELEMENTS.forEach((callback) => callback(this.getElementsAndConnections()));
   }
 }

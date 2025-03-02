@@ -3,16 +3,13 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Link } from 'react-router-dom';
 import styles from './Registration.module.css';
+import { authAPI } from '../api/index';
 
-// Схема валидации с использованием Yup
 const RegistrationSchema = Yup.object().shape({
-  phone: Yup.string()
-    .matches(/^\+?[0-9]{10,15}$/, 'Неверный формат номера')
-    .required('Обязательное поле'),
   email: Yup.string()
     .email('Неверный формат email')
     .required('Обязательное поле'),
-  nickname: Yup.string()
+  username: Yup.string()
     .min(3, 'Минимум 3 символа')
     .required('Обязательное поле'),
   password: Yup.string()
@@ -24,20 +21,30 @@ const RegistrationSchema = Yup.object().shape({
 });
 
 const Registration = () => {
-  const handleSubmit = (values, { setSubmitting }) => {
-    console.log('Данные регистрации:', values);
-    // Здесь можно выполнить асинхронный запрос на регистрацию пользователя
-    setTimeout(() => {
-      setSubmitting(false);
-      // Можно добавить уведомление об успешной регистрации или перенаправление
-    }, 1000);
+  const handleSubmit = async (values, { setSubmitting, setErrors }) => {
+    try {
+      setSubmitting(true);
+  
+      console.log('Данные регистрации:', values);
+      const response = await authAPI.register(values);
+  
+      
+      console.log('Регистрация прошла успешно:', response);
+  
+    } catch (error) {
+      console.error('Ошибка регистрации:', error.message);
+  
+      // Обработка ошибок, например, отображение ошибки в форме
+      setErrors({ submit: error.message }); // Устанавливаем ошибку в форму
+    } finally {
+      setSubmitting(false); // Восстанавливаем возможность отправки формы
+    }
   };
 
   return (
     <div className={styles.formContainer}>
       <Formik
         initialValues={{
-          phone: '',
           email: '',
           nickname: '',
           password: '',
@@ -48,23 +55,6 @@ const Registration = () => {
       >
         {({ isSubmitting }) => (
           <Form className={styles.registrationForm + " dark-primary-color"}>
-            <div className={styles.fieldGroup}>
-              <label htmlFor="phone" className={styles.label}>
-                Номер телефона
-              </label>
-              <Field
-                type="text"
-                name="phone"
-                id="phone"
-                placeholder="+7XXXXXXXXXX"
-                className={styles.inputField}
-              />
-              <ErrorMessage
-                name="phone"
-                component="div"
-                className={styles.errorMessage}
-              />
-            </div>
 
             <div className={styles.fieldGroup}>
               <label htmlFor="email" className={styles.label}>
@@ -86,13 +76,13 @@ const Registration = () => {
 
             <div className={styles.fieldGroup}>
               <label htmlFor="nickname" className={styles.label}>
-                Ник
+                Имя
               </label>
               <Field
                 type="text"
                 name="nickname"
                 id="nickname"
-                placeholder="Ваш ник"
+                placeholder="Ваше имя"
                 className={styles.inputField}
               />
               <ErrorMessage

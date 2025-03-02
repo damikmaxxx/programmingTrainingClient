@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import Select from "../components/UI/Select/Select";
 import Tabs, { Tab, TabHeader } from '../components/UI/Tabs/Tabs';
 import CodeEditor from "../components/UI/CodeEditor/CodeEditor";
-import { Link, useParams } from 'react-router-dom';
-
+import { useActiveProjectStore } from '../store/store.js';
+import Button from "../components/UI/Button/Button.jsx";
+import ProjectSolution from "../components/ProjectSolutions.jsx";
 function Project() {
-    const [activeTab, setActiveTab] = useState("theory");
     const [selectedLang, setSelectedLang] = useState("javascript");
+    const { activeProject } = useActiveProjectStore();
 
-
+    const [isMyCodeBlock, setIsMyCodeBlock] = useState(true)
 
     const languageOptions = [
         { value: "javascript", label: "JavaScript" },
@@ -19,7 +20,146 @@ function Project() {
         { id: "theory", label: "Теория" },
         { id: "description", label: "Описание задания" },
     ]
-    const { id } = useParams(); // Получаем ID проекта из URL
+
+    const solutions = [
+        {
+            id: 1,
+            author: 'User1',
+            code: `function calculatePrimeFactors(number) {
+                    let factors = [];
+                    let divisor = 2;
+        
+                    // Проходим через возможные делители от 2 до квадратного корня из числа
+                    while (number >= divisor * divisor) {
+                        if (number % divisor === 0) {
+                            factors.push(divisor); // Добавляем делитель в список
+                            number = number / divisor; // Уменьшаем число
+                        } else {
+                            divisor++; // Увеличиваем делитель, если не нашли кратность
+                        }
+                    }
+        
+                    // Если число больше 1, то оно простое и добавляем его в список
+                    if (number > 1) {
+                        factors.push(number);
+                    }
+        
+                    return factors;
+                }
+            `,
+            stars: 10,
+            liked: false,
+            showComments: false,
+            comments: [
+                { author: 'Veselchak', text: 'Отличное решение!', date: '2025-02-22' },
+                { author: 'Dokopatel', text: 'Можно еще оптимизировать. Можно еще оптимизировать Можно еще оптимизировать Можно еще оптимизировать Можно еще оптимизировать', date: '2025-02-21' },
+                { author: 'Veselchak', text: 'Отличное решение!', date: '2025-02-22' },
+                { author: 'Dokopatel', text: 'Можно еще оптимизировать.', date: '2025-02-21' },
+                { author: 'Veselchak', text: 'Отличное решение!', date: '2025-02-22' },
+                { author: 'Dokopatel', text: 'Можно еще оптимизировать.', date: '2025-02-21' },
+                { author: 'Veselchak', text: 'Отличное решение!', date: '2025-02-22' },
+                { author: 'Dokopatel', text: 'Можно еще оптимизировать.', date: '2025-02-21' },
+                { author: 'Veselchak', text: 'Отличное решение!', date: '2025-02-22' },
+                { author: 'Dokopatel', text: 'Можно еще оптимизировать.', date: '2025-02-21' },
+            ],
+        },
+        {
+            id: 2,
+            author: 'User2',
+            code: `
+        const multiply = (a, b) => a * b;
+        
+        const add = (a, b) => a + b;
+        
+        const subtract = (a, b) => a - b;
+        
+        const divide = (a, b) => {
+          if (b === 0) {
+            throw new Error('Division by zero');
+          }
+          return a / b;
+        };
+        
+        console.log(multiply(5, 3));
+        console.log(add(2, 3));
+        console.log(subtract(8, 4));
+        console.log(divide(10, 2));
+            `,
+            stars: 5,
+            liked: false,
+            showComments: false,
+            comments: [
+                { author: 'Krutoi', text: 'Хорошая идея!', date: '2025-02-20' },
+                { author: 'CHETO_NADO', text: 'Добавь обработку ошибок.', date: '2025-02-19' },
+            ],
+        },
+        {
+            id: 3,
+            author: 'User2',
+            code: `
+        const multiply = (a, b) => a * b;
+        
+        const factorial = (n) => {
+          if (n === 0) return 1;
+          return n * factorial(n - 1);
+        };
+        
+        const isPrime = (n) => {
+          for (let i = 2; i <= Math.sqrt(n); i++) {
+            if (n % i === 0) return false;
+          }
+          return n > 1;
+        };
+        
+        const reverseString = (str) => str.split('').reverse().join('');
+        
+        console.log(multiply(5, 3));
+        console.log(factorial(5));
+        console.log(isPrime(7));
+        console.log(reverseString('hello'));
+            `,
+            stars: 5,
+            liked: false,
+            showComments: false,
+            comments: [
+                { author: 'Krutoi', text: 'Хорошая идея!', date: '2025-02-20' },
+                { author: 'CHETO_NADO', text: 'Добавь обработку ошибок.', date: '2025-02-19' },
+            ],
+        },
+        {
+            id: 4,
+            author: 'User2',
+            code: `
+        const multiply = (a, b) => a * b;
+        
+        const mergeArrays = (arr1, arr2) => [...arr1, ...arr2];
+        
+        const filterEvenNumbers = (arr) => arr.filter(num => num % 2 === 0);
+        
+        const findMax = (arr) => Math.max(...arr);
+        
+        const isPalindrome = (str) => {
+          const reversed = str.split('').reverse().join('');
+          return str === reversed;
+        };
+        
+        console.log(multiply(5, 3));
+        console.log(mergeArrays([1, 2], [3, 4]));
+        console.log(filterEvenNumbers([1, 2, 3, 4, 5]));
+        console.log(findMax([1, 2, 3, 4, 5]));
+        console.log(isPalindrome('madam'));
+            `,
+            stars: 5,
+            liked: false,
+            showComments: false,
+            comments: [
+                { author: 'Krutoi', text: 'Хорошая идея!', date: '2025-02-20' },
+                { author: 'CHETO_NADO', text: 'Добавь обработку ошибок.', date: '2025-02-19' },
+            ],
+        },
+
+    ]
+
     return (
         <div className="container">
             <div className="row">
@@ -28,71 +168,17 @@ function Project() {
                         <Tabs tabs={tabs} defaultActiveTab="theory">
                             <TabHeader tabs={tabs} />
                             <Tab id="theory">
-                                <h5 >Теория:</h5>
-                                <p>
-                                    <strong>Что такое палиндром?</strong><br />
-                                    Палиндром — это слово, фраза, число или последовательность символов, которые
-                                    читаются одинаково
-                                    слева направо и справа налево. Например, слова "радар", "кот" и фразы "А
-                                    роза упала на лапу Азора" являются палиндромами.
-                                    Палиндромы интересны тем, что они могут быть как короткими, так и длинными.
-                                    Например, фраза "А роза упала на лапу Азора" состоит из множества слов и
-                                    пробелов, но при этом сохраняет свое значение при чтении в обоих
-                                    направлениях.
-                                </p>
-                                <p>
-                                    <strong>Как проверить палиндром?</strong><br />
-                                    Для проверки строки на палиндром можно использовать несколько подходов:
-                                </p>
-                                <ul>
-                                    <li>Удалить все пробелы и привести строку к одному регистру (например, к
-                                        нижнему).</li>
-                                    <li>Сравнить строку с её обратной версией.</li>
-                                    <li>Или пройтись по строке с двух концов и сравнить символы.</li>
-                                    <li>Также можно использовать регулярные выражения для удаления нежелательных
-                                        символов и пробелов.</li>
-                                </ul>
-                                <p>
-                                    <strong>Пример проверки:</strong><br />
-                                    Рассмотрим строку "A man a plan a canal Panama". После удаления пробелов и
-                                    приведения к нижнему регистру она становится "amanaplanacanalpanama",
-                                    которая является палиндромом.
-                                    Важно отметить, что не только слова могут быть палиндромами; даже числа
-                                    могут быть палиндромами, например, 12321.
-                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Numquam temporibus
-                                    saepe tempore maiores voluptas harum maxime ducimus asperiores, cum illo.
-                                    Dolores est magnam, atque in quia quae modi alias architecto?
-                                </p>
+                                <div className="task__block__section">
+                                    <h5 >Теория:</h5>
+                                    <div dangerouslySetInnerHTML={{ __html: activeProject.theory }} />
+                                </div>
+
                             </Tab>
                             <Tab id="description">
-                                <h5>Описание задания:</h5>
-                                <p>
-                                    <strong>Задание:</strong> Напишите функцию, которая проверяет, является ли
-                                    строка палиндромом (читается одинаково слева направо и справа налево).
-                                    <br /><br />
-                                    <strong>Описание:</strong> Игнорируйте пробелы и регистр. Обратите внимание
-                                    на
-                                    возможные специальные символы, которые также могут влиять на проверку.
-                                    <br /><br />
-                                    <strong>Пример:</strong>
-                                </p>
-                                <ul>
-                                    <li><code>is_palindrome("A man a plan a canal Panama")</code> — вернет
-                                        <strong>true</strong>
-                                    </li>
-                                    <li><code>is_palindrome("Hello World")</code> — вернет
-                                        <strong>false</strong>
-                                    </li>
-                                    <li><code>is_palindrome("12321")</code> — вернет <strong>true</strong></li>
-                                    <li><code>is_palindrome("Was it a car or a cat I saw?")</code> — вернет
-                                        <strong>true</strong>
-                                    </li>
-                                </ul>
-                                <p>
-                                    <em>Подсказка:</em> Используйте методы для работы со строками, такие как
-                                    `toLowerCase()` для приведения к нижнему регистру и `replace()` для удаления
-                                    пробелов.
-                                </p>
+                                <div className="task__block__section">
+                                    <h5>Описание задания:</h5>
+                                    <div dangerouslySetInnerHTML={{ __html: activeProject.description }} />
+                                </div>
                             </Tab>
                         </Tabs>
                     </div>
@@ -101,10 +187,15 @@ function Project() {
                     <div className="task__block task__block--height">
                         <div className="task__block__tools">
                             <div className="task__block__tools__button">
-                                <a className="button me-3 button-primary" href="#">Запустить код</a>
-                                <a className="button me-3 button-primary" href="#">Подтвердить </a>
-                                <a > </a>
-                                <Link className="button button-primary" to={"/projectsolution/" + id} > Решения</Link>
+                                {isMyCodeBlock ? <>
+                                    <Button variant="small" className=" me-3">Запустить код</Button>
+                                    <Button variant="small" className=" me-3">Подтвердить</Button>
+                                    <Button variant="small" className=" me-3" onClick={() => setIsMyCodeBlock(false)}>Другие решения</Button>
+                                </> : <><Button variant="small" className=" me-3" onClick={() => setIsMyCodeBlock(true)}>Мое решение</Button></>}
+
+
+
+
                             </div>
                             <div className="select">
                                 <Select
@@ -115,12 +206,16 @@ function Project() {
                                 />
                             </div>
                         </div>
-                        <div className="task__block__editor">
-                            <CodeEditor
-                                language={selectedLang}
-                                initialCode={"function sum(a, b) {\n\treturn a + b;\n}\nconsole.log(sum(5, 6)); // Этот код добавляется через JS"}
-                            />
-                        </div>
+                        {isMyCodeBlock ?
+                            <div className="task__block__editor">
+                                <CodeEditor
+                                    language={selectedLang}
+                                    initialCode={"function sum(a, b) {\n\treturn a + b;\n}\nconsole.log(sum(5, 6));"}
+                                />
+                            </div> :
+                            <div className="task__block__solution">
+                                <ProjectSolution sortedLang={selectedLang} solutions={solutions} />
+                            </div>}
 
                     </div>
                 </div>

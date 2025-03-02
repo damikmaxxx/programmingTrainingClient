@@ -7,7 +7,6 @@ import Map from './pages/Map';
 import NotFound from './pages/NotFound';
 import Project from './pages/Project';
 import Projects from './pages/Projects';
-import ProjectSolution from './pages/ProjectSolutions';
 import Registration from './pages/Registration';
 import Login from './pages/Login';
 import Rating from './pages/Rating';
@@ -17,10 +16,9 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Layout><Home /></Layout>} />
-        <Route path="/profile" element={<Layout><Profile /></Layout>} />
+        <Route path="/profile" element={<Layout mainClear><Profile /></Layout>} />
         <Route path="/projects" element={<Layout dark><Projects /></Layout>} />
         <Route path="/project/:id" element={<Layout dark><Project /></Layout>} />
-        <Route path="/projectsolution/:id" element={<Layout dark><ProjectSolution /></Layout>} />
         <Route path="/registration" element={<Layout dark><Registration /></Layout>} />
         <Route path="/login" element={<Layout dark><Login /></Layout>} />
         <Route path="/map" element={<Layout noMainWrapper><Map /></Layout>} />
