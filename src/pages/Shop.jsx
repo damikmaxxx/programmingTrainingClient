@@ -4,8 +4,9 @@ import Tabs, { Tab, TabHeader } from '../components/UI/Tabs/Tabs';
 import Button from '../components/UI/Button/Button';
 import "../styles/nicknameStyles.css";
 import Select from '../components/UI/Select/Select.jsx';
-import { useShopStore } from '../store/store.js';
+import { useShopStore,useUserStore } from '../store/store.js';
 import ItemCounter from '../components/Shared/ItemCounter/ItemCounter.jsx';
+import { useNavigate } from 'react-router-dom';
 
 // Функция для отображения правильной цены и иконки в зависимости от типа
 const renderPriceAndIcon = (style) => {
@@ -21,9 +22,7 @@ const buyItem = (item) => {
   console.log(item);
 }
 
-const checkStyle = (item) => {
-  console.log(item);
-}
+
 const Shop = () => {
   const { nicknameStyles, profileStyle } = useShopStore();
   const tabs = [
@@ -119,8 +118,14 @@ export default Shop;
 
 
 const ProfileShopEffects = ({ profileStyle }) => {
-  const { getStyleComponentByName } = useShopStore();
+  const { getStyleComponentByName,setTestProfileStyle } = useShopStore();
+  const navigate = useNavigate();
 
+  const checkStyle = (item) => {
+    console.log(item.value)
+    setTestProfileStyle(item.value); // Устанавливаем testProfileStyle
+    navigate('/profile/test-style'); // Перенаправляем на страницу профиля
+  }
   return (
     <div className="row">
       {profileStyle.map((style) => {

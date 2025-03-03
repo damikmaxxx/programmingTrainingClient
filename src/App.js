@@ -17,6 +17,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout><Home /></Layout>} />
         <Route path="/profile" element={<Layout mainClear><Profile /></Layout>} />
+        <Route path="/profile/test-style" element={<Layout mainClear><Profile testStyle={true} /></Layout>} />
         <Route path="/projects" element={<Layout dark><Projects /></Layout>} />
         <Route path="/project/:id" element={<Layout dark><Project /></Layout>} />
         <Route path="/registration" element={<Layout dark><Registration /></Layout>} />

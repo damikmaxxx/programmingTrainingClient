@@ -3,6 +3,7 @@ import FireEffect from "../../components/effects/FireEffect";
 import SnowEffect from "../../components/effects/SnowEffect";
 import LaserEffect from "../../components/effects/LaserEffect";
 export const useShopStore = create((set,get) => ({
+  testProfileStyle:"",
   nicknameStyles: [
     {
       id: 9,
@@ -93,6 +94,7 @@ export const useShopStore = create((set,get) => ({
     {
       id: 1,
       name: "Fire Style",
+      value:"FireStyle",
       priceInCoin: 0,
       priceInStars: 20,
       component: FireEffect,
@@ -106,6 +108,7 @@ export const useShopStore = create((set,get) => ({
     {
       id: 2,
       name: "Snow Style",
+      value:"SnowStyle",
       priceInCoin: 0,
       priceInStars: 10,
       component: SnowEffect,
@@ -119,6 +122,7 @@ export const useShopStore = create((set,get) => ({
     {
       id: 3,
       name: "Laser Style",
+      value:"LaserStyle",
       priceInCoin: 0,
       priceInStars: 25,
       component: LaserEffect,
@@ -133,7 +137,7 @@ export const useShopStore = create((set,get) => ({
     },
     // и так далее для других тем
   ],
-  
+  setTestProfileStyle: (styleName) => set({ testProfileStyle: styleName }),
   // Функция для получения класса по имени стиля
   getStyleClassByName: (name) => {
     const effect = get().nicknameStyles.find((style) => style.name === name); // Используем get(), чтобы обратиться к состоянию

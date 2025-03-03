@@ -1,32 +1,29 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { useUserStore,useShopStore } from '../store/store'; // Импортируем useUserStore
 import DefaultProfile from '../components/profileStyles/DefaultPage/DefaultProfile';
 
+function Profile({testStyle = false}) {
+  console.log(testStyle)
+  // Получаем данные пользователя из Zustand store
+  const { id, name, coins, stars, exp, profileStyle,description, recentProjects, skills, timeExpDiagram } = useUserStore();
+  const {testProfileStyle } = useShopStore();
+  console.log(testProfileStyle, profileStyle)
+  // Выбираем стиль для профиля
+  const selectedStyle = testStyle ? testProfileStyle : profileStyle;
 
-function Profile() {
-  const userData = {
-    avatar: "https://www.gravatar.com/avatar/?d=mp",
-    name: "User Usernamovich",
-    coins:500,
-    stars: 5,
-    exp: 800,
-    description: "Люблю кодить и решать сложные задачи!",
-    recentProjects: ["Калькулятор", "Чат-бот", "Игра на React"],
-    skills: [
-      { name: "JavaScript", percentage: 70 },
-      { name: "Python", percentage: 65 },
-      { name: "React", percentage: 90 }
-    ],
-    experience: 3400,
-    projectTimes: 45,
-    timeExpDiagram:{
-      time: ["12.02", "13.02", "14.02", "15.02"],
-      exp: [30, 45, 20, 60],
-    }
-
-  };
   return (
-    <DefaultProfile {...userData}/>
-
+    <DefaultProfile 
+      avatar="https://www.gravatar.com/avatar/?d=mp"
+      name={name}
+      coins={coins}
+      stars={stars}
+      exp={exp}
+      description={description}
+      recentProjects={recentProjects}
+      skills={skills}
+      timeExpDiagram={timeExpDiagram}
+      selectedStyle={selectedStyle} // Передаем выбранный стиль
+    />
   );
 }
 
