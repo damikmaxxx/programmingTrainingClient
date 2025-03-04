@@ -15,7 +15,10 @@ export class MAP_CONTROLLER {
       COMMANDS: {
         BACK: "back",
       },
+      USER: "user",
+      ADMIN: "admin",
     };
+
     this.MODE_HISTORY = [];
     this.activeMode = this.MODE_CONSTANTS.DEFAULT;
     this._DOM_ELEMENTS = DOM_ELEMENTS;
@@ -23,10 +26,10 @@ export class MAP_CONTROLLER {
     this.MAP_SETTINGS = {
       X: map_settings.transformX || 0,
       Y: map_settings.transformY || 0,
-      scale:map_settings.scale || 1,
+      scale: map_settings.scale || 1,
+      mode: map_settings.mode || "admin",
     };
     this.SUBSCRIBERS_TO_UPDATE_MODE = [];
-
 
     this.dom_controller.getUseDOM((obj) => this.useDOM(obj));
     this.dom_controller.getModeSettings({
@@ -37,8 +40,7 @@ export class MAP_CONTROLLER {
     this.dom_controller.getModeSubscribe((callback, modes) =>
       this.subscribeToUpdateModes(callback, modes)
     );
-    this.dom_controller.getMapSettings(this.MAP_SETTINGS)
-
+    this.dom_controller.getMapSettings(this.MAP_SETTINGS);
   }
   init() {
     this.dom_controller.init();
@@ -46,6 +48,7 @@ export class MAP_CONTROLLER {
     this.initToolsPanel();
   }
   initMoving() {
+    // if (this.MAP_SETTINGS.mode === this.MODE_CONSTANTS.USER) return;
     const scaleFactor = 0.1;
     let startPos = { x: this.MAP_SETTINGS.X, y: this.MAP_SETTINGS.Y };
     this._ACTIVE_SCREEN.addEventListener("mousedown", (event) => {
@@ -70,6 +73,7 @@ export class MAP_CONTROLLER {
     });
 
     this._ACTIVE_SCREEN.addEventListener("mousemove", (event) => {
+      event.preventDefault();
       if (this.isMode(this.MODE_CONSTANTS.MOVING)) {
         const deltaX = event.clientX - startPos.x;
         const deltaY = event.clientY - startPos.y;
@@ -82,8 +86,8 @@ export class MAP_CONTROLLER {
       }
     });
 
-    this._ACTIVE_SCREEN.addEventListener("mouseup", (event) => {
-      event.preventDefault(); 
+    document.addEventListener("mouseup", (event) => {
+      event.preventDefault();
       if (this.isMode(this.MODE_CONSTANTS.MOVING)) {
         this.setMode(this.MODE_CONSTANTS.COMMANDS.BACK);
       }
@@ -97,8 +101,10 @@ export class MAP_CONTROLLER {
       const vptRect = this._ACTIVE_SCREEN.getBoundingClientRect();
       const cvsW = this._DOM_ELEMENTS.offsetWidth * scaleOld;
       const cvsH = this._DOM_ELEMENTS.offsetHeight * scaleOld;
-      const cvsX = (this._ACTIVE_SCREEN.offsetWidth - cvsW) / 2 + this.MAP_SETTINGS.X;
-      const cvsY = (this._ACTIVE_SCREEN.offsetHeight - cvsH) / 2 + this.MAP_SETTINGS.Y;
+      const cvsX =
+        (this._ACTIVE_SCREEN.offsetWidth - cvsW) / 2 + this.MAP_SETTINGS.X;
+      const cvsY =
+        (this._ACTIVE_SCREEN.offsetHeight - cvsH) / 2 + this.MAP_SETTINGS.Y;
       const originX = event.x - vptRect.x - cvsX - cvsW / 2;
       const originY = event.y - vptRect.y - cvsY - cvsH / 2;
 
@@ -121,23 +127,36 @@ export class MAP_CONTROLLER {
     document.addEventListener("contextmenu", (event) => event.preventDefault());
   }
   initToolsPanel() {
-    document.getElementById("editButton").addEventListener("click", () => {
-      if (!this.isMode(this.MODE_CONSTANTS.EDITING)) {
-        document.getElementById("toolspanel").classList.add("active");
-        this.setMode(this.MODE_CONSTANTS.EDITING);
-      } else {
-        document.getElementById("toolspanel").classList.remove("active");
-        this.setMode(this.MODE_CONSTANTS.DEFAULT);
-        this.create_mode = false;
-        document.getElementById("toggleCreateBlock").checked = false;
-      }
-    });
-    document
-      .getElementById("toggleCreateBlock")
-      .addEventListener("click", (event) => {
-        if (event.target.checked) this.setMode(this.MODE_CONSTANTS.CREATING);
-        else this.setMode(this.MODE_CONSTANTS.EDITING);
+    if (this.MAP_SETTINGS.mode === this.MODE_CONSTANTS.USER) return;
+    const editButton = document.getElementById("editButton");
+    const toolsPanel = document.getElementById("toolspanel");
+    const toggleCreateBlock = document.getElementById("toggleCreateBlock");
+
+    if (editButton) {
+      editButton.addEventListener("click", () => {
+        if (!this.isMode(this.MODE_CONSTANTS.EDITING)) {
+          toolsPanel?.classList.add("active");
+          this.setMode(this.MODE_CONSTANTS.EDITING);
+        } else {
+          toolsPanel?.classList.remove("active");
+          this.setMode(this.MODE_CONSTANTS.DEFAULT);
+          this.create_mode = false;
+          if (toggleCreateBlock) {
+            toggleCreateBlock.checked = false;
+          }
+        }
       });
+    }
+
+    if (toggleCreateBlock) {
+      toggleCreateBlock.addEventListener("click", (event) => {
+        this.setMode(
+          event.target.checked
+            ? this.MODE_CONSTANTS.CREATING
+            : this.MODE_CONSTANTS.EDITING
+        );
+      });
+    }
   }
   setMode(mode) {
     if (this.MODE_CONSTANTS.COMMANDS.BACK === mode) {
@@ -200,13 +219,12 @@ export class MAP_CONTROLLER {
     return this.dom_controller.getElementsAndConnections();
   }
   addNewElement(obj) {
-    console.log(obj,this.MAP_SETTINGS.X,this.MAP_SETTINGS.Y)
+    console.log(obj, this.MAP_SETTINGS.X, this.MAP_SETTINGS.Y);
     obj.position.x -= this.MAP_SETTINGS.X;
     obj.position.y -= this.MAP_SETTINGS.Y;
     this.dom_controller.pushElement(obj);
   }
   subcribeUpdateElements(callback) {
-
-    return this.dom_controller.subcribeUpdateElements((obj) => callback(obj))
+    return this.dom_controller.subcribeUpdateElements((obj) => callback(obj));
   }
 }

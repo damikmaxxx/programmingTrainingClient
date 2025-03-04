@@ -35,6 +35,10 @@ body{
     z-index: 5;
 
 }
+.active__element{
+    border:1px solid var(--line-color);
+    border-radius: 20px;
+}
 .element .element_delete-button{
     display: none;
 }

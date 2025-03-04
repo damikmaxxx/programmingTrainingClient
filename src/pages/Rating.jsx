@@ -15,13 +15,18 @@ const tabs = [
 
 const Rating = () => {
   const { topExpFull, topExpWeek, topStarsFull, topStarsWeek } = useRatingStore();
-  const {name,id} = useUserStore()
+  const { name, id } = useUserStore();
+
   const MyRating = {
-    userId:id,
-    name:name,
-    index:999,
-    exp:10,
-  }
+    userId: id,
+    name: name,
+    index: 999,
+    exp: 10,
+  };
+
+  // Проверяем, есть ли пользователь в топе
+  const isInTop = topExpFull.some(user => user.userId === MyRating.userId);
+
   return (
     <div className="container">
       <h1 className="text-center mb-3">Рейтинг пользователей</h1>
@@ -32,14 +37,15 @@ const Rating = () => {
             <div className={styles.rating}>
               <RatingItem index={1} {...topExpFull[0]} />
               <div className={styles.ratingScroll}>
-
                 {topExpFull.slice(1).map((item, index) => (
                   <RatingItem key={item.id} index={index + 2} {...item} />
                 ))}
               </div>
-              <div className={styles.ratingItemLast}>
-                <RatingItem index={MyRating} {...MyRating} />
-              </div>
+              {!isInTop && (
+                <div className={styles.ratingItemLast}>
+                  <RatingItem index={MyRating.index} {...MyRating} />
+                </div>
+              )}
             </div>
           </Tab>
           <Tab id="starsfull">

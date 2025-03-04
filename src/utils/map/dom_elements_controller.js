@@ -14,7 +14,13 @@ export class DOM_ELEMENTS_CONTROLLER {
     this.MAP_SETTINGS = {}
   }
   init() {
-    this.initDrag();
+    if (this.MAP_SETTINGS.mode === this.MODE_HANDLER.CONSTANTS.USER){
+      this.initClick()
+    }
+    else{
+      this.initDrag();
+    }
+
     this.create();
 
     this.modeSubscribers(() => {
@@ -112,9 +118,10 @@ export class DOM_ELEMENTS_CONTROLLER {
       // SOON
       return;
     }
-    if (Math.abs(y2 - y1) < 20 || Math.abs(x2 - x1) < 20){
-      if(y2 - y1 < 20 && y2 - y1 >= 0){
+    if (Math.abs(y2 - y1) < 30 || Math.abs(x2 - x1) < 100){
 
+      if(y2 - y1 < 30 && y2 - y1 >= -30){
+        console.log(y2,y1)
         if(x2 - x1 >= 0){
           adjustedY1 = from.position.y + from.height / 2;
           adjustedX1 = from.position.x  + from.width;
@@ -130,10 +137,9 @@ export class DOM_ELEMENTS_CONTROLLER {
           this.drawLine(adjustedX1, adjustedY1, adjustedX2, adjustedY2,params,id);
         }
       }
-      if(x2 - x1 < 20 && x2 - x1 >= 0){
+     if(x2 - x1 < 100 && x2 - x1 >= -100){
 
         if(y2 - y1 >= 0){
-  
           adjustedY1 = from.position.y  + from.height;
           adjustedX1 = from.position.x  + from.width/2;
           adjustedY2 = to.position.y;
@@ -141,10 +147,10 @@ export class DOM_ELEMENTS_CONTROLLER {
           this.drawLine(adjustedX1, adjustedY1, adjustedX2, adjustedY2,params,id);
         }
         if(y2 - y1 < 0){
-          console.log("Asdad")
+          console.log(x2, x1)
           adjustedY1 = from.position.y;
           adjustedX1 = from.position.x + from.width/2;
-          adjustedY2 = to.position.y + from.heigh
+          adjustedY2 = to.position.y + from.height
           adjustedX2 = to.position.x  + from.width/2;
           this.drawLine(adjustedX1, adjustedY1, adjustedX2, adjustedY2,params,id);
         }
@@ -287,15 +293,30 @@ export class DOM_ELEMENTS_CONTROLLER {
     this.startElementId = id;
   }
   finishConnection(id) {
-    console.log("asda", id);
     if (!this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CONNECTING)) return;
     if (this.startElementId === id) return;
-    console.log(this.startElementId, id);
     this.createConnection(this.startElementId, id);
 
     this.MODE_HANDLER.SET_MODE(this.MODE_HANDLER.CONSTANTS.COMMANDS.BACK);
   }
+  initClick(){
+    if (this.MAP_SETTINGS.mode === this.MODE_HANDLER.CONSTANTS.ADMIN) return
+    let activeTarget;
+    this.useDOM("screen").addEventListener("click", (event) => {
+      if (this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CONNECTING) ||
+          this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CREATING) ||
+          this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.MOVING))
+        return;
+      activeTarget = event.target.closest(".element");
+      if (!activeTarget) return;
+      console.log(activeTarget)
+      document.querySelectorAll('.active__element').forEach(el => el.classList.remove('active__element'));
+      // Добавляем класс active__element к текущему элементу
+      activeTarget.classList.add('active__element');
+    });
+  }
   initDrag() {
+
     let offsetX, offsetY;
     let activeTarget;
     const onMouseDown = (event) => {
@@ -305,8 +326,6 @@ export class DOM_ELEMENTS_CONTROLLER {
         return;
       activeTarget = event.target.closest(".element");
       if (!activeTarget) return;
-      const rect = activeTarget.getBoundingClientRect();
-      console.log(event.clientX,rect,activeTarget.style.left.replace("px", ""),activeTarget.style.top.replace("px", ""))
       offsetX =
         event.clientX - Number(activeTarget.style.left.replace("px", ""));
       offsetY =
@@ -324,10 +343,8 @@ export class DOM_ELEMENTS_CONTROLLER {
       // const newX = event.clientX - offsetX;
       // const newY = event.clientY - offsetY;
       const rect = activeTarget.getBoundingClientRect();
-      console.log(event.clientX,rect,activeTarget.style.left.replace("px", ""),activeTarget.style.top.replace("px", ""))
       const newX = (event.clientX - offsetX)*this.MAP_SETTINGS.scale;
       const newY = (event.clientY - offsetY)*this.MAP_SETTINGS.scale;
-      console.log(newX,newY)
       activeTarget.style.left = `${newX}px`;
       activeTarget.style.top = `${newY}px`;
       this.update();
