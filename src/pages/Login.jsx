@@ -3,7 +3,8 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Link } from 'react-router-dom';
 import styles from './Login.module.css';
-
+import { authAPI } from '../api/api';
+import { useUserStore } from '../store/user/userStore';
 // Валидация через Yup
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -12,14 +13,15 @@ const LoginSchema = Yup.object().shape({
 });
 
 const Login = () => {
-  const handleSubmit = (values, { setSubmitting }) => {
-    console.log('Данные для входа:', values);
-    setTimeout(() => {
+  const { setAuth } = useUserStore()
+  const handleSubmit = async (values, { setSubmitting, setErrors }) => {
+    setSubmitting(true);
+    const { email, password } = values;
+    const response = await authAPI.login({ email, password }, () => {
       setSubmitting(false);
-      // Здесь можно выполнить запрос на сервер для аутентификации
-    }, 1000);
+      setAuth(true)
+    });
   };
-
   return (
     <div className={styles.loginContainer}>
       <Formik

@@ -1,12 +1,12 @@
 import { create } from 'zustand';
 
 export const useUserStore = create((set) => ({
-  isAuth: true,
-  id: 8786,
-  name: 'USERNAME',
-  coins: 500,
+  isAuth: false,
+  id: 0,
+  name: '',
+  coins: 0,
   exp: 0,
-  stars: 5,
+  stars: 0,
   profileStyle: "LaserStyle",
   nicknameStyle: "Neon Blue",
 

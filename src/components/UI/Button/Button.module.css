@@ -39,11 +39,11 @@
 }
 
 .btn:hover::before {
-    transform: skew(45deg) rotate(180deg) translate(-50%, -50%);
+    transform: skew(40deg) rotate(180deg) translate(-50%, -50%);
 }
 
 .btn:hover::after {
-    transform: skew(45deg) translate(-50%, -50%);
+    transform: skew(40deg) translate(-50%, -50%);
 }
 
 .btn:hover {

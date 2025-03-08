@@ -1,0 +1,42 @@
+/* NotFound.module.css */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    flex-grow: 1;
+  }
+  
+  .title {
+    font-size: 4rem; /* Крупный шрифт для заголовка */
+    color: #f8f9fa; /* Очень светлый серый для контраста */
+    margin-bottom: 1rem;
+  }
+  
+  .text {
+    font-size: 1.5rem; /* Читаемый размер текста */
+    color: #e0e0e0; /* Светло-серый для основного текста */
+    margin-bottom: 2rem;
+  }
+  
+  .homeLink {
+    padding: 10px 20px;
+    background-color: #17a2b8; /* Бирюзовый фон кнопки для контраста */
+    color: #fff; /* Белый текст кнопки */
+    text-decoration: none;
+    border-radius: 5px; /* Скруглённые углы */
+    font-size: 1rem;
+    transition: background-color 0.3s; /* Плавный переход цвета */
+  }
+  
+  .homeLink:hover {
+    background-color: #138496; /* Более тёмный бирюзовый при наведении */
+  }
+  
+  .image {
+    width: 200px; /* Размер изображения */
+    margin-bottom: 2rem;
+  }

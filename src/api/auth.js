@@ -1,35 +1,71 @@
-const API_URL = process.env.REACT_APP_API_URL;
+import { $host,setTokens } from "./index";
 
-export const login = async (email, password) => {
-  const response = await fetch(`${API_URL}/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
-
-  if (!response.ok) throw new Error("Ошибка авторизации");
-  return await response.json();
-};
-
-export const register = async ({email, password, username}) => {
+export const login = async ({email, password},callback) => {
   try {
-    const response = await fetch(`${API_URL}/register/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email,password,username
-      }),
-    });
+    console.log(email,password)
+    const { data } = await $host.post("/token/", { email, password });
 
-    if (!response.ok) {
-      const errorData = await response.json();  // Читаем ошибку от сервера
-      console.error("Server Error:", errorData);  // Выводим ошибку в консоль
-      throw new Error(`Ошибка регистрации: ${errorData.message || 'Неправильные данные'}`);
+    setTokens({access:data.access, refresh:data.refresh});
+
+
+    if (callback) {
+      callback(data); // Вызываем колбэк, передавая полученные данные
     }
 
-    return await response.json();
+    return data;
   } catch (error) {
-    console.error("Error", error);
-    throw error; // Выбрасываем ошибку дальше, если нужно
+    console.error("Ошибка авторизации:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || "Ошибка авторизации");
+  }
+};
+
+export const register = async ({ email, password, username },callback) => {
+  try {
+    const { data } = await $host.post("/register/", { email, password, username });
+        // Используем setTokens для сохранения токенов
+    setTokens({access:data.access, refresh:data.refresh});
+
+    if (callback) {
+      callback(data); // Вызываем колбэк, передавая полученные данные
+    }
+    return data;
+  } catch (error) {
+    console.error("Ошибка регистрации:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || "Ошибка регистрации");
+  }
+};
+
+export const updateAccessToken = async () => {
+  try {
+    const shortToken = localStorage.getItem('short_token');
+    const { data } = await $host.post("/token/refresh/", { refresh: shortToken });
+    setTokens({short:data.access});
+    return data;
+  } catch (error) {
+    if (error.response?.status === 401) {
+      console.log("Refresh token истёк. Необходима повторная авторизация.");
+
+      // Удаляем токены из localStorage
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('access_token'); // Если у вас есть дневной токен
+
+    } else {
+      // Для других ошибок логируем и выбрасываем исключение
+      console.error("Ошибка при обновлении токена:", error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || "Ошибка авторизации");
+    }
+  }
+};
+
+
+export const check = async (email, password) => {
+  try {
+    const { data } = await $host.post("/login/", { email, password });
+    // Используем setTokens для сохранения токенов
+    setTokens(data.access, data.refresh);
+    return data;
+  } catch (error) {
+    console.error("Ошибка авторизации:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || "Ошибка авторизации");
   }
 };

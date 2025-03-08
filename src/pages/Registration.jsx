@@ -3,7 +3,8 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Link } from 'react-router-dom';
 import styles from './Registration.module.css';
-import { authAPI } from '../api/index';
+import { authAPI } from '../api/api';
+import { useUserStore } from '../store/user/userStore';
 
 // Схема валидации с использованием Yup
 const RegistrationSchema = Yup.object().shape({
@@ -22,21 +23,16 @@ const RegistrationSchema = Yup.object().shape({
 });
 
 const Registration = () => {
-  const handleSubmit = async (values, { setSubmitting, setErrors }) => {
+  const {setAuth} = useUserStore()
+  const handleSubmit = async (values, { setSubmitting }) => {
     setSubmitting(true);
-    try {
-      const { confirmPassword, ...registrationValues } = values;
-      console.log(registrationValues);
-      const response = await authAPI.register(registrationValues);
-      // console.log('Регистрация прошла успешно:', response);
-    } catch (error) {
-      console.error('Ошибка регистрации:', error.message);
-      setErrors({ submit: error.message });
-    } finally {
+    const { confirmPassword, ...registrationValues } = values;
+    const { email, password } = values;
+    const response = await authAPI.register(registrationValues, () => {
       setSubmitting(false);
-    }
+      setAuth(true)
+    });
   };
-
   return (
     <div className={styles.formContainer}>
       <Formik
