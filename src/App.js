@@ -1,12 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { useUserStore } from './store/store'; // Предполагаемый импорт стора
 import Layout from './components/Layout';
 import { authRoutes, publicRoutes, guestRoutes, notFoundRoute } from './routes';
+import { authAPI } from './api/api';
 
 function App() {
-  const { isAuth } = useUserStore(); // Получаем состояние авторизации из стора
+  const {isAuth, setAuth,setUser } = useUserStore(); // Получаем состояние авторизации из стора
 
+  useEffect(() => {
+    async function fetchData() {
+      await authAPI.check((auth) => {
+        setAuth(auth);
+      });
+      const {username,coins,stars,nickname_id} = await authAPI.getUserMinInfo();
+      console.log({username,coins,stars,nickname_id})
+      setUser({username:username,coins:coins,stars:stars,nicknameStyleId:nickname_id})
+    }
+    fetchData();
+  }, []);
+
+  
   return (
     <Router>
       <Routes>

@@ -3,7 +3,7 @@ import styles from './Rating.module.css';
 import Tabs, { Tab, TabHeader } from '../components/UI/Tabs/Tabs';
 import { Link } from 'react-router-dom';
 import "../styles/nicknameStyles.css";
-import { GetStyleClassByName } from '../data/nicknameStyles.js';
+import { GetStyleClassById} from '../data/ALL_STYLES.js';
 import { useRatingStore, useUserStore } from '../store/store.js';
 
 const tabs = [
@@ -72,7 +72,7 @@ const Rating = () => {
 export default Rating;
 
 
-const RatingItem = ({ index, logo, name, exp, userId, textEffect="default" }) => {
+const RatingItem = ({ index, logo, name, exp, userId, textEffectId }) => {
   const avatarSrc = 'https://www.gravatar.com/avatar/?d=mp';
   const isTop = index <= 1;
   return (
@@ -85,7 +85,7 @@ const RatingItem = ({ index, logo, name, exp, userId, textEffect="default" }) =>
         </div>
 
 
-        <span className={`${styles.userName} ${GetStyleClassByName(textEffect) || ''}`}>{name || 'User'}</span>
+        <span className={`${styles.userName} ${GetStyleClassById(textEffectId) || ''}`}>{name || 'User'}</span>
       </Link>
       <div className={styles.userRes}>EXP {exp || 50}</div>
     </div>

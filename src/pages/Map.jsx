@@ -8,21 +8,33 @@ import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import ItemCounter from '../components/Shared/ItemCounter/ItemCounter';
 import Button from '../components/UI/Button/Button';
+import {mapAPI} from '../api/api';
 
 const Map = () => {
   const { mapProjects, } = useProjectsStore()
-  const { domElements, domConnection, setMapData } = useMapStore()
+  const {setMapProjects, domElements, domConnection, setMapData } = useMapStore()
   const [readyProjects, setReadyProjects] = useState(null)
   const [activeProject, setActiveProject] = useState(null)
   const [mapController, setMapController] = useState(null)
   const [mapMode, setMapMode] = useState("user")
   const [elementPosition, setElementPosition] = useState({ x: 0, y: 0 }); // Состояние для координат
   const [activeElement, setActiveElement] = useState(null);
-  const [trackedElementId, setTrackedElementId] = useState(null);
   const [activeProjectInfo, setActiveprojectInfo] = useState({
     title: "Проверка палиндрома", description: "Задание: Напишите функцию, которая проверяет, является ли строка палиндромом (читается одинаково слева направо и справа налево).", exp: 50,
     money: 75,
   });
+
+
+  useEffect(() => {
+    async function fetchData() {
+      await mapAPI.getUserProjectMap((data) => {
+        console.log(data)
+      });
+    }
+    fetchData();
+    // setMapProjects()
+  }, []);
+
   useEffect(() => {
     const DOM_ELEMENTS_TEMPLATE = domElements.map(el => {
       const project = mapProjects.find(p => p.id === el.id)
@@ -126,9 +138,6 @@ const Map = () => {
   }
 
 
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleClick = () => setIsOpen(prev => !prev);
 
   const ProjectInfo = () => {
     return (
@@ -146,6 +155,9 @@ const Map = () => {
       </div>
     );
   };
+
+
+
 
 
   return (

@@ -7,8 +7,8 @@ export const useUserStore = create((set) => ({
   coins: 0,
   exp: 0,
   stars: 0,
-  profileStyle: "LaserStyle",
-  nicknameStyle: "Neon Blue",
+  profileStyleId:0,
+  nicknameStyleId:0,
 
   description: "Люблю кодить и решать сложные задачи!",
   recentProjects: ["Калькулятор", "Чат-бот", "Игра на React"],
@@ -24,7 +24,7 @@ export const useUserStore = create((set) => ({
   
   setAuth: (status) => set({ isAuth: status }),
   setAuthData: (data) => set({ authData: data }),
-  setUser: (id, name, coins) => set({ id, name, coins }),
+  setUser: (id, name, coins,stars) => set({ id, name, coins,stars }),
   clearUser: () => set({ id: null, name: '', coins: 0, exp: 0, stars: 0, isAuth: false }),
   setTestProfileStyle: (styleName) => set({ testProfileStyle: styleName }),
 

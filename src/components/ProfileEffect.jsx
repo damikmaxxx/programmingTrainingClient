@@ -5,15 +5,15 @@ import LaserEffect from './effects/LaserEffect';
 // import RainEffect from './effects/RainEffect'; // Пример импорта компонента дождя
 // import { profileThemes } from './data/profileThemes'; // Импорт массива тем
 
-function ProfileEffect({ selectedStyle, children }) {
+function ProfileEffect({ selectedStyleId, children }) {
   // Функция для выбора компонента эффекта
-  const renderEffect = (selectedStyle) => {
-    switch (selectedStyle) {
-      case 'FireStyle':
+  const renderEffect = (selectedStyleId) => {
+    switch (selectedStyleId) {
+      case 13:
         return <FireEffect speed={{ x: 0, y: -100 }} life={200}  radius={30} particleCount={500} >{children}</FireEffect>;
-      case 'SnowStyle':
+      case 14:
         return <SnowEffect>{children}</SnowEffect>;
-      case 'LaserStyle':
+      case 15:
         return <LaserEffect>{children}</LaserEffect>;
       default:
         return null;
@@ -21,7 +21,7 @@ function ProfileEffect({ selectedStyle, children }) {
   };
 
   return (
-      renderEffect(selectedStyle)
+      renderEffect(selectedStyleId)
   );
 }
 

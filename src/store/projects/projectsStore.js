@@ -269,6 +269,30 @@ export const useProjectsStore = create((set) => ({
       money: "90",
     },
   ],
+  // Сет функции для обновления "mapProjects"
+  setMapProjects: (newProjects) =>
+    set({
+      mapProjects: newProjects,
+    }),
+
+  // Сет функции для обновления "temporaryProjects"
+  setTemporaryProjects: (newProjects) =>
+    set({
+      temporaryProjects: newProjects,
+    }),
+
+  // Сет функции для обновления "startedProjects"
+  setStartedProjects: (newProjects) =>
+    set({
+      startedProjects: newProjects,
+    }),
+
+  // Сет функции для обновления "completedProjects"
+  setCompletedProjects: (newProjects) =>
+    set({
+      completedProjects: newProjects,
+    }),
+
   // Добавление проекта в категорию "временные"
   addTemporaryProject: (project) =>
     set((state) => ({

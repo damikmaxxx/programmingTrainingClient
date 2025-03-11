@@ -4,9 +4,10 @@ import Tabs, { Tab, TabHeader } from '../components/UI/Tabs/Tabs';
 import Button from '../components/UI/Button/Button';
 import "../styles/nicknameStyles.css";
 import Select from '../components/UI/Select/Select.jsx';
-import { useShopStore,useUserStore } from '../store/store.js';
+import { useShopStore, useUserStore } from '../store/store.js';
 import ItemCounter from '../components/Shared/ItemCounter/ItemCounter.jsx';
 import { useNavigate } from 'react-router-dom';
+import { ALL_STYLES, GetStyleComponentById } from '../data/ALL_STYLES.js';
 
 // Функция для отображения правильной цены и иконки в зависимости от типа
 const renderPriceAndIcon = (style) => {
@@ -65,22 +66,26 @@ const Shop = () => {
         </div>
         <Tab id="styleNames">
           <div className="row">
-            {nicknameStyles.map((style) => (
-              <div key={style.id} className="col-4">
-                <div className={styles.shopItem + " dark-primary-color"}>
-                  <div className={styles.shopItemName}>
-                    <span className={style.className || ""}>USER NAME</span>
-                  </div>
-                  <div>
-                    <h4>{style.name}</h4>
-                    <div className={styles.shopItemPrice}>
-                      Цена: {renderPriceAndIcon(style)}
+            {nicknameStyles.map(({ id }) => {
+              const s = ALL_STYLES.find(s => s.id === id);
+
+              return (
+                <div key={id} className="col-4">
+                  <div className={styles.shopItem + " dark-primary-color"}>
+                    <div className={styles.shopItemName}>
+                      <span className={s?.className || ""}>USER NAME</span>
                     </div>
-                    <Button variant="small" onClick={() => buyItem(style)}>КУПИТЬ</Button>
+                    <div>
+                      <h4>{s?.name}</h4>
+                      <div className={styles.shopItemPrice}>
+                        Цена: {s ? renderPriceAndIcon(s) : "Неизвестно"}
+                      </div>
+                      <Button variant="small" onClick={() => s && buyItem(s)}>КУПИТЬ</Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </Tab>
         <Tab id="profileThemes">
@@ -118,7 +123,7 @@ export default Shop;
 
 
 const ProfileShopEffects = ({ profileStyle }) => {
-  const { getStyleComponentByName,setTestProfileStyle } = useShopStore();
+  const { getStyleComponentByName, setTestProfileStyle } = useShopStore();
   const navigate = useNavigate();
 
   const checkStyle = (item) => {
@@ -128,29 +133,30 @@ const ProfileShopEffects = ({ profileStyle }) => {
   }
   return (
     <div className="row">
-      {profileStyle.map((style) => {
-        const StyleComponent = getStyleComponentByName(style.name);
+      {profileStyle.map(({ id }) => {
+        const s = ALL_STYLES.find(s => s.id === id);
+        const StyleComponent = GetStyleComponentById(id);
         if (!StyleComponent) {
           return null; // Если компонент не найден, ничего не рендерим
         }
         return (
-          <div key={style.id} className="col-4">
+          <div key={s.id} className="col-4">
             <div className={`${styles.shopItem} dark-primary-color`}>
               <div className={styles.shopItemName}>
-                <StyleComponent {...style.props}>
-                  <span className={style.className || ""}>ПРОФИЛЬ</span>
+                <StyleComponent {...s.props}>
+                  <span className={s.className || ""}>ПРОФИЛЬ</span>
                 </StyleComponent>
               </div>
               <div>
-                <h4>{style.name}</h4>
+                <h4>{s.name}</h4>
                 <div className={styles.shopItemPrice}>
-                  Цена: {renderPriceAndIcon(style)}
+                  Цена: {renderPriceAndIcon(s)}
                 </div>
                 <span>
-                  <Button className='me-3' variant="small" onClick={() => buyItem(style)}>
+                  <Button className='me-3' variant="small" onClick={() => buyItem(s)}>
                     КУПИТЬ
                   </Button>
-                  <Button variant="small" onClick={() => checkStyle(style)}>
+                  <Button variant="small" onClick={() => checkStyle(s)}>
                     ПОСМОТРЕТЬ
                   </Button>
                 </span>

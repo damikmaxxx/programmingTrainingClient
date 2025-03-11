@@ -7,7 +7,7 @@ import FireEffect from "../../effects/FireEffect";
 import ProfileEffect from '../../ProfileEffect';
 ChartJS.register(...registerables);
 
-export default function DefaultProfile({ avatar, name, stars, level, recentProjects, description, timeExpDiagram, skills, exp, projectTimes, bgStyles, selectedStyle }) {
+export default function DefaultProfile({ avatar, name, stars, level, recentProjects, description, timeExpDiagram, skills, exp, projectTimes, bgStyles, selectedStyleId }) {
 
 
   const radarData = {
@@ -48,7 +48,7 @@ export default function DefaultProfile({ avatar, name, stars, level, recentProje
   return (
     <div className={styles.bg}>
       <div className={styles.bg_styles_wrapper}>
-        <ProfileEffect selectedStyle={selectedStyle} className={styles.ava}>
+        <ProfileEffect selectedStyleId={selectedStyleId} className={styles.ava}>
           <div className={styles.bg_styles}></div>
         </ProfileEffect>
       </div>

@@ -8,7 +8,7 @@ export const useRatingStore = create((set) => ({
     name: 'PlayerOne',
     exp: 1500,
     stars: 4.5,
-    textEffect: 'Glowing Green' // Используем название эффекта
+    textEffectId: 2
   },
   {
     id: 2,
@@ -17,7 +17,7 @@ export const useRatingStore = create((set) => ({
     name: 'PlayerTwo',
     exp: 1400,
     stars: 4.2,
-    textEffect: 'Rainbow Animation' // Используем название эффекта
+    textEffectId:9
   },
   {
     id: 3,
@@ -26,7 +26,7 @@ export const useRatingStore = create((set) => ({
     name: 'PlayerThree',
     exp: 1350,
     stars: 4.8,
-    textEffect: '' // Используем название эффекта
+    textEffectId: ''
   },
   {
     id: 4,
@@ -35,7 +35,7 @@ export const useRatingStore = create((set) => ({
     name: 'PlayerFour',
     exp: 1300,
     stars: 4.0,
-    textEffect: 'Shadow Purple' // Используем название эффекта
+    textEffectId: 4
   },
   {
     id: 5,
@@ -44,7 +44,7 @@ export const useRatingStore = create((set) => ({
     name: 'PlayerFive',
     exp: 1250,
     stars: 3.9,
-    textEffect: '' // Обычный текст
+    textEffectId: ''
   },
   {
     id: 6,
@@ -53,7 +53,7 @@ export const useRatingStore = create((set) => ({
     name: 'PlayerSix',
     exp: 1200,
     stars: 4.1,
-    textEffect: '' // Обычный текст
+    textEffectId: ''
   },
   {
     id: 7,
@@ -62,7 +62,7 @@ export const useRatingStore = create((set) => ({
     name: 'PlayerSeven',
     exp: 1150,
     stars: 4.7,
-    textEffect: '' // Обычный текст
+    textEffectId: ''
   },
   {
     id: 8,
@@ -71,7 +71,7 @@ export const useRatingStore = create((set) => ({
     name: 'PlayerEight',
     exp: 1100,
     stars: 3.8,
-    textEffect: '' // Обычный текст
+    textEffectId: ''
   },
   {
     id: 9,
@@ -80,7 +80,7 @@ export const useRatingStore = create((set) => ({
     name: 'PlayerNine',
     exp: 1050,
     stars: 4.3,
-    textEffect: 'Fire Orange' // Используем название эффекта
+    textEffectId: 'Fire Orange'
   },
   {
     id: 10,
@@ -89,7 +89,7 @@ export const useRatingStore = create((set) => ({
     name: 'PlayerTen',
     exp: 1000,
     stars: 4.0,
-    textEffect: '' // Обычный текст
+    textEffectId: '' // Обычный текст
   }],
   topExpWeek: [],
   topStarsFull: [],
