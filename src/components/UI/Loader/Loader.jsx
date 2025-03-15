@@ -1,8 +1,9 @@
 import React from 'react';
-import c from "./Loader.module.css"
-const Loader = () => {
+import c from "./Loader.module.css";
+
+const Loader = ({ fullPage = true }) => {
     return (
-        <div className={c.background}>
+        <div className={fullPage ? c.background : ""}>
             <span className={c.loader}></span>
         </div>
     );

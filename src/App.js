@@ -1,26 +1,36 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { useUserStore } from './store/store'; // Предполагаемый импорт стора
 import Layout from './components/Layout';
 import { authRoutes, publicRoutes, guestRoutes, notFoundRoute } from './routes';
 import { authAPI } from './api/api';
+import Loader from './components/UI/Loader/Loader';
 
 function App() {
   const {isAuth, setAuth,setUser } = useUserStore(); // Получаем состояние авторизации из стора
-
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     async function fetchData() {
-      await authAPI.check((auth) => {
+      await authAPI.check(async (auth) => {
         setAuth(auth);
+        if (!auth) {
+          setIsLoading(false); // Если не авторизован, скрываем лоадер
+          return;
+        }
+
+        try {
+          const { username, coins, stars, nickname_id } = await authAPI.getUserMinInfo();
+          setUser({ name: username, coins, stars, nicknameStyleId: nickname_id });
+        } catch (error) {
+          console.error("Ошибка загрузки данных пользователя:", error);
+        } finally {
+          setIsLoading(false); // Завершаем загрузку
+        }
       });
-      const {username,coins,stars,nickname_id} = await authAPI.getUserMinInfo();
-      console.log({username,coins,stars,nickname_id})
-      setUser({username:username,coins:coins,stars:stars,nicknameStyleId:nickname_id})
     }
     fetchData();
   }, []);
-
-  
+  if (isLoading) return <Loader />; 
   return (
     <Router>
       <Routes>

@@ -1,7 +1,8 @@
 import { create } from 'zustand';
-
-export const useUserStore = create((set) => ({
+import { devtools } from "zustand/middleware";
+export const useUserStore = create(devtools((set) => ({
   isAuth: false,
+  role:"user",
   id: 0,
   name: '',
   coins: 0,
@@ -24,7 +25,7 @@ export const useUserStore = create((set) => ({
   
   setAuth: (status) => set({ isAuth: status }),
   setAuthData: (data) => set({ authData: data }),
-  setUser: (id, name, coins,stars) => set({ id, name, coins,stars }),
+  setUser: ({id, name, coins,stars}) => set({ id, name, coins,stars }),
   clearUser: () => set({ id: null, name: '', coins: 0, exp: 0, stars: 0, isAuth: false }),
   setTestProfileStyle: (styleName) => set({ testProfileStyle: styleName }),
 
@@ -35,4 +36,4 @@ export const useUserStore = create((set) => ({
     skills: data.skills,
     timeExpDiagram: data.timeExpDiagram,
   }),
-}));
+})));

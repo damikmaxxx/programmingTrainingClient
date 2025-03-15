@@ -12,7 +12,7 @@ function Header() {
   const [isTabValid,setIsTabValid] = useState(true);
   const navigate = useNavigate();
 
-  const {isAuth,setAuth} = useUserStore();
+  const {isAuth,setAuth , name} = useUserStore();
 
   const handleTabClick = (tabId) => {
     setActiveTab(tabId);
@@ -95,7 +95,7 @@ function Header() {
                 <div onClick={() => toggleAccordion()} className='header-user'>
                   <span className='header-avatar'><img src="https://www.gravatar.com/avatar/?d=mp" alt="аватарка" /></span>
 
-                  <span>USERNAME</span>
+                  <span>{name}</span>
 
                   <AccordionDropdown isOpen={isOpen} setIsOpen={setIsOpen}>
                     <div className="header-user-dropdown">

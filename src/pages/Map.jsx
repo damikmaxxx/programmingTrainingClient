@@ -3,7 +3,7 @@ import '../styles/map.css';
 import { MAP_CONTROLLER } from '../utils/map/map_controller';
 import { DOM_ELEMENTS_CONTROLLER } from '../utils/map/dom_elements_controller';
 import styles from './Map.module.css';
-import { useProjectsStore, useMapStore } from '../store/store';
+import { useProjectsStore, useMapStore, useUserStore } from '../store/store';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import ItemCounter from '../components/Shared/ItemCounter/ItemCounter';
@@ -12,11 +12,12 @@ import {mapAPI} from '../api/api';
 
 const Map = () => {
   const { mapProjects, } = useProjectsStore()
+  const {role} = useUserStore()
   const {setMapProjects, domElements, domConnection, setMapData } = useMapStore()
   const [readyProjects, setReadyProjects] = useState(null)
   const [activeProject, setActiveProject] = useState(null)
   const [mapController, setMapController] = useState(null)
-  const [mapMode, setMapMode] = useState("user")
+  const [mapMode, setMapMode] = useState(role)
   const [elementPosition, setElementPosition] = useState({ x: 0, y: 0 }); // Состояние для координат
   const [activeElement, setActiveElement] = useState(null);
   const [activeProjectInfo, setActiveprojectInfo] = useState({
