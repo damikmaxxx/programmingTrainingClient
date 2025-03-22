@@ -6,9 +6,10 @@ import LaserEffect from './effects/LaserEffect';
 // import { profileThemes } from './data/profileThemes'; // Импорт массива тем
 
 function ProfileEffect({ selectedStyleId, children }) {
+  console.log(selectedStyleId == 13)
   // Функция для выбора компонента эффекта
   const renderEffect = (selectedStyleId) => {
-    switch (selectedStyleId) {
+    switch (Number(selectedStyleId)) {
       case 13:
         return <FireEffect speed={{ x: 0, y: -100 }} life={200}  radius={30} particleCount={500} >{children}</FireEffect>;
       case 14:

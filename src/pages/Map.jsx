@@ -8,43 +8,83 @@ import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import ItemCounter from '../components/Shared/ItemCounter/ItemCounter';
 import Button from '../components/UI/Button/Button';
-import {mapAPI} from '../api/api';
+import { mapAPI, projectAPI } from '../api/api';
+import Loader from '../components/UI/Loader/Loader';
+import { getIdFromDomElement } from '../utils/map/utils';
 
 const Map = () => {
-  const { mapProjects, } = useProjectsStore()
-  const {role} = useUserStore()
-  const {setMapProjects, domElements, domConnection, setMapData } = useMapStore()
+  const { mapProjects, setMapProjects } = useProjectsStore()
+  const { role } = useUserStore()
+  const { domElements, domConnection, setMapData } = useMapStore()
   const [readyProjects, setReadyProjects] = useState(null)
   const [activeProject, setActiveProject] = useState(null)
+  const [focusProjectId, setFocusProjectId] = useState(null)
   const [mapController, setMapController] = useState(null)
   const [mapMode, setMapMode] = useState(role)
   const [elementPosition, setElementPosition] = useState({ x: 0, y: 0 }); // Состояние для координат
   const [activeElement, setActiveElement] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeProjectInfo, setActiveprojectInfo] = useState({
-    title: "Проверка палиндрома", description: "Задание: Напишите функцию, которая проверяет, является ли строка палиндромом (читается одинаково слева направо и справа налево).", exp: 50,
-    money: 75,
+    id: 0,
+    name: "", description: "", experience: 0,
+    coins: 0,
   });
 
 
   useEffect(() => {
     async function fetchData() {
-      await mapAPI.getUserProjectMap((data) => {
-        console.log(data)
-      });
+      console.log("Запрос данных...");
+
+      try {
+        const projects = await projectAPI.getProjects();
+        const filteredProjects = projects.filter(project => project.is_limited === false);
+
+        console.log("Фильтрованные проекты:", projects);
+
+        const userProjects = await mapAPI.getUserProjectMap();
+        const connection = await mapAPI.getConnections();
+        console.log(userProjects)
+        const connectionF = connection
+          .filter(item => item.prev_project !== null)
+          .map((item, index) => ({
+            id: index + 1, // ID соединения
+            from: item.prev_project, // Откуда
+            to: item.project, // Куда
+            params: { arrow: true, brokenLine: true } // Общие параметры
+          }));
+
+        const elements = await mapAPI.getElements()
+        const elementsF = elements.map(item => ({
+          id: item.project_id, // ID элемента
+          position: {
+            x: item.position_x, // Масштабирование X для удобства отображения
+            y: item.position_y // Масштабирование Y для удобства отображения
+          },
+          params: { draggable: true } // Общие параметры
+        }));
+
+        console.log("---", connection, connectionF, elementsF);
+        setMapData(elementsF, connectionF)
+        setMapProjects(filteredProjects)
+      } catch (error) {
+        console.error("Ошибка при получении данных:", error);
+      }
     }
+
     fetchData();
-    // setMapProjects()
+
   }, []);
 
   useEffect(() => {
+    if (isLoading) return
     const DOM_ELEMENTS_TEMPLATE = domElements.map(el => {
       const project = mapProjects.find(p => p.id === el.id)
-      if (project.title.length > 15) {
-        project.title = project.title.slice(0, 20) + '...';
+      if (project.name.length > 15) {
+        project.name = project.name.slice(0, 20) + '...';
       }
       return {
         ...el,
-        html: `<div class="${styles.map__element}">${project.title}</div>`
+        html: `<div class="${styles.map__element}">${project.name}</div>`
       };
     })
     const onMap = DOM_ELEMENTS_TEMPLATE.map(el => el.id);
@@ -67,7 +107,7 @@ const Map = () => {
 
 
 
-  }, []);
+  }, [isLoading]);
 
   useEffect(() => {
     const container = document.getElementById('domelements');
@@ -88,6 +128,13 @@ const Map = () => {
               y: rect.top + scrollY,
             });
             setActiveElement(target.id);
+            const focusId = getIdFromDomElement(target)
+            const focusProject = mapProjects.find(el => el.id === focusId)
+            setActiveprojectInfo({
+              id: focusProject.id,
+              name: focusProject.name, description: focusProject.description, experience: focusProject.experience,
+              coins: focusProject.coins,
+            })
             stopCheck = true;
           } else if (target.classList && !target.classList.contains('active__element') && !stopCheck) {
             console.log(target)
@@ -105,7 +152,7 @@ const Map = () => {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [isLoading]);
 
   const availableElements = (elements) => {
     const onMap = elements.map(el => el.id);
@@ -143,14 +190,14 @@ const Map = () => {
   const ProjectInfo = () => {
     return (
       <div className={styles.projectInfo}>
-        <h3>{activeProjectInfo.title}</h3>
+        <h3>{activeProjectInfo.name}</h3>
         <p>{activeProjectInfo.description}</p>
         <div className={styles.projectInfo_footer}>
           <span className={styles.projectInfo_items}>
-            <ItemCounter type="coin" count={activeProjectInfo.money} />
-            <ItemCounter type="exp" count={activeProjectInfo.exp} />
+            <ItemCounter type="coin" count={activeProjectInfo.coins} />
+            <ItemCounter type="exp" count={activeProjectInfo.experience} />
           </span>
-            <Button onClick={() => console.log("ПЕРРЕХОД НА ПРОЕКТ")} variant='small' >Перейти</Button>
+          <Button onClick={() => console.log("ПЕРРЕХОД НА ПРОЕКТ")} variant='small' >Перейти</Button>
         </div>
 
       </div>
@@ -158,9 +205,15 @@ const Map = () => {
   };
 
 
+  useEffect(() => {
+    console.log(mapProjects.length, domElements.length, domConnection.length)
+    if (mapProjects.length > 0 && domElements.length > 0 && domConnection.length > 0) {
 
+      setIsLoading(false)
+    }
+  }, [mapProjects]);
 
-
+  if (isLoading) return <Loader />;
   return (
     <main className="main--map">
       <div className={styles.fixedElement}>

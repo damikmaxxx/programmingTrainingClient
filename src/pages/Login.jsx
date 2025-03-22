@@ -13,13 +13,16 @@ const LoginSchema = Yup.object().shape({
 });
 
 const Login = () => {
-  const { setAuth } = useUserStore()
+  const { setAuth,setUser } = useUserStore()
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     setSubmitting(true);
     const { email, password } = values;
-    const response = await authAPI.login({ email, password }, () => {
+    const response = await authAPI.login({ email, password }, async () => {
       setSubmitting(false);
       setAuth(true)
+      const { username, coins, stars, nickname_id } = await authAPI.getUserMinInfo();
+      console.log(nickname_id)
+      setUser({ name: username, coins, stars, nicknameStyleId: nickname_id });
     });
   };
   return (

@@ -23,14 +23,17 @@ const RegistrationSchema = Yup.object().shape({
 });
 
 const Registration = () => {
-  const {setAuth} = useUserStore()
+  const { setAuth,setUser } = useUserStore()
   const handleSubmit = async (values, { setSubmitting }) => {
     setSubmitting(true);
     const { confirmPassword, ...registrationValues } = values;
     const { email, password } = values;
-    const response = await authAPI.register(registrationValues, () => {
+    const response = await authAPI.register(registrationValues, async () => {
       setSubmitting(false);
       setAuth(true)
+      const { username, coins, stars, nickname_id } = await authAPI.getUserMinInfo();
+      console.log(nickname_id)
+      setUser({ name: username, coins, stars, nicknameStyleId: nickname_id });
     });
   };
   return (

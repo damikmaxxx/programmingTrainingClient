@@ -4,6 +4,7 @@ import Button from './UI/Button/Button.jsx';
 import AccordionDropdown from './UI/AccordionDropdown/AccordionDropdown.jsx';
 import { useUserStore } from '../store/store.js';
 import ItemCounter from './Shared/ItemCounter/ItemCounter.jsx';
+import { GetStyleClassById } from '../data/ALL_STYLES.js';
 function Header() {
   const [activeTab, setActiveTab] = useState("profile");
   const tabsLineRef = useRef(null);
@@ -12,7 +13,7 @@ function Header() {
   const [isTabValid,setIsTabValid] = useState(true);
   const navigate = useNavigate();
 
-  const {isAuth,setAuth , name} = useUserStore();
+  const {isAuth,setAuth ,logout, name,nicknameStyleId} = useUserStore();
 
   const handleTabClick = (tabId) => {
     setActiveTab(tabId);
@@ -61,7 +62,7 @@ function Header() {
   const toggleAccordion = () => {
     setIsOpen(!isOpen);
   }
-
+  const classStyle = GetStyleClassById(nicknameStyleId);
   return (
     <header>
       <div className="container">
@@ -95,7 +96,7 @@ function Header() {
                 <div onClick={() => toggleAccordion()} className='header-user'>
                   <span className='header-avatar'><img src="https://www.gravatar.com/avatar/?d=mp" alt="аватарка" /></span>
 
-                  <span>{name}</span>
+                  <span className={classStyle}>{name}</span>
 
                   <AccordionDropdown isOpen={isOpen} setIsOpen={setIsOpen}>
                     <div className="header-user-dropdown">
@@ -105,7 +106,7 @@ function Header() {
                     </div>
 
                     <Button onClick={() => navigate('/profile')}>Профиль</Button>
-                    <Button onClick={() => setAuth(false)}>Выход</Button>
+                    <Button onClick={() => logout()}>Выход</Button>
                     </div>
                   </AccordionDropdown>
                 </div>

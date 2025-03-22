@@ -20,6 +20,7 @@ function App() {
 
         try {
           const { username, coins, stars, nickname_id } = await authAPI.getUserMinInfo();
+          console.log(nickname_id)
           setUser({ name: username, coins, stars, nicknameStyleId: nickname_id });
         } catch (error) {
           console.error("Ошибка загрузки данных пользователя:", error);

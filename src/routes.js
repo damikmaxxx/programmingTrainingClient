@@ -29,7 +29,7 @@ export const authRoutes = [
     },
   },
   {
-    path: `${PROFILE_ROUTE}/test-style`,
+    path: `${PROFILE_ROUTE}/test-style/:id`,
     Component: (props) => <Profile {...props} testStyle={true} />,
     layoutProps: {
       mainClear: true,

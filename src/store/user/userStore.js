@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from "zustand/middleware";
+import authAPI from "../../api/auth";
 export const useUserStore = create(devtools((set) => ({
   isAuth: false,
   role:"user",
@@ -11,7 +12,7 @@ export const useUserStore = create(devtools((set) => ({
   profileStyleId:0,
   nicknameStyleId:0,
 
-  description: "Люблю кодить и решать сложные задачи!",
+  description: "",
   recentProjects: ["Калькулятор", "Чат-бот", "Игра на React"],
   skills: [
     { name: "JavaScript", percentage: 70 },
@@ -25,7 +26,7 @@ export const useUserStore = create(devtools((set) => ({
   
   setAuth: (status) => set({ isAuth: status }),
   setAuthData: (data) => set({ authData: data }),
-  setUser: ({id, name, coins,stars}) => set({ id, name, coins,stars }),
+  setUser: ({name, coins,stars,nicknameStyleId}) => set({name, coins,stars,nicknameStyleId }),
   clearUser: () => set({ id: null, name: '', coins: 0, exp: 0, stars: 0, isAuth: false }),
   setTestProfileStyle: (styleName) => set({ testProfileStyle: styleName }),
 
@@ -36,4 +37,22 @@ export const useUserStore = create(devtools((set) => ({
     skills: data.skills,
     timeExpDiagram: data.timeExpDiagram,
   }),
+  logout: () =>  {
+    authAPI.logout();
+    set({
+      isAuth: false,
+      role: "user",
+      id: 0,
+      name: '',
+      coins: 0,
+      exp: 0,
+      stars: 0,
+      profileStyleId: 0,
+      nicknameStyleId: 0,
+      description: "",
+      // recentProjects: [],
+      // skills: [],
+      // timeExpDiagram: { time: [], exp: [] },
+    });
+  }
 })));

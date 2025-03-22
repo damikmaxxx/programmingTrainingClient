@@ -97,13 +97,18 @@ const authAPI = {
       // Отправляем GET запрос с токеном в заголовках
       const { data } = await $authHost.get("/usermininfo/");
       return data; // Возвращаем полученные данные
-
     } catch (error) {
       console.error(
         "Ошибка получения данных после регистрации:",
         error.response?.data?.code
       );
     }
+  },
+  // Метод для выхода из системы
+  logout: () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    console.log("Пользователь вышел из системы");
   },
 };
 

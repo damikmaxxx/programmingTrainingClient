@@ -1,4 +1,4 @@
 import authAPI from "./auth";
 import mapAPI from "./map"; 
-
-export { authAPI, mapAPI }; 
+import projectAPI from "./project";
+export { authAPI, mapAPI,projectAPI }; 

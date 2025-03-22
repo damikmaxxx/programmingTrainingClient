@@ -123,13 +123,11 @@ export default Shop;
 
 
 const ProfileShopEffects = ({ profileStyle }) => {
-  const { getStyleComponentByName, setTestProfileStyle } = useShopStore();
+  const { getStyleComponentByName,} = useShopStore();
   const navigate = useNavigate();
 
   const checkStyle = (item) => {
-    console.log(item.value)
-    setTestProfileStyle(item.value); // Устанавливаем testProfileStyle
-    navigate('/profile/test-style'); // Перенаправляем на страницу профиля
+    navigate('/profile/test-style/'+item.id); // Перенаправляем на страницу профиля
   }
   return (
     <div className="row">
