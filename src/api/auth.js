@@ -55,20 +55,13 @@ const authAPI = {
       callback(true);
       return data;
     } catch (error) {
-      if (error.response?.status === 401) {
-        console.log("Refresh token истёк. Необходима повторная авторизация.");
+      console.log(error);
+      console.log("Refresh token истёк. Необходима повторная авторизация.");
 
-        // Удаляем токены из localStorage
-        localStorage.removeItem("refresh_token");
-        localStorage.removeItem("access_token");
-        callback(false);
-      } else {
-        console.error(
-          "Ошибка при обновлении токена:",
-          error.response?.data || error.message
-        );
-        throw new Error(error.response?.data?.message || "Ошибка авторизации");
-      }
+      // Удаляем токены из localStorage
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("access_token");
+      callback(false);
     }
   },
 
@@ -83,12 +76,14 @@ const authAPI = {
       callback(true);
     } catch (error) {
       const errorCode = error.response?.data?.code;
-      if (errorCode === "token_not_valid") {
-        await authAPI.updateAccessToken(callback);
-        console.log("asdasd");
-      } else {
-        console.error("Ошибка авторизации:", errorCode);
-      }
+      console.log(error);
+      await authAPI.updateAccessToken(callback);
+      // if (errorCode === "token_not_valid" || errorCode === "ERR_BAD_REQUEST") {
+      //   await authAPI.updateAccessToken(callback);
+      //   console.log("asdasd");
+      // } else {
+      //   console.error("Ошибка авторизации:", errorCode);
+      // }
     }
   },
   // Новый метод для получения минимальной информации о пользователе

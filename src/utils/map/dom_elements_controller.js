@@ -11,13 +11,12 @@ export class DOM_ELEMENTS_CONTROLLER {
     this.MODE_SETTINGS = null;
     this.startConnectionEl = null;
     this.SUBSCRIBERS_TO_UPDATE_ELEMENTS = [];
-    this.MAP_SETTINGS = {}
+    this.MAP_SETTINGS = {};
   }
   init() {
-    if (this.MAP_SETTINGS.mode === this.MODE_HANDLER.CONSTANTS.USER){
-      this.initClick()
-    }
-    else{
+    if (this.MAP_SETTINGS.mode === this.MODE_HANDLER.CONSTANTS.USER) {
+      this.initClick();
+    } else {
       this.initDrag();
     }
 
@@ -25,9 +24,13 @@ export class DOM_ELEMENTS_CONTROLLER {
 
     this.modeSubscribers(() => {
       this.update();
-    }, [this.MODE_HANDLER.CONSTANTS.DEFAULT,this.MODE_HANDLER.CONSTANTS.EDITING]);
+    }, [
+      this.MODE_HANDLER.CONSTANTS.DEFAULT,
+      this.MODE_HANDLER.CONSTANTS.EDITING,
+    ]);
   }
   createElement(el) {
+    console.log(el);
     let tempDiv = document.createElement("div");
 
     tempDiv.innerHTML = el.html;
@@ -37,6 +40,16 @@ export class DOM_ELEMENTS_CONTROLLER {
     newElement.style.top = el.position.y + "px";
     newElement.classList.add("element");
     newElement.id = `element_${el.id}`;
+
+    // Добавляем класс element_close, если isOpen === false
+    if (el.params && el.params.isOpen === false) {
+      newElement.classList.add("element_close");
+    }
+    // Добавляем класс element_close, если isOpen === false
+    if (el.params && el.params.isCompleted === true) {
+      newElement.classList.add("element_completed");
+    }
+
     this.useDOM("elements").appendChild(newElement);
     el.width = newElement.offsetWidth;
     el.height = newElement.offsetHeight;
@@ -62,17 +75,15 @@ export class DOM_ELEMENTS_CONTROLLER {
     createBindScreen.addEventListener("click", () => {
       this.finishConnection(el.id);
     });
-
-
   }
   createConnection(from, to, params) {
     if (!params) params = { arrow: false, brokenLine: true };
     const now = new Date();
     let id = now.getTime();
 
-    this.connections.push({id, from, to, params });
+    this.connections.push({ id, from, to, params });
     this.update();
-    console.log(this.connections)
+    console.log(this.connections);
   }
 
   create() {
@@ -83,7 +94,7 @@ export class DOM_ELEMENTS_CONTROLLER {
     this.connections.forEach((con) => {
       let from = this.elements.find((el) => el.id === con.from);
       let to = this.elements.find((el) => el.id === con.to);
-      this.drawConnection(from, to, con.params,con.id);
+      this.drawConnection(from, to, con.params, con.id);
     });
   }
   update() {
@@ -92,7 +103,8 @@ export class DOM_ELEMENTS_CONTROLLER {
         let element = searchElementsById(el.id);
         el.position.x = Number(element.style.left.replace("px", ""));
         el.position.y = Number(element.style.top.replace("px", ""));
-        if(this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.EDITING)) searchElementsById(el.id).classList.add("element--edit");
+        if (this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.EDITING))
+          searchElementsById(el.id).classList.add("element--edit");
         else searchElementsById(el.id).classList.remove("element--edit");
         return el;
       });
@@ -104,10 +116,10 @@ export class DOM_ELEMENTS_CONTROLLER {
     this.connections.forEach((con) => {
       let from = this.elements.find((el) => el.id === con.from);
       let to = this.elements.find((el) => el.id === con.to);
-      this.drawConnection(from, to, con.params,con.id);
+      this.drawConnection(from, to, con.params, con.id);
     });
   }
-  drawConnection(from, to, params,id) {
+  drawConnection(from, to, params, id) {
     const x1 = from.position.x + from.width / 2;
     const y1 = from.position.y + from.height / 2;
     const x2 = to.position.x + to.width / 2;
@@ -118,46 +130,71 @@ export class DOM_ELEMENTS_CONTROLLER {
       // SOON
       return;
     }
-    if (Math.abs(y2 - y1) < 30 || Math.abs(x2 - x1) < 100){
-
-      if(y2 - y1 < 30 && y2 - y1 >= -30){
-        console.log(y2,y1)
-        if(x2 - x1 >= 0){
+    if (Math.abs(y2 - y1) < 30 || Math.abs(x2 - x1) < 100) {
+      if (y2 - y1 < 30 && y2 - y1 >= -30) {
+        console.log(y2, y1);
+        if (x2 - x1 >= 0) {
           adjustedY1 = from.position.y + from.height / 2;
-          adjustedX1 = from.position.x  + from.width;
+          adjustedX1 = from.position.x + from.width;
           adjustedY2 = to.position.y + to.height / 2;
-          adjustedX2 = to.position.x 
-          this.drawLine(adjustedX1, adjustedY1, adjustedX2, adjustedY2,params,id);
+          adjustedX2 = to.position.x;
+          this.drawLine(
+            adjustedX1,
+            adjustedY1,
+            adjustedX2,
+            adjustedY2,
+            params,
+            id
+          );
         }
-        if(x2 - x1 < 0){
+        if (x2 - x1 < 0) {
           adjustedY1 = from.position.y + from.height / 2;
           adjustedX1 = from.position.x;
           adjustedY2 = to.position.y + to.height / 2;
           adjustedX2 = to.position.x + to.width;
-          this.drawLine(adjustedX1, adjustedY1, adjustedX2, adjustedY2,params,id);
+          this.drawLine(
+            adjustedX1,
+            adjustedY1,
+            adjustedX2,
+            adjustedY2,
+            params,
+            id
+          );
         }
       }
-     if(x2 - x1 < 100 && x2 - x1 >= -100){
-
-        if(y2 - y1 >= 0){
-          adjustedY1 = from.position.y  + from.height;
-          adjustedX1 = from.position.x  + from.width/2;
+      if (x2 - x1 < 100 && x2 - x1 >= -100) {
+        if (y2 - y1 >= 0) {
+          adjustedY1 = from.position.y + from.height;
+          adjustedX1 = from.position.x + from.width / 2;
           adjustedY2 = to.position.y;
-          adjustedX2 = to.position.x   + from.width/2;
-          this.drawLine(adjustedX1, adjustedY1, adjustedX2, adjustedY2,params,id);
+          adjustedX2 = to.position.x + from.width / 2;
+          this.drawLine(
+            adjustedX1,
+            adjustedY1,
+            adjustedX2,
+            adjustedY2,
+            params,
+            id
+          );
         }
-        if(y2 - y1 < 0){
-          console.log(x2, x1)
+        if (y2 - y1 < 0) {
+          console.log(x2, x1);
           adjustedY1 = from.position.y;
-          adjustedX1 = from.position.x + from.width/2;
-          adjustedY2 = to.position.y + from.height
-          adjustedX2 = to.position.x  + from.width/2;
-          this.drawLine(adjustedX1, adjustedY1, adjustedX2, adjustedY2,params,id);
+          adjustedX1 = from.position.x + from.width / 2;
+          adjustedY2 = to.position.y + from.height;
+          adjustedX2 = to.position.x + from.width / 2;
+          this.drawLine(
+            adjustedX1,
+            adjustedY1,
+            adjustedX2,
+            adjustedY2,
+            params,
+            id
+          );
         }
       }
-      return
-    }
-    else if (Math.abs(y2 - y1) > Math.abs(x2 - x1)) {
+      return;
+    } else if (Math.abs(y2 - y1) > Math.abs(x2 - x1)) {
       if (y2 > y1) {
         adjustedY1 = from.position.y + from.height;
         adjustedY2 = to.position.y + to.height / 2;
@@ -185,30 +222,72 @@ export class DOM_ELEMENTS_CONTROLLER {
       adjustedY1 = y1;
     }
     if (params?.brokenLine) {
-      let isArrow = params.arrow
-      params.arrow = false
+      let isArrow = params.arrow;
+      params.arrow = false;
       if (Math.abs(y2 - y1) > Math.abs(x2 - x1)) {
-        this.drawLine(adjustedX1, adjustedY1, adjustedX1, adjustedY2,params,id);
-        params.arrow = isArrow
+        this.drawLine(
+          adjustedX1,
+          adjustedY1,
+          adjustedX1,
+          adjustedY2,
+          params,
+          id
+        );
+        params.arrow = isArrow;
         if (adjustedY2 > adjustedY1) {
-          this.drawLine(adjustedX1, adjustedY2, adjustedX2, adjustedY2,params,id);
+          this.drawLine(
+            adjustedX1,
+            adjustedY2,
+            adjustedX2,
+            adjustedY2,
+            params,
+            id
+          );
         } else {
-          this.drawLine(adjustedX1, adjustedY2, adjustedX2, adjustedY2,params,id);
+          this.drawLine(
+            adjustedX1,
+            adjustedY2,
+            adjustedX2,
+            adjustedY2,
+            params,
+            id
+          );
         }
       } else {
-        this.drawLine(adjustedX1, adjustedY1, adjustedX2, adjustedY1,params,id);
-        params.arrow = isArrow
+        this.drawLine(
+          adjustedX1,
+          adjustedY1,
+          adjustedX2,
+          adjustedY1,
+          params,
+          id
+        );
+        params.arrow = isArrow;
         if (adjustedX2 > adjustedX1) {
-          this.drawLine(adjustedX2, adjustedY1, adjustedX2, adjustedY2,params,id);
+          this.drawLine(
+            adjustedX2,
+            adjustedY1,
+            adjustedX2,
+            adjustedY2,
+            params,
+            id
+          );
         } else {
-          this.drawLine(adjustedX2, adjustedY1, adjustedX2, adjustedY2,params,id);
+          this.drawLine(
+            adjustedX2,
+            adjustedY1,
+            adjustedX2,
+            adjustedY2,
+            params,
+            id
+          );
         }
       }
     } else {
-      this.drawLine(adjustedX1, adjustedY1, adjustedX2, adjustedY2, params,id);
+      this.drawLine(adjustedX1, adjustedY1, adjustedX2, adjustedY2, params, id);
     }
   }
-  drawLine(x1, y1, x2, y2, params = {},id) {
+  drawLine(x1, y1, x2, y2, params = {}, id) {
     const dx = x2 - x1;
     const dy = y2 - y1;
     const length = Math.sqrt(dx * dx + dy * dy);
@@ -217,7 +296,7 @@ export class DOM_ELEMENTS_CONTROLLER {
     const line = document.createElement("div");
     line.classList.add("line");
     if (params.arrow) line.classList.add("line_arrow");
-    line.id =  `line_${id}`;
+    line.id = `line_${id}`;
 
     this.useDOM("elements").appendChild(line);
     line.style.width = `${length}px`;
@@ -227,7 +306,9 @@ export class DOM_ELEMENTS_CONTROLLER {
     if (this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.EDITING)) {
       line.classList.add("line--delete");
       line.addEventListener("click", () => {
-        this.connections = this.connections.filter(connection => connection.id !== id);
+        this.connections = this.connections.filter(
+          (connection) => connection.id !== id
+        );
         this.update();
       });
     }
@@ -293,36 +374,42 @@ export class DOM_ELEMENTS_CONTROLLER {
     this.startElementId = id;
   }
   finishConnection(id) {
-    if (!this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CONNECTING)) return;
+    if (!this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CONNECTING))
+      return;
     if (this.startElementId === id) return;
     this.createConnection(this.startElementId, id);
 
     this.MODE_HANDLER.SET_MODE(this.MODE_HANDLER.CONSTANTS.COMMANDS.BACK);
   }
-  initClick(){
-    if (this.MAP_SETTINGS.mode === this.MODE_HANDLER.CONSTANTS.ADMIN) return
+  initClick() {
+    if (this.MAP_SETTINGS.mode === this.MODE_HANDLER.CONSTANTS.ADMIN) return;
     let activeTarget;
     this.useDOM("screen").addEventListener("click", (event) => {
-      if (this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CONNECTING) ||
-          this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CREATING) ||
-          this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.MOVING))
+      if (
+        this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CONNECTING) ||
+        this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CREATING) ||
+        this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.MOVING)
+      )
         return;
       activeTarget = event.target.closest(".element");
       if (!activeTarget) return;
-      console.log(activeTarget)
-      document.querySelectorAll('.active__element').forEach(el => el.classList.remove('active__element'));
+      console.log(activeTarget);
+      document
+        .querySelectorAll(".active__element")
+        .forEach((el) => el.classList.remove("active__element"));
       // Добавляем класс active__element к текущему элементу
-      activeTarget.classList.add('active__element');
+      activeTarget.classList.add("active__element");
     });
   }
   initDrag() {
-
     let offsetX, offsetY;
     let activeTarget;
     const onMouseDown = (event) => {
-      if (this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CONNECTING) ||
-          this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CREATING) ||
-          this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.MOVING))
+      if (
+        this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CONNECTING) ||
+        this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.CREATING) ||
+        this.MODE_HANDLER.IS_MODE(this.MODE_HANDLER.CONSTANTS.MOVING)
+      )
         return;
       activeTarget = event.target.closest(".element");
       if (!activeTarget) return;
@@ -343,8 +430,8 @@ export class DOM_ELEMENTS_CONTROLLER {
       // const newX = event.clientX - offsetX;
       // const newY = event.clientY - offsetY;
       const rect = activeTarget.getBoundingClientRect();
-      const newX = (event.clientX - offsetX)*this.MAP_SETTINGS.scale;
-      const newY = (event.clientY - offsetY)*this.MAP_SETTINGS.scale;
+      const newX = (event.clientX - offsetX) * this.MAP_SETTINGS.scale;
+      const newY = (event.clientY - offsetY) * this.MAP_SETTINGS.scale;
       activeTarget.style.left = `${newX}px`;
       activeTarget.style.top = `${newY}px`;
       this.update();
@@ -365,7 +452,7 @@ export class DOM_ELEMENTS_CONTROLLER {
     }
     this.elements.push(objElement);
     this.createElement(objElement);
-    this.notifySubcribeUpdateElements()
+    this.notifySubcribeUpdateElements();
   }
   deleteElement(id) {
     this.elements = this.elements.filter((el) => el.id !== id);
@@ -374,7 +461,7 @@ export class DOM_ELEMENTS_CONTROLLER {
       (connection) => connection.from !== id && connection.to !== id
     );
     this.update();
-    this.notifySubcribeUpdateElements()
+    this.notifySubcribeUpdateElements();
   }
 
   // ФУНКЦИИ ДЛЯ ВЗАИМОДЕЙСТВИЯ С ОСНОВНЫМ КОНТРОЛЛЕРОМ
@@ -394,8 +481,8 @@ export class DOM_ELEMENTS_CONTROLLER {
   getModeSubscribe(callback) {
     this.modeSubscribers = callback;
   }
-  getMapSettings(settings){
-    this.MAP_SETTINGS = settings
+  getMapSettings(settings) {
+    this.MAP_SETTINGS = settings;
   }
   subcribeUpdateElements(callback) {
     if (typeof callback !== "function") {
@@ -412,6 +499,8 @@ export class DOM_ELEMENTS_CONTROLLER {
   }
 
   notifySubcribeUpdateElements() {
-    this.SUBSCRIBERS_TO_UPDATE_ELEMENTS.forEach((callback) => callback(this.getElementsAndConnections()));
+    this.SUBSCRIBERS_TO_UPDATE_ELEMENTS.forEach((callback) =>
+      callback(this.getElementsAndConnections())
+    );
   }
 }

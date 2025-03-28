@@ -41,9 +41,10 @@ const Map = () => {
 
         console.log("Фильтрованные проекты:", projects);
 
-        const userProjects = await mapAPI.getUserProjectMap();
+        const openedProjects = await mapAPI.getUserProjectMap();
         const connection = await mapAPI.getConnections();
-        console.log(userProjects)
+        console.log(openedProjects);
+
         const connectionF = connection
           .filter(item => item.prev_project !== null)
           .map((item, index) => ({
@@ -53,19 +54,27 @@ const Map = () => {
             params: { arrow: true, brokenLine: true } // Общие параметры
           }));
 
-        const elements = await mapAPI.getElements()
-        const elementsF = elements.map(item => ({
-          id: item.project_id, // ID элемента
-          position: {
-            x: item.position_x, // Масштабирование X для удобства отображения
-            y: item.position_y // Масштабирование Y для удобства отображения
-          },
-          params: { draggable: true } // Общие параметры
-        }));
+        const elements = await mapAPI.getElements();
+        const elementsF = elements.map(item => {
+          const projectData = openedProjects.find(proj => proj.project_id === item.project_id);
+
+          return {
+            id: item.project_id, // ID элемента
+            position: {
+              x: item.position_x,
+              y: item.position_y
+            },
+            params: {
+              draggable: true,
+              isOpen: projectData ? projectData.is_open : false,
+              isCompleted: projectData ? projectData.is_completed : false
+            }
+          };
+        });
 
         console.log("---", connection, connectionF, elementsF);
-        setMapData(elementsF, connectionF)
-        setMapProjects(filteredProjects)
+        setMapData(elementsF, connectionF);
+        setMapProjects(filteredProjects);
       } catch (error) {
         console.error("Ошибка при получении данных:", error);
       }
@@ -84,7 +93,7 @@ const Map = () => {
       }
       return {
         ...el,
-        html: `<div class="${styles.map__element}">${project.name}</div>`
+        html: `<div class="map__element">${project.name}</div>`
       };
     })
     const onMap = DOM_ELEMENTS_TEMPLATE.map(el => el.id);
@@ -108,7 +117,6 @@ const Map = () => {
 
 
   }, [isLoading]);
-
   useEffect(() => {
     const container = document.getElementById('domelements');
     if (!container) return;
@@ -118,26 +126,40 @@ const Map = () => {
       mutations.forEach(mutation => {
         if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
           const target = mutation.target;
-          if (target.classList && target.classList.contains('active__element')) {
+
+          if (target.classList.contains('element_close')) {
+            return; // Пропускаем элементы с классом element_close
+          }
+
+          if (target.classList.contains('active__element')) {
             const rect = target.getBoundingClientRect();
             const scrollX = window.scrollX;
             const scrollY = window.scrollY;
-            console.log(scrollX, scrollY, rect)
+
+            console.log(scrollX, scrollY, rect);
+
             setElementPosition({
               x: rect.left + scrollX,
               y: rect.top + scrollY,
             });
+
             setActiveElement(target.id);
-            const focusId = getIdFromDomElement(target)
-            const focusProject = mapProjects.find(el => el.id === focusId)
-            setActiveprojectInfo({
-              id: focusProject.id,
-              name: focusProject.name, description: focusProject.description, experience: focusProject.experience,
-              coins: focusProject.coins,
-            })
+            const focusId = getIdFromDomElement(target);
+            const focusProject = mapProjects.find(el => el.id === focusId);
+
+            if (focusProject) {
+              setActiveprojectInfo({
+                id: focusProject.id,
+                name: focusProject.name,
+                description: focusProject.description,
+                experience: focusProject.experience,
+                coins: focusProject.coins,
+              });
+            }
+
             stopCheck = true;
-          } else if (target.classList && !target.classList.contains('active__element') && !stopCheck) {
-            console.log(target)
+          } else if (!target.classList.contains('active__element') && !stopCheck) {
+            console.log(target);
             setActiveElement(null);
             setElementPosition({ x: 0, y: 0 });
           }
@@ -153,6 +175,7 @@ const Map = () => {
 
     return () => observer.disconnect();
   }, [isLoading]);
+
 
   const availableElements = (elements) => {
     const onMap = elements.map(el => el.id);
