@@ -10,10 +10,10 @@ function Header() {
   const tabsLineRef = useRef(null);
   const tabRefs = useRef({});
   const location = useLocation();
-  const [isTabValid,setIsTabValid] = useState(true);
+  const [isTabValid, setIsTabValid] = useState(true);
   const navigate = useNavigate();
 
-  const {isAuth,setAuth ,logout, name,nicknameStyleId} = useUserStore();
+  const { isAuth, setAuth, logout, name, nicknameStyleId, photo } = useUserStore();
 
   const handleTabClick = (tabId) => {
     setActiveTab(tabId);
@@ -37,7 +37,7 @@ function Header() {
     if (activeTabFromRoute) {
       setActiveTab(activeTabFromRoute.id);
     }
-  }, [location.pathname,tabs]);
+  }, [location.pathname, tabs]);
 
   useEffect(() => {
 
@@ -55,7 +55,7 @@ function Header() {
         tabsLineRef.current.style.width = `${width}px`;
       }
     }
-  }, [activeTab,tabs]);
+  }, [activeTab, tabs]);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -82,7 +82,7 @@ function Header() {
                   <Link to={tab.path}>{tab.name}</Link>
                 </li>
               ))}
-              <div ref={tabsLineRef} className={`tabs-line`}/>
+              <div ref={tabsLineRef} className={`tabs-line`} />
             </ul>
           </nav>
           <div className="col-lg-3">
@@ -94,19 +94,21 @@ function Header() {
             ) : (
               <>
                 <div onClick={() => toggleAccordion()} className='header-user'>
-                  <span className='header-avatar'><img src="https://www.gravatar.com/avatar/?d=mp" alt="аватарка" /></span>
+                  <span className='header-avatar'>
+                    <img src={photo ? photo : "https://www.gravatar.com/avatar/?d=mp"} alt="аватарка" />
+                  </span>
 
                   <span className={classStyle}>{name}</span>
 
                   <AccordionDropdown isOpen={isOpen} setIsOpen={setIsOpen}>
                     <div className="header-user-dropdown">
-                    <div className='header-user__info'>
-                    <ItemCounter type="coin"/>
-                    <ItemCounter type="star"/>
-                    </div>
+                      <div className='header-user__info'>
+                        <ItemCounter type="coin" />
+                        <ItemCounter type="star" />
+                      </div>
 
-                    <Button onClick={() => navigate('/profile')}>Профиль</Button>
-                    <Button onClick={() => logout()}>Выход</Button>
+                      <Button onClick={() => navigate('/profile')}>Профиль</Button>
+                      <Button onClick={() => logout()}>Выход</Button>
                     </div>
                   </AccordionDropdown>
                 </div>

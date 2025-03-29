@@ -54,9 +54,19 @@
 .expFill {
   height: 100%;
   background-color: #61DAEE;
-  transition: width 0.5s ease-in-out;
-  animation: neon-exp 2s ease-in-out infinite alternate;
+  animation: fillAnimation 0.5s ease-in-out forwards, neon-exp 2s ease-in-out infinite alternate;
 }
+
+@keyframes fillAnimation {
+  from {
+    width: 0%; /* Начальная ширина */
+  }
+  to {
+    width: var(--progress); /* Конечная ширина из переменной */
+  }
+}
+
+
 
 @keyframes neon-exp {
     from {
@@ -109,7 +119,9 @@
   font-size: 16px;
   color: white;
 }
-
+.description{
+  margin-right: 40px;
+}
 .statsContainer {
   display: flex;
   margin-top:10px;
@@ -229,15 +241,24 @@
 
 
 .section {
+  position: relative;
   border-radius: 20px;
   background-color: var(--dark-primary-color);
   padding: 15px;
   min-height: 60px;
   z-index:10;
 }
+.section .fullInfo{
+  position: absolute;
+  font-size: 20px;
+  top:50%;
+  left:50%;
+  transform: translate(-50%, -50%);
+}
 .alignCenter{
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 .over{
   z-index:20;
@@ -290,3 +311,5 @@
 /* .section .lineDiagram{
   max-height: 500px;
 } */
+
+

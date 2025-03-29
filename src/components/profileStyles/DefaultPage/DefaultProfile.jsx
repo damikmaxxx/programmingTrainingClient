@@ -3,13 +3,50 @@ import { Chart as ChartJS, registerables } from 'chart.js';
 import styles from "./DefaultProfile.module.css";
 import { FaEdit } from "react-icons/fa";
 import ItemCounter from "../../Shared/ItemCounter/ItemCounter";
-import FireEffect from "../../effects/FireEffect";
 import ProfileEffect from '../../ProfileEffect';
+import { getLevelInfo } from '../../../data/LEVEL_MAP';
+
 ChartJS.register(...registerables);
 
-export default function DefaultProfile({ avatar, name, stars, level, recentProjects, description, timeExpDiagram, skills, exp, projectTimes, bgStyles, selectedStyleId }) {
+export default function DefaultProfile({ avatar, name, stars, recentProjects, description, timeExpDiagram, skills, exp, projectTimes, bgStyles, selectedStyleId }) {
+  const descriptionMin = description.length > 150 ? description.slice(0, 150) + '...' : description;
+  const { level, expOnCurrentLevel, progressPercentage, expToNextLevel } = getLevelInfo(exp);
+  console.log(skills);
+  console.log(timeExpDiagram)
+  // Группировка данных по датам и усреднение значений опыта
+  const groupedData = timeExpDiagram.reduce((acc, { date, experience }) => {
+    if (!acc[date]) {
+      acc[date] = [];
+    }
+    acc[date].push(experience);
+    return acc;
+  }, {});
+  console.log(groupedData)
+  const sortedDates = Object.keys(groupedData).sort((a, b) => new Date(a) - new Date(b));
+  const groupedTimeExpDiagram = {
+    date: sortedDates,
+    experience: sortedDates.map(date => {
+      const experiences = groupedData[date];
+      return experiences.reduce((sum, exp) => sum + exp, 0) / experiences.length;
+    })
+  };
 
+  console.log(groupedTimeExpDiagram);
 
+  // Настройка данных для графика Line
+  const lineData = {
+    labels: groupedTimeExpDiagram.date,
+    datasets: [
+      {
+        label: 'Получено опыта',
+        data: groupedTimeExpDiagram.experience,
+        fill: false,
+        borderColor: 'rgba(54, 162, 235, 1)',
+        tension: 0.1
+      }
+    ]
+  };
+  skills = []
   const radarData = {
     labels: skills.map(skill => skill.name),
     datasets: [
@@ -31,20 +68,6 @@ export default function DefaultProfile({ avatar, name, stars, level, recentProje
       }
     }
   };
-
-  const lineData = {
-    labels: timeExpDiagram.time,
-    datasets: [
-      {
-        label: 'Время решения (минуты)',
-        data: timeExpDiagram.exp,
-        fill: false,
-        borderColor: 'rgba(54, 162, 235, 1)',
-        tension: 0.1
-      }
-    ]
-  };
-
   return (
     <div className={styles.bg}>
       <div className={styles.bg_styles_wrapper}>
@@ -60,7 +83,7 @@ export default function DefaultProfile({ avatar, name, stars, level, recentProje
                 <img className={styles.avatar} src={avatar} alt="Аватар" />
                 <div className={styles.info}>
                   <h2 className={styles.name}>{name}</h2>
-                  <p className={styles.description}>{description}</p>
+                  <p className={styles.description}>{descriptionMin}</p>
                   <div className={styles.statsContainer}>
                     <ItemCounter type={"coin"} />
                     <ItemCounter type={"star"} />
@@ -77,38 +100,16 @@ export default function DefaultProfile({ avatar, name, stars, level, recentProje
               <h3 className={styles.sectionTitle}>Последние проекты</h3>
               <ul className={styles.projectList}>
                 {recentProjects.map((project, index) => (
-                  <li key={index} className={styles.projectItem}>{project}</li>
+                  <li key={index} className={styles.projectItem}>{project.project_name}</li>
                 ))}
               </ul>
             </div>
           </div>
         </div>
         <div className="row">
-          <div className={"col-lg-6 " + styles.over}>
-            <div className={`${styles.section} mb-3 ${styles.alignCenter}`}>
-              <div className={styles.activeSkillWr}>
-                <p>Используемые языки:</p>
-                <div className={styles.activeSkill}>
-                  <span className="js-skill">JavaScript</span>
-                  <span className="cpp-skill">C++</span>
-                  <span className="python-skill">Python</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className={"col-lg-6 " + styles.over}>
-            <div className={`${styles.section} mb-3 ${styles.alignCenter}`}>
-              <div className={styles.timeInfo}>
-                Последний раз заходил: <span>16.02.2025</span>
-                Регистрация <span>01.02.2025</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="row">
           <div className={"col-lg-2 " + styles.over}>
             <div className={`${styles.section} mb-3 ${styles.alignCenter}`}>
-              5 УРОВЕНЬ
+              {level} УРОВЕНЬ
             </div>
           </div>
           <div className={"col-lg-10 " + styles.over}>
@@ -117,11 +118,11 @@ export default function DefaultProfile({ avatar, name, stars, level, recentProje
                 <div className={styles.expBar}>
                   <div
                     className={styles.expFill}
-                    style={{ width: `${70}%` }}
+                    style={{ '--progress': `${progressPercentage}%` }}
                   ></div>
                 </div>
               </div>
-              <span className={styles.expText}> 700 / 1000 </span>
+              <span className={styles.expText}> {expOnCurrentLevel} / {expToNextLevel} </span>
             </div>
           </div>
         </div>
@@ -129,6 +130,7 @@ export default function DefaultProfile({ avatar, name, stars, level, recentProje
           <div className={"col-lg-8 " + styles.over}>
             <div className={styles.section}>
               <span className={styles.lineDiagram}><Line data={lineData} /></span>
+              {timeExpDiagram.length !== 0 || <p className={styles.fullInfo}>Нет данных для отображения графика</p>}
             </div>
           </div>
           <div className={"col-lg-4 " + styles.over}>

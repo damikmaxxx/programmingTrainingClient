@@ -19,9 +19,9 @@ function App() {
         }
 
         try {
-          const { username, coins, stars, nickname_id } = await authAPI.getUserMinInfo();
-          console.log(nickname_id)
-          setUser({ name: username, coins, stars, nicknameStyleId: nickname_id });
+          const { username, coins, stars, nickname_id,photo } = await authAPI.getUserMinInfo();
+          console.log(photo)
+          setUser({ name: username, coins, stars, nicknameStyleId: nickname_id,photo });
         } catch (error) {
           console.error("Ошибка загрузки данных пользователя:", error);
         } finally {
