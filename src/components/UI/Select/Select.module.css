@@ -1,119 +1,122 @@
 .selectUI {
-    width: 100%;
-    position: relative;
-    height: 30px;
-    font-size: 15px;
-    border-bottom: 2px solid var(--white-color);
-    transition: 0.3s;
-    cursor: pointer;
-  }
-  
-  .selected {
-    width: 80%;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    position: relative;
-    color: var(--white-color);
-    padding-left: 10px;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .selectUI:hover .selected,
-  .selectUI.active .selected {
-    color: var(--primary-color);
-    transition: 0.3s;
-  }
-  
-  .selectUI:hover {
-    border-bottom: 2px solid var(--primary-color);
-  }
-  
-  .selectUI::after {
-    content: "";
-    position: absolute;
-    right: 10px;
-    top: calc(50% - 5px);
-    height: 20px;
-    width: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-bottom: 10px solid var(--white-color);
-    transform: rotate(180deg);
-    transition: 0.3s;
-  }
-  
-  .selectUI:hover::after,
-  .selectUI.active::after {
-    border-bottom: 10px solid var(--primary-color);
-  }
-  
-  .selectUI.active::after {
-    transform: rotate(0deg);
-  }
-  
-  .options {
-    position: absolute;
-    top: 110%;
-    display: none;
-    z-index: 10;
-    width: 100%;
-    cursor: pointer;
-    box-shadow: 0px 0px 5px 0px black;
-  }
-  
-  .option {
-    padding: 5px 10px;
-    background-color: var(--dark-primary-color);
-    color: var(--white-color);
-    transition: 0.3s;
-    position: relative;
-  }
-  
-  .option.optionInfo:hover {
-    background-color: var(--dark-primary-color);
-  }
-  
-  .selectUI.active .options {
-    display: block;
-  }
-  
-  .option:hover {
-    background-color: var(--dark-bg-color);
-    color: var(--primary-color);
-  }
-  
-  .option.optionInfo:hover {
-    background-color: var(--dark-primary-color);
-    color: var(--white-color);
-  }
-  
-  .option::after {
-    content: "";
-    position: absolute;
-    left: -2px;
-    top: 0;
-    width: 2px;
-    height: 100%;
-    background-color: var(--primary-color);
-    display: none;
-    box-shadow: 0px 0px 5px 0px var(--primary-color);
-  }
-  
-  .option:hover::after {
-    display: block;
-  }
-  
-  .option.optionInfo::after {
-    content: "";
-    display: none;
-  }
-  
+  width: 100%;
+  position: relative;
+  height: 30px;
+  font-size: 15px;
+  border-bottom: 2px solid var(--white-color);
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.selected {
+  width: 80%;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  color: var(--white-color);
+  padding-left: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.selectUI:hover .selected,
+.selectUI.active .selected {
+  color: var(--primary-color);
+  transition: 0.3s;
+}
+
+.selectUI:hover {
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.selectUI::after {
+  content: "";
+  position: absolute;
+  right: 10px;
+  top: calc(50% - 5px);
+  height: 20px;
+  width: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 10px solid var(--white-color);
+  transform: rotate(180deg);
+  transition: 0.3s;
+}
+
+.selectUI:hover::after,
+.selectUI.active::after {
+  border-bottom: 10px solid var(--primary-color);
+}
+
+.selectUI.active::after {
+  transform: rotate(0deg);
+}
+
+.options {
+  position: absolute;
+  top: 110%;
+  display: none;
+  z-index: 10;
+  width: 100%;
+  cursor: pointer;
+  box-shadow: 0px 0px 5px 0px black;
+}
+
+.option {
+  padding: 5px 10px;
+  background-color: var(--dark-primary-color);
+  color: var(--white-color);
+  transition: 0.3s;
+  position: relative;
+}
+
+.optionInfo {
+  color: var(--white-color);
+}
+
+.optionInfo:hover {
+  background-color: var(--dark-primary-color);
+}
+
+.selectUI.active .options {
+  display: block;
+}
+
+.option:hover {
+  background-color: var(--dark-bg-color);
+  color: var(--primary-color);
+}
+
+.option.optionInfo:hover {
+  background-color: var(--dark-primary-color);
+  color: var(--white-color);
+}
+
+.option::after {
+  content: "";
+  position: absolute;
+  left: -2px;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background-color: var(--primary-color);
+  display: none;
+  box-shadow: 0px 0px 5px 0px var(--primary-color);
+}
+
+.option:hover::after {
+  display: block;
+}
+
+.option.optionInfo::after {
+  content: "";
+  display: none;
+}

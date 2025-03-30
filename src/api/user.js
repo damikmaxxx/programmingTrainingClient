@@ -29,6 +29,36 @@ const userAPI = {
     } catch (error) {
       console.error("Ошибка при получении информации о прогрессе пользователя:", error.response?.data || error.message);
     }
+  },
+
+  // Получение информации о стилях пользователя
+  getUserStyles: async () => {
+    try {
+      const { data } = await $authHost.get("/userstyle/");
+      return data;
+    } catch (error) {
+      console.error("Ошибка при получении стилей пользователя:", error.response?.data || error.message);
+    }
+  },
+
+  // Добавление нового стиля (покупка)
+  addUserStyle: async (styleData) => {
+    try {
+      const { data } = await $authHost.post("/userstyle/", styleData);
+      return data;
+    } catch (error) {
+      console.error("Ошибка при добавлении стиля:", error.response?.data || error.message);
+    }
+  },
+
+  // Обновление стиля профиля или ника
+  updateUserStyle: async (styleId) => {
+    try {
+      const { data } = await $authHost.put(`/userstyle/${styleId}/`);
+      return data;
+    } catch (error) {
+      console.error("Ошибка при обновлении стиля:", error.response?.data || error.message);
+    }
   }
 };
 

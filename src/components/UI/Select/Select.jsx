@@ -10,7 +10,7 @@ const defaultOptions = [
 const Select = ({ 
   options = defaultOptions, 
   defaultValue = "Значение по умолчанию", 
-  placeholder = "верхнее поле", 
+  placeholder = "", 
   onChange 
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,7 +48,7 @@ const Select = ({
       <div className={styles.selected}>{selectedLabel}</div>
       {isOpen && (
         <div className={styles.options}>
-          <div className={styles.optionInfo}>{placeholder}</div>
+          <div className={styles.option + " " +styles.optionInfo}>{placeholder}</div>
           {options.map((option) => (
             <div
               key={option.value}

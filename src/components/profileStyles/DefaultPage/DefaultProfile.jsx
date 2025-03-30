@@ -5,11 +5,15 @@ import { FaEdit } from "react-icons/fa";
 import ItemCounter from "../../Shared/ItemCounter/ItemCounter";
 import ProfileEffect from '../../ProfileEffect';
 import { getLevelInfo } from '../../../data/LEVEL_MAP';
+import Modal from '../../UI/Modal/Modal';
+import { useState } from 'react';
+import ProfileEditModal from '../../Shared/ProfileEditModal/ProfileEditModal';
+import { userAPI } from '../../../api/api';
 
 ChartJS.register(...registerables);
 
 export default function DefaultProfile({ avatar, name, stars, recentProjects, description, timeExpDiagram, skills, exp, projectTimes, bgStyles, selectedStyleId }) {
-  const descriptionMin = description.length > 150 ? description.slice(0, 150) + '...' : description;
+  const descriptionMin = description?.length > 150 ? description.slice(0, 150) + '...' : description;
   const { level, expOnCurrentLevel, progressPercentage, expToNextLevel } = getLevelInfo(exp);
   console.log(skills);
   console.log(timeExpDiagram)
@@ -68,15 +72,56 @@ export default function DefaultProfile({ avatar, name, stars, recentProjects, de
       }
     }
   };
+
+
+  const [showModal, setShowModal] = useState(false);
+
+  // Открытие модалки
+  const openModal = () => setShowModal(true);
+
+  // Закрытие модалки
+  const closeModal = () => setShowModal(false);
+  const BackgroundStyles = () => <div className={styles.bg_styles}></div>;
+  const handleConfirm = async (props) => {
+    // Логика для обработки подтверждения действия
+    console.log(props);
+
+    try {
+      const formData = new FormData();
+      formData.append('username', props.values.nickname);
+      formData.append('description', props.values.description);
+      // formData.append('nicknameStyle', props.values.nicknameStyle);
+      if (avatar) {
+        formData.append('photo', props.avatar); // Добавляем аватар в FormData
+      }
+      console.log(formData.get('username'));
+      await userAPI.updateProfile(formData);  // Отправляем данные на сервер
+    } catch (error) {
+      console.error('Ошибка при обновлении профиля:', error);
+    }
+    closeModal();
+  }
+
+
+  
   return (
     <div className={styles.bg}>
+
       <div className={styles.bg_styles_wrapper}>
         <ProfileEffect selectedStyleId={selectedStyleId} className={styles.ava}>
-          <div className={styles.bg_styles}></div>
+          <BackgroundStyles />
         </ProfileEffect>
       </div>
+
+      <ProfileEditModal
+        user={{ name, description, avatar,name }}
+        showModal={showModal}
+        closeModal={closeModal}
+        handleConfirm={handleConfirm}
+      />
       <div className="container">
         <div className="row">
+
           <div className={"col-lg-8 " + styles.over}>
             <div className={`${styles.section} mb-3`}>
               <div className={styles.headerInfo}>
@@ -89,7 +134,7 @@ export default function DefaultProfile({ avatar, name, stars, recentProjects, de
                     <ItemCounter type={"star"} />
                   </div>
                 </div>
-                <button className={styles.editIcon} onClick={() => alert("Редактирование профиля")}>
+                <button className={styles.editIcon} onClick={() => openModal()}>
                   <FaEdit />
                 </button>
               </div>
