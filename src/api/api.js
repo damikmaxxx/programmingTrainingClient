@@ -2,4 +2,6 @@ import authAPI from "./auth";
 import mapAPI from "./map"; 
 import projectAPI from "./project";
 import userAPI from "./user";
-export { authAPI, mapAPI,projectAPI,userAPI }; 
+import ratingAPI from "./rating";
+import shopAPI from "./shop";
+export { authAPI, mapAPI,projectAPI,userAPI,ratingAPI,shopAPI }; 

@@ -11,9 +11,10 @@ import Button from '../components/UI/Button/Button';
 import { mapAPI, projectAPI } from '../api/api';
 import Loader from '../components/UI/Loader/Loader';
 import { getIdFromDomElement } from '../utils/map/utils';
-
+import { useNavigate } from 'react-router-dom';
 const Map = () => {
   const { mapProjects, setMapProjects } = useProjectsStore()
+  const navigate = useNavigate();
   const { role } = useUserStore()
   const { domElements, domConnection, setMapData } = useMapStore()
   const [readyProjects, setReadyProjects] = useState(null)
@@ -209,8 +210,8 @@ const Map = () => {
   }
 
 
-
   const ProjectInfo = () => {
+    console.log(activeProjectInfo)
     return (
       <div className={styles.projectInfo}>
         <h3>{activeProjectInfo.name}</h3>
@@ -220,7 +221,12 @@ const Map = () => {
             <ItemCounter type="coin" count={activeProjectInfo.coins} />
             <ItemCounter type="exp" count={activeProjectInfo.experience} />
           </span>
-          <Button onClick={() => console.log("ПЕРРЕХОД НА ПРОЕКТ")} variant='small' >Перейти</Button>
+          <Button 
+            onClick={() => navigate(`/project/${activeProjectInfo.id}`)} // Переход на страницу проекта
+            variant='small'
+          >
+            Перейти
+          </Button>
         </div>
 
       </div>

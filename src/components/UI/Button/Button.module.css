@@ -70,4 +70,23 @@
     padding: 8px 16px;
     font-size: 12px;
   }
-  
+
+/* Стили для отключённой кнопки */
+.btn:disabled {
+    color: #4A9BB0;
+    border-color: #4A9BB0;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.btn:disabled:hover {
+    color: #4A9BB0;
+}
+
+.btn:disabled:hover::before {
+    transform: skew(90deg) rotate(180deg) translate(-50%, -50%);
+}
+
+.btn:disabled:hover::after {
+    transform: skew(90deg) translate(-50%, -50%);
+}

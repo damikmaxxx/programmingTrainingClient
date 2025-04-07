@@ -6,7 +6,7 @@ import {
   SHOP_ROUTE, 
   RATING_ROUTE, 
   LOGIN_ROUTE, 
-  REGISTRATION_ROUTE 
+  REGISTRATION_ROUTE
 } from './utils/consts';
 
 import Profile from './pages/Profile';
@@ -38,6 +38,13 @@ export const authRoutes = [
   {
     path: PROJECTS_ROUTE,
     Component: Projects,
+    layoutProps: {
+      dark: true,
+    },
+  },
+  {
+    path: `${PROJECT_ROUTE}/last`,
+    Component: Project,
     layoutProps: {
       dark: true,
     },

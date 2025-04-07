@@ -4,40 +4,61 @@ import styles from './Tabs.module.css';
 // Контекст для управления активной вкладкой
 const TabContext = createContext();
 
-const Tabs = ({ tabs = [], defaultActiveTab = tabs[0]?.id, children }) => {
-  const [activeTab, setActiveTab] = useState(defaultActiveTab);
+const Tabs = ({ 
+  tabs = [], 
+  defaultActiveTab = tabs[0]?.id, 
+  children, 
+  onTabChange, 
+  activeTab: controlledActiveTab, // Внешний activeTab
+  setActiveTab: setControlledActiveTab // Внешний setActiveTab
+}) => {
+  // Используем внутреннее состояние, только если внешнее не предоставлено
+  const [internalActiveTab, setInternalActiveTab] = useState(defaultActiveTab);
+  
+  // Определяем, управляется ли компонент извне
+  const isControlled = controlledActiveTab !== undefined && setControlledActiveTab !== undefined;
+  const activeTab = isControlled ? controlledActiveTab : internalActiveTab;
+  const setActiveTab = isControlled ? setControlledActiveTab : setInternalActiveTab;
 
   return (
-    <TabContext.Provider value={{ activeTab, setActiveTab }}>
-        {children}
+    <TabContext.Provider value={{ activeTab, setActiveTab, onTabChange }}>
+      {children}
     </TabContext.Provider>
   );
 };
 
 const TabHeader = ({ tabs }) => {
-  const { activeTab, setActiveTab } = useContext(TabContext);
+  const { activeTab, setActiveTab, onTabChange } = useContext(TabContext);
   const activeTabRef = useRef(null);
   const tabsLineRef = useRef(null);
+
   useEffect(() => {
     if (activeTabRef.current && tabsLineRef.current) {
       tabsLineRef.current.style.left = `${activeTabRef.current.offsetLeft}px`;
       tabsLineRef.current.style.width = `${activeTabRef.current.offsetWidth}px`;
     }
   }, [activeTab]);
+
+  const handleTabClick = (tabId) => {
+    setActiveTab(tabId); // Устанавливаем новую активную вкладку
+    if (onTabChange) {
+      onTabChange(tabId); // Вызываем функцию обратного вызова
+    }
+  };
+
   return (
     <div className={styles.tabs}>
       {tabs.map((tab) => (
         <div
           key={tab.id}
           className={`${styles.tab} ${activeTab === tab.id ? styles.tabActive : ''}`}
-          onClick={() => setActiveTab(tab.id)}
+          onClick={() => handleTabClick(tab.id)}
           ref={activeTab === tab.id ? activeTabRef : null}
         >
           {tab.label}
-
         </div>
       ))}
-        <div className={styles.tabsLine} ref={tabsLineRef}></div>
+      <div className={styles.tabsLine} ref={tabsLineRef}></div>
     </div>
   );
 };

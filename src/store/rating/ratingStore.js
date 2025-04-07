@@ -92,12 +92,15 @@ export const useRatingStore = create((set) => ({
     textEffectId: '' // Обычный текст
   }],
   topExpWeek: [],
+  topStarsMonth: [],
   topStarsFull: [],
   topStarsWeek: [],
-  
+  topStarsMonth: [],
   // Функции для сеттинга массивов
   setTopExpFull: (data) => set({ topExpFull: data }),
   setTopExpWeek: (data) => set({ topExpWeek: data }),
+  setTopExpMonth: (data) => set({ topStarsMonth: data }),
   setTopStarsFull: (data) => set({ topStarsFull: data }),
   setTopStarsWeek: (data) => set({ topStarsWeek: data }),
+  setTopStarsMonth: (data) => set({ topStarsMonth: data }),
 }));

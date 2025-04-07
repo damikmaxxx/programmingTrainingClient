@@ -561,7 +561,6 @@ header {
 	color: var(--white-color);
 	width: 100%;
 	background: var(--dark-primary-color);
-	;
 	display: flex;
 	flex-direction: column;
 	overflow: scroll;
@@ -822,10 +821,10 @@ a.button {
 /* .projects__project:hover .projects__project__time{
 	box-shadow: 0px 0px 15px #a91056;
 } */
-.projects__project h5 {
+.projects__project h3 {
 	height: 60px;
 	z-index: 25;
-	width: 80%;
+	padding-right: 10px;
 	overflow: hidden;
 }
 
@@ -964,3 +963,23 @@ a.button {
 	border-radius: 20px;
 	/* padding:5px 10px; */
 }
+
+.input-data-control {
+	width: 100%;
+	resize: vertical;
+	padding: 12px;
+	font-size: 14px;
+	font-family: monospace;
+	background-color: #1e1e1e;
+	color: #ffffff;
+	border: none;
+	outline: none;
+	box-shadow: none;
+	border-radius: 6px;
+	line-height: 1.5;
+  }
+  .input-data-control:focus {
+	outline: none;
+	box-shadow: none;
+	border: none;
+  }

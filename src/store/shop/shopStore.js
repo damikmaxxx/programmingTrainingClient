@@ -52,6 +52,8 @@ export const useShopStore = create((set, get) => ({
       id: 15,
     },
   ],
+  setNicknameStyles: (styles) => set({ nicknameStyles: styles }),
+  setProfileStyle: (styles) => set({ profileStyle: styles }),
   // Функция для получения класса по имени стиля
   getStyleClassByName: (name) => {
     const effect = get().nicknameStyles.find((style) => style.name === name); // Используем get(), чтобы обратиться к состоянию

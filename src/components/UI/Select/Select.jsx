@@ -9,13 +9,18 @@ const defaultOptions = [
 
 const Select = ({ 
   options = defaultOptions, 
-  defaultValue = "Значение по умолчанию", 
+  defaultValue = null, 
+  defaultLabel = "Значение по умолчанию",
   placeholder = "", 
   onChange 
 }) => {
+  console.log(defaultValue,defaultLabel)
+  if(defaultLabel === "Значение по умолчанию") {
+    defaultLabel = defaultValue
+  }
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelecteValue] = useState(defaultValue);
-  const [selectedLabel, setselectedLabel] = useState(defaultValue);
+  const [selectedLabel, setselectedLabel] = useState(defaultLabel);
   const selectRef = useRef(null);
 
   // Обработчик выбора элемента
@@ -24,7 +29,7 @@ const Select = ({
     setselectedLabel(option.label);
     setIsOpen(false);
     if (onChange) {
-      onChange(option.value);
+      onChange({value:option.value, label:option.label});
     }
   };
 

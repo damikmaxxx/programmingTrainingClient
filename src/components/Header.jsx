@@ -6,7 +6,7 @@ import { useUserStore } from '../store/store.js';
 import ItemCounter from './Shared/ItemCounter/ItemCounter.jsx';
 import { GetStyleClassById } from '../data/ALL_STYLES.js';
 function Header() {
-  const [activeTab, setActiveTab] = useState("profile");
+  const [activeTab, setActiveTab] = useState(null);
   const tabsLineRef = useRef(null);
   const tabRefs = useRef({});
   const location = useLocation();
@@ -22,18 +22,18 @@ function Header() {
 
 
   const tabs = useMemo(() => [
-    { name: "Проект", path: "/project/1", id: "project" },
-    { name: "Все проекты", path: "/projects", id: "projects" },
-    { name: "Карта", path: "/map", id: "map" },
-    { name: "Рейтинг", path: "/rating", id: "rating" },
-    { name: "Магазин", path: "/shop", id: "shop" },
+    { name: "Проект", path: "/project/last", id: "project",pathForTab: "/project/" },
+    { name: "Все проекты", path: "/projects", id: "projects",pathForTab: "/projects" },
+    { name: "Карта", path: "/map", id: "map",pathForTab: "/map" },
+    { name: "Рейтинг", path: "/rating", id: "rating",pathForTab: "/rating" },
+    { name: "Магазин", path: "/shop", id: "shop",pathForTab: "/shop" },
   ], []);
 
 
 
   useEffect(() => {
-    setIsTabValid(tabs.some((tab) => tab.path === location.pathname));
-    const activeTabFromRoute = tabs.find(tab => tab.path === location.pathname);
+    setIsTabValid(tabs.some((tab) => location.pathname.includes(tab.pathForTab)));
+    const activeTabFromRoute = tabs.find(tab => location.pathname.includes(tab.pathForTab));
     if (activeTabFromRoute) {
       setActiveTab(activeTabFromRoute.id);
     }

@@ -1,4 +1,4 @@
-export const levelMap = [
+export const LEVEL_MAP = [
     { level: 2, exp: 100 },
     { level: 3, exp: 150 },
     { level: 4, exp: 300 },
@@ -27,12 +27,12 @@ export function getLevelInfo(totalExp) {
   let progressPercentage = 0; // Процент прогресса до следующего уровня
 
   // Проходим по карте уровней
-  for (let i = 0; i < levelMap.length; i++) {
-      const requiredExp = levelMap[i].exp;
+  for (let i = 0; i < LEVEL_MAP.length; i++) {
+      const requiredExp = LEVEL_MAP[i].exp;
       if (totalExp >= requiredExp) {
           // Если опыта хватает, вычитаем его и повышаем уровень
           totalExp -= requiredExp;
-          currentLevel = levelMap[i].level;
+          currentLevel = LEVEL_MAP[i].level;
           expOnCurrentLevel = totalExp;
       } else {
           // Если опыта недостаточно, останавливаемся
@@ -41,13 +41,13 @@ export function getLevelInfo(totalExp) {
           break;
       }
   }
-  console.log(levelMap.find(obj => obj.level === currentLevel+1).exp)
+  console.log(LEVEL_MAP.find(obj => obj.level === currentLevel+1).exp)
   // Возвращаем результат
   return {
       level: currentLevel, // Текущий уровень
       expOnCurrentLevel: expOnCurrentLevel, // Опыт на текущем уровне
       progressPercentage: progressPercentage.toFixed(3), // Процент прогресса (3 знака после запятой)
-      expToNextLevel: levelMap.find(obj => obj.level === currentLevel+1).exp
+      expToNextLevel: LEVEL_MAP.find(obj => obj.level === currentLevel+1).exp
   };
 }
 
