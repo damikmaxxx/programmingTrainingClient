@@ -307,6 +307,8 @@
   display: flex;
   align-items: center;
   height: 400px;
+  text-align: center;
+  font-size: 20px;
 }
 /* .section .lineDiagram{
   max-height: 500px;

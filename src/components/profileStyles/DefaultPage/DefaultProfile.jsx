@@ -64,13 +64,15 @@ const skillsWithPercentage = normalizedSkills.map(skill => ({
   ...skill,
   percentage: totalExperience > 0 ? (skill.experience / totalExperience) * 100 : 0,
 }));
+console.log(skillsWithPercentage);
 
 const radarData = {
   labels: skillsWithPercentage.map(skill => skill.language), // Используем language
   datasets: [
     {
       label: 'Навыки',
-      data: skillsWithPercentage.map(skill => skill.percentage), // Используем вычисленные проценты
+      // Если totalExperience = 0, данные пустые, иначе используем проценты
+      data: totalExperience > 0 ? skillsWithPercentage.map(skill => skill.percentage) : [],
       backgroundColor: 'rgba(255, 99, 132, 0.2)',
       borderColor: 'rgba(255, 99, 132, 1)',
       borderWidth: 1,
@@ -82,20 +84,26 @@ const radarOptions = {
   scales: {
     r: {
       ticks: {
-        beginAtZero: true,
-        max: 100, // Фиксируем максимум на 100%, так как это проценты
-        callback: () => '', // Скрываем числа на шкале
+        display: false, // Полностью убираем ticks (включая их визуальные элементы)
       },
       grid: {
-        display: false, // Скрываем серую сетку
+        color: '#282C34', // Темнее светло-серого, но не слишком тёмный
+        lineWidth: 2,
       },
       angleLines: {
-        display: false, // Скрываем серые линии, идущие от центра к меткам
+        display: false, // Убираем радиальные линии от центра к меткам
+      },
+      pointLabels: {
+        display: true, // Оставляем метки видимыми
+        font: {
+          size: 16, // Увеличиваем размер шрифта
+          weight: 'bold', // Делаем шрифт жирнее (опционально)
+        },
+        color: '#f0f0f0', // Светлый цвет, почти белый, но мягче
       },
     },
   },
 };
-
   const [showModal, setShowModal] = useState(false);
 
   // Открытие модалки
@@ -220,6 +228,7 @@ const radarOptions = {
           <div className={"col-lg-4 " + styles.over}>
             <div className={styles.section}>
               <span className={styles.radarDiagram}><Radar data={radarData} options={radarOptions} /></span>
+
             </div>
           </div>
         </div>
