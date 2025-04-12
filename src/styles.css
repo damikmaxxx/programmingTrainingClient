@@ -555,7 +555,7 @@ header {
 	/* border: 1px solid var(--primary-color); */
 	border-radius: 20px;
 	padding: 0px 30px;
-	margin-bottom: 10px;
+
 	background-color: var(--white-color);
 	font-size: 13px;
 	color: var(--white-color);
@@ -571,12 +571,29 @@ header {
 .task__block__section {
 	margin-top: 10px;
 }
-
+.task__block--title{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px;
+	overflow: visible;
+	margin-bottom: 10px;
+}
+.task__block--title h3{
+	margin: 0px;
+	padding: 0px;
+	font-size: 30px;
+	text-align: center;
+}
 .task__block--height {
+	display: flex;
+	flex-direction: column;
 	height: min(77vh, 1500px);
 	/* Занимает 90% экрана, но не больше 1000px */
 }
-
+.task__block--fullHeight {
+	height: 100%;
+}
 
 .item-Button-inv {
 	border: 2px solid blue;

@@ -118,13 +118,13 @@ const userAPI = {
   //   }
   // },
 
-  // 2.2 GET /user_projects/{id}/ - Получение пользовательского проекта по ID
+  // 2.2 GET /user-projects/{id}/ - Получение пользовательского проекта по ID
   getUserProjectById: async (id) => {
-    console.log("Adsasd");
+    console.log(id);
     try {
       const { data } = await $authHost.post(
         `/user-projects/get_user_project/`,
-        { project_id: id }
+        { project: id }
       );
       console.log(data);
       return data; // { project_id, project_name, code, is_completed, is_published, earned_stars, language, finished_date }
@@ -137,7 +137,7 @@ const userAPI = {
     }
   },
 
-  // 2.2 PUT /user_projects/{id}/ - Обновление пользовательского проекта по ID
+  // 2.2 PUT /user-projects/{id}/ - Обновление пользовательского проекта по ID
   updateUserProjectById: async (id, projectData) => {
     try {
       console.log(id, projectData);
@@ -156,7 +156,7 @@ const userAPI = {
     }
   },
 
-  // 2.2 DELETE /user_projects/{id}/ - Удаление пользовательского проекта по ID
+  // 2.2 DELETE /user-projects/{id}/ - Удаление пользовательского проекта по ID
   deleteUserProject: async (id) => {
     try {
       await $authHost.delete(`/user-projects/${id}/`);
@@ -170,7 +170,7 @@ const userAPI = {
     }
   },
 
-  // 2.3 PUT /user_projects/{id}/end_project/ - Завершение проекта пользователя
+  // 2.3 PUT /user-projects/{id}/end_project/ - Завершение проекта пользователя
   endUserProject: async (id) => {
     try {
       const { data } = await $authHost.put(`/user-projects/${id}/end-project/`);
@@ -184,7 +184,7 @@ const userAPI = {
     }
   },
 
-  // 2.4 POST /user_projects/start_project/ - Начало нового проекта
+  // 2.4 POST /user-projects/start_project/ - Начало нового проекта
   startUserProject: async (projectId) => {
     try {
       const { data } = await $authHost.post("/user-projects/start-project/", {

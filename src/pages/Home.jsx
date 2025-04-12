@@ -5,12 +5,14 @@ import styles from "./Home.module.css"
 function Home() {
   return (
     <div className="container">
-      <div className="row">
-        <div className="col-lg-8">
+      <section id={styles.titleSection}>
+        <div className="row">
+          <div className="col-lg-8">
 
-        <h1>Добро пожаловать в мир, где обучение программированию превращается в захватывающее приключение!</h1>
+            <h1>Добро пожаловать в мир, где обучение программированию превращается в захватывающее приключение!</h1>
+          </div>
         </div>
-      </div>
+      </section>
       {/* Блок с кнопками регистрации и входа */}
       <section>
         <Link to="/register">

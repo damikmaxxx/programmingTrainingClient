@@ -59,7 +59,7 @@ export class MAP_CONTROLLER {
       if (event.button === 0) {
         if (!this.isMode(this.MODE_CONSTANTS.CREATING)) return;
         event.preventDefault();
-
+        
         let objElement = {
           html: document.getElementById("createBlockTextArea").value,
           position: {
@@ -127,6 +127,7 @@ export class MAP_CONTROLLER {
     document.addEventListener("contextmenu", (event) => event.preventDefault());
   }
   initToolsPanel() {
+    console.log("editButton clicked");
     if (this.MAP_SETTINGS.mode === this.MODE_CONSTANTS.USER) return;
     const editButton = document.getElementById("editButton");
     const toolsPanel = document.getElementById("toolspanel");
@@ -134,6 +135,7 @@ export class MAP_CONTROLLER {
 
     if (editButton) {
       editButton.addEventListener("click", () => {
+
         if (!this.isMode(this.MODE_CONSTANTS.EDITING)) {
           toolsPanel?.classList.add("active");
           this.setMode(this.MODE_CONSTANTS.EDITING);
@@ -226,5 +228,11 @@ export class MAP_CONTROLLER {
   }
   subcribeUpdateElements(callback) {
     return this.dom_controller.subcribeUpdateElements((obj) => callback(obj));
+  }
+
+  changeMode(mode) {  
+    this.MAP_SETTINGS.mode = mode;
+    console.log(mode)
+    this.dom_controller.getMapSettings(this.MAP_SETTINGS);
   }
 }

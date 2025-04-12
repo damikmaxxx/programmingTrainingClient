@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { userAPI } from '../api/api.js'; // Импортируем API для получения стилей
+import { ALL_STYLES } from '../data/ALL_STYLES.js';
 
 const useUserStyles = (userProfileStyle, userNicknameStyle) => {
   const [profileStylesOptions, setProfileStylesOptions] = useState([]);
@@ -18,25 +19,27 @@ const useUserStyles = (userProfileStyle, userNicknameStyle) => {
         const userStyles = await userAPI.getUserStyles();
         if (userStyles) {
           // Фильтруем стили по категориям
+          console.log(userStyles);
+
           const profileStyles = userStyles
             .filter(style => style.category === 'background_profile')
             .map(style => ({
-              value: style.style,
-              label: style.style,
+              value: style.style_id,
+              label: ALL_STYLES.find(s => s.id === style.style_id)?.name,
             }));
           const nicknameStyles = userStyles
             .filter(style => style.category === 'nickname')
             .map(style => ({
-              value: style.style,
-              label: style.style,
+              value: style.style_id,
+              label: ALL_STYLES.find(s => s.id === style.style_id)?.name,
             }));
-
+          console.log(profileStyles, nicknameStyles);
           // Добавляем опцию "Без стиля" в начало
-          const noStyleOption = { value: "0", label: "Без стиля" };
+          const noStyleOption = { value: userStyles.find(style => style.is_active === true).style_id, label: "Без стиля" };
           const updatedProfileStyles = [noStyleOption, ...profileStyles];
           const updatedNicknameStyles = [noStyleOption, ...nicknameStyles];
-
-          // Находим активные стили как объекты { value, label }
+          console.log(noStyleOption);
+          // Находим активные стили как объекты { value, labe l }
           const activeProfile = userStyles.find(style => style.category === 'background_profile' && style.is_active);
           const activeNickname = userStyles.find(style => style.category === 'nickname' && style.is_active);
 

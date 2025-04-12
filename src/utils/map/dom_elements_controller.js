@@ -77,7 +77,7 @@ export class DOM_ELEMENTS_CONTROLLER {
     });
   }
   createConnection(from, to, params) {
-    if (!params) params = { arrow: false, brokenLine: true };
+    if (!params) params = { arrow: true, brokenLine: true };
     const now = new Date();
     let id = now.getTime();
 
@@ -90,7 +90,7 @@ export class DOM_ELEMENTS_CONTROLLER {
     this.elements.forEach((el) => {
       this.createElement(el);
     });
-
+    if(this.connections?.length === 0 || !this.connections) return;
     this.connections.forEach((con) => {
       let from = this.elements.find((el) => el.id === con.from);
       let to = this.elements.find((el) => el.id === con.to);
@@ -112,7 +112,7 @@ export class DOM_ELEMENTS_CONTROLLER {
     this.drawDeleteButtons();
     const lines = document.querySelectorAll(".line");
     lines.forEach((line) => line.remove());
-
+    
     this.connections.forEach((con) => {
       let from = this.elements.find((el) => el.id === con.from);
       let to = this.elements.find((el) => el.id === con.to);
@@ -120,6 +120,8 @@ export class DOM_ELEMENTS_CONTROLLER {
     });
   }
   drawConnection(from, to, params, id) {
+    console.log(from, to, params, id);
+    if(!from || !to) return;
     const x1 = from.position.x + from.width / 2;
     const y1 = from.position.y + from.height / 2;
     const x2 = to.position.x + to.width / 2;
@@ -468,11 +470,12 @@ export class DOM_ELEMENTS_CONTROLLER {
   getUseDOM(obj) {
     this.useDOM = obj;
   }
-  getModeSettings(obj) {
+  getModeSettings(obj = {}) {
+    console.log(obj)
     this.MODE_HANDLER = {
-      CONSTANTS: obj.constants,
-      SET_MODE: obj.setMode,
-      IS_MODE: obj.isMode,
+      CONSTANTS: obj.constants ?? this.MODE_HANDLER?.CONSTANTS,
+      SET_MODE: obj.setMode ?? this.MODE_HANDLER?.SET_MODE,
+      IS_MODE: obj.isMode ?? this.MODE_HANDLER?.IS_MODE,
     };
   }
   getElementsAndConnections() {
@@ -482,6 +485,7 @@ export class DOM_ELEMENTS_CONTROLLER {
     this.modeSubscribers = callback;
   }
   getMapSettings(settings) {
+    console.log(settings)
     this.MAP_SETTINGS = settings;
   }
   subcribeUpdateElements(callback) {

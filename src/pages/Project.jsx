@@ -15,7 +15,7 @@ function Project() {
   const { id } = useParams(); // Может быть undefined, если URL /project без id
   const navigate = useNavigate();
   const { setActiveProject } = useActiveProjectStore();
-  const { isLoading:isLoadingProject, error, userProject } = useUserProject(id);
+  const { isLoading: isLoadingProject, error, userProject } = useUserProject(id);
   const [selectedLang, setSelectedLang] = useState("");
   const [isMyCodeBlock, setIsMyCodeBlock] = useState(true);
   const [code, setCode] = useState("");
@@ -27,7 +27,12 @@ function Project() {
   // Проверка последнего проекта из localStorage, если id не указан
   useEffect(() => {
     if (!id) {
-      const lastProjectId = JSON.parse(localStorage.getItem("recent_project_id")) || null;
+      let lastProjectId = null;
+      const item = localStorage.getItem("recent_project_id");
+      if (item && item !== "undefined") {
+        lastProjectId = JSON.parse(item);
+      }
+      console.log("lastProjectId:", lastProjectId);
       if (lastProjectId) {
         navigate(`/project/${lastProjectId}`);
       } else {
@@ -155,30 +160,36 @@ function Project() {
     <div className="container container-big">
       <div className="row">
         <div className="col-lg-4">
-          <div className="task__block task__block--height">
-            <Tabs tabs={tabs} defaultActiveTab="theory" activeTab={activeTab}>
-              <TabHeader tabs={tabs} />
-              <Tab id="theory">
-                <div className="task__block__section">
-                  <h5>Теория:</h5>
-                  <div dangerouslySetInnerHTML={{ __html: projectToDisplay.project_theory || "Теория отсутствует" }} />
-                </div>
-              </Tab>
-              <Tab id="description">
-                <div className="task__block__section">
-                  <h5>Описание задания:</h5>
-                  <div dangerouslySetInnerHTML={{ __html: projectToDisplay.project_description || "Описание отсутствует" }} />
-                </div>
-              </Tab>
-              <Tab id="output">
-                <div className="task__block__section">
-                  <h5>Результат:</h5>
-                  <div className="output mt-3 p-2 bg-dark text-light rounded">
-                    <pre>{outputData || "Здесь будет результат выполнения кода"}</pre>
+          <div className="task__block--height">
+            <div className="task__block task__block--title">
+              <h3>{projectToDisplay.project_name}</h3>
+            </div>
+            <div className="task__block task__block--fullHeight">
+
+              <Tabs tabs={tabs} defaultActiveTab="theory" activeTab={activeTab}>
+                <TabHeader tabs={tabs} />
+                <Tab id="theory">
+                  <div className="task__block__section">
+                    <h5>Теория:</h5>
+                    <div dangerouslySetInnerHTML={{ __html: projectToDisplay.project_theory || "Теория отсутствует" }} />
                   </div>
-                </div>
-              </Tab>
-            </Tabs>
+                </Tab>
+                <Tab id="description">
+                  <div className="task__block__section">
+                    <h5>Описание задания:</h5>
+                    <div dangerouslySetInnerHTML={{ __html: projectToDisplay.project_description || "Описание отсутствует" }} />
+                  </div>
+                </Tab>
+                <Tab id="output">
+                  <div className="task__block__section">
+                    <h5>Результат:</h5>
+                    <div className="output mt-3 p-2 bg-dark text-light rounded">
+                      <pre>{outputData || "Здесь будет результат выполнения кода"}</pre>
+                    </div>
+                  </div>
+                </Tab>
+              </Tabs>
+            </div>
           </div>
         </div>
         <div className="col-lg-8">
@@ -223,7 +234,7 @@ function Project() {
                   defaultLabel={selectedLang}
                   defaultValue={SUPPORTED_LANGUAGES.find(lang => lang.label === selectedLang)?.value}
                   placeholder="Выберите язык"
-                  onChange={({label}) => setSelectedLang(label)}
+                  onChange={({ label }) => setSelectedLang(label)}
                 />
               </div>
             </div>

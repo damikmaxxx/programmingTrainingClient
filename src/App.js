@@ -1,13 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { useUserStore } from './store/store'; // Предполагаемый импорт стора
-import Layout from './components/Layout';
-import { authRoutes, publicRoutes, guestRoutes, notFoundRoute } from './routes';
-import { authAPI } from './api/api';
-import Loader from './components/UI/Loader/Loader';
+import React, { useEffect, useState } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
+import { useUserStore } from "./store/store"; // Предполагаемый импорт стора
+import Layout from "./components/Layout";
+import { authRoutes, publicRoutes, guestRoutes, notFoundRoute, adminRoutes } from "./routes";
+import { authAPI } from "./api/api";
+import Loader from "./components/UI/Loader/Loader";
 
 function App() {
-  const {isAuth, setAuth,setUser } = useUserStore(); // Получаем состояние авторизации из стора
+  const { isAuth, setAuth, setUser, role } = useUserStore(); // Получаем состояние авторизации из стора
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     async function fetchData() {
@@ -19,9 +24,25 @@ function App() {
         }
 
         try {
-          const { username, coins, stars, nickname_id,photo } = await authAPI.getUserMinInfo();
-          console.log(photo)
-          setUser({ name: username, coins, stars, nicknameStyleId: nickname_id,photo });
+          const { username, coins, stars, nickname_id, photo, is_staff } =
+            await authAPI.getUserMinInfo();
+          console.log(is_staff);
+          console.log({
+            name: username,
+            coins,
+            stars,
+            nicknameStyleId: nickname_id,
+            photo,
+            role: is_staff ? "admin" : "user",
+          });
+          setUser({
+            name: username,
+            coins,
+            stars,
+            nicknameStyleId: nickname_id,
+            photo,
+            role: is_staff ? "admin" : "user",
+          });
         } catch (error) {
           console.error("Ошибка загрузки данных пользователя:", error);
         } finally {
@@ -31,7 +52,7 @@ function App() {
     }
     fetchData();
   }, []);
-  if (isLoading) return <Loader />; 
+  if (isLoading) return <Loader />;
   return (
     <Router>
       <Routes>
@@ -91,6 +112,21 @@ function App() {
               <Layout {...layoutProps}>
                 <Component />
               </Layout>
+            }
+          />
+        ))}
+        {adminRoutes.map(({ path, Component, layoutProps }) => (
+          <Route
+            key={path}
+            path={path}
+            element={
+              isAuth && role === "admin" ? (
+                <Layout {...layoutProps}>
+                  <Component />
+                </Layout>
+              ) : (
+                <Navigate to={isAuth ? "/map" : "/login"} replace />
+              )
             }
           />
         ))}

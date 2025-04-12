@@ -8,7 +8,7 @@ export const useActiveProjectStore = create((set) => ({
   // Добавление проекта в категорию "временные" и сохранение в localStorage
   setActiveProject: (project) =>
     set(() => {
-      localStorage.setItem("recent_project_id", JSON.stringify(project.project_id));
+      localStorage.setItem("recent_project_id", JSON.stringify(project.project));
       return {
         activeProject: project, // Обновляем activeProject новым значением
       };

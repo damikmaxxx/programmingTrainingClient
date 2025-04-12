@@ -10,10 +10,11 @@ import { useState } from 'react';
 import ProfileEditModal from '../../Shared/ProfileEditModal/ProfileEditModal';
 import { userAPI } from '../../../api/api';
 import { useUserStore } from '../../../store/store';
+import { GetStyleClassById } from '../../../data/ALL_STYLES';
 
 ChartJS.register(...registerables);
 
-export default function DefaultProfile({ avatar, stars, recentProjects, description, timeExpDiagram, skills, exp, projectTimes, bgStyles, selectedStyleId }) {
+export default function DefaultProfile({ avatar, stars, recentProjects, description, timeExpDiagram, skills, exp, projectTimes, bgStyles,nicknameStyleId, selectedStyleId }) {
   const descriptionMin = description?.length > 150 ? description.slice(0, 150) + '...' : description;
   const { level, expOnCurrentLevel, progressPercentage, expToNextLevel } = getLevelInfo(exp);
   const { name } = useUserStore();
@@ -59,10 +60,13 @@ const normalizedSkills = skills || [];
 // Подсчитываем общую сумму опыта
 const totalExperience = normalizedSkills.reduce((sum, skill) => sum + skill.experience, 0);
 
-// Вычисляем процент для каждого навыка (если totalExperience = 0, проценты будут 0)
+// Определяем базовое значение для расчёта процентов: минимум 1000
+const baseExperience = Math.max(totalExperience, 1000);
+
+// Вычисляем процент для каждого навыка относительно baseExperience
 const skillsWithPercentage = normalizedSkills.map(skill => ({
   ...skill,
-  percentage: totalExperience > 0 ? (skill.experience / totalExperience) * 100 : 0,
+  percentage: (skill.experience / baseExperience) * 100,
 }));
 console.log(skillsWithPercentage);
 
@@ -71,8 +75,7 @@ const radarData = {
   datasets: [
     {
       label: 'Навыки',
-      // Если totalExperience = 0, данные пустые, иначе используем проценты
-      data: totalExperience > 0 ? skillsWithPercentage.map(skill => skill.percentage) : [],
+      data: skillsWithPercentage.map(skill => skill.percentage), // Используем проценты
       backgroundColor: 'rgba(255, 99, 132, 0.2)',
       borderColor: 'rgba(255, 99, 132, 1)',
       borderWidth: 1,
@@ -83,6 +86,8 @@ const radarData = {
 const radarOptions = {
   scales: {
     r: {
+      min: 0, // Устанавливаем минимум шкалы
+      max: 100, // Устанавливаем максимум шкалы на 100%
       ticks: {
         display: false, // Полностью убираем ticks (включая их визуальные элементы)
       },
@@ -152,7 +157,9 @@ const radarOptions = {
     }
     closeModal();
   };
-
+  console.log(nicknameStyleId)
+  const classStyle = GetStyleClassById(nicknameStyleId);
+  console.log(classStyle)
   return (
     <div className={styles.bg}>
       <div className={styles.bg_styles_wrapper}>
@@ -174,7 +181,7 @@ const radarOptions = {
               <div className={styles.headerInfo}>
                 <img className={styles.avatar} src={avatar} alt="Аватар" />
                 <div className={styles.info}>
-                  <h2 className={styles.name}>{name}</h2>
+                  <h2 className={styles.name + " " + classStyle}>{name}</h2>
                   <p className={styles.description}>{descriptionMin}</p>
                   <div className={styles.statsContainer}>
                     <ItemCounter type={"coin"} />

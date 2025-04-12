@@ -3,44 +3,115 @@ import styles from './Rating.module.css';
 import Tabs, { Tab, TabHeader } from '../components/UI/Tabs/Tabs';
 import { Link } from 'react-router-dom';
 import "../styles/nicknameStyles.css";
-import { GetStyleClassById} from '../data/ALL_STYLES.js';
+import { GetStyleClassById } from '../data/ALL_STYLES.js';
 import { useRatingStore, useUserStore } from '../store/store.js';
 import Loader from '../components/UI/Loader/Loader.jsx';
 import { ratingAPI } from '../api/api.js';
+
 const tabs = [
   { id: 'expfull', label: 'ТОП-10 EXP' },
   { id: 'starsfull', label: 'ТОП-10 STARS' },
-  { id: 'expshort', label: 'ТОП-10 недели EXP' },
-  { id: 'starsshort', label: 'ТОП-10 недели STARS' },
+  { id: 'expshort', label: 'ТОП-10 месяца EXP' },
+  { id: 'starsshort', label: 'ТОП-10 месяца STARS' },
 ];
 
 const Rating = () => {
-  const { topExpFull, topExpWeek, topStarsFull, topStarsWeek,topExpMonth,topStarsMonth,setTopExpMonth,setTopStarsMonth, setTopExpFull,setTopStarsFull } = useRatingStore();
-    const [isLoading, setIsLoading] = useState(true);
+  const { topExpFull = [], topStarsFull = [], topExpMonth = [], topStarsMonth = [], setTopExpMonth, setTopStarsMonth, setTopExpFull, setTopStarsFull } = useRatingStore();
+  const [isLoading, setIsLoading] = useState(true);
   const { name, id } = useUserStore();
-
-  const MyRating = {
-    userId: id,
-    name: name,
-    index: 999,
-    exp: 10,
-  };
-
+  const [currentUserRatings, setCurrentUserRatings] = useState({
+    expfull: null,
+    starsfull: null,
+    expshort: null,
+    starsshort: null,
+  });
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const [expFull, starsFull,expMonth,starsMonth] = await Promise.all([
+        const [expFull, starsFull, expMonth, starsMonth] = await Promise.all([
           ratingAPI.getExperienceRanking('all_time', 10),
           ratingAPI.getStarsRanking('all_time', 10),
           ratingAPI.getExperienceRanking('month', 10),
-          ratingAPI.getStarsRanking('month', 10)
+          ratingAPI.getStarsRanking('month', 10),
         ]);
-        console.log(expFull, starsFull)
-        setTopExpFull(expFull);
-        setTopStarsFull(starsFull);
-        setTopExpMonth(expMonth);
-        setTopStarsMonth(starsMonth);
+        console.log('expFull:', expFull);
+        console.log('starsFull:', starsFull);
+        console.log('expMonth:', expMonth);
+        console.log('starsMonth:', starsMonth);
+
+        setTopExpFull(expFull.users.map(user => ({
+          userId: user.user_id,
+          username: user.username,
+          photo: user.photo,
+          textEffectId: user.nickname_id,
+          total_experience: user.total_experience || 0,
+          total_stars: 0,
+        })));
+        setTopStarsFull(starsFull.users.map(user => ({
+          userId: user.user_id,
+          username: user.username,
+          photo: user.photo,
+          textEffectId: user.nickname_id,
+          total_experience: 0,
+          total_stars: user.total_stars || 0,
+        })));
+        setTopExpMonth(expMonth.users.map(user => ({
+          userId: user.user_id,
+          username: user.username,
+          photo: user.photo,
+          textEffectId: user.nickname_id,
+          total_experience: user.total_experience || 0,
+          total_stars: 0,
+        })));
+        setTopStarsMonth(starsMonth.users.map(user => ({
+          userId: user.user_id,
+          username: user.username,
+          photo: user.photo,
+          textEffectId: user.nickname_id,
+          total_experience: 0,
+          total_stars: user.total_stars || 0,
+        })));
+
+        // Сохраняем рейтинговые данные текущего пользователя для каждой вкладки
+        setCurrentUserRatings({
+          expfull: expFull.current_user_ranking ? {
+            userId: expFull.current_user_ranking.user_id,
+            username: expFull.current_user_ranking.username,
+            photo: expFull.current_user_ranking.photo,
+            textEffectId: expFull.current_user_ranking.nickname_id,
+            total_experience: expFull.current_user_ranking.total_experience || 0,
+            total_stars: 0,
+            index: expFull.current_user_ranking.position || 999,
+          } : null,
+          starsfull: starsFull.current_user_ranking ? {
+            userId: starsFull.current_user_ranking.user_id,
+            username: starsFull.current_user_ranking.username,
+            photo: starsFull.current_user_ranking.photo,
+            textEffectId: starsFull.current_user_ranking.nickname_id,
+            total_experience: 0,
+            total_stars: starsFull.current_user_ranking.total_stars || 0,
+            index: starsFull.current_user_ranking.position || 999,
+          } : null,
+          expshort: expMonth.current_user_ranking ? {
+            userId: expMonth.current_user_ranking.user_id,
+            username: expMonth.current_user_ranking.username,
+            photo: expMonth.current_user_ranking.photo,
+            textEffectId: expMonth.current_user_ranking.nickname_id,
+            total_experience: expMonth.current_user_ranking.total_experience || 0,
+            total_stars: 0,
+            index: expMonth.current_user_ranking.position || 999,
+          } : null,
+          starsshort: starsMonth.current_user_ranking ? {
+            userId: starsMonth.current_user_ranking.user_id,
+            username: starsMonth.current_user_ranking.username,
+            photo: starsMonth.current_user_ranking.photo,
+            textEffectId: starsMonth.current_user_ranking.nickname_id,
+            total_experience: 0,
+            total_stars: starsMonth.current_user_ranking.total_stars || 0,
+            index: starsMonth.current_user_ranking.position || 999,
+          } : null,
+        });
       } catch (error) {
         console.error("Ошибка загрузки рейтинга:", error);
       } finally {
@@ -48,11 +119,10 @@ const Rating = () => {
       }
     }
     fetchData();
-  }, []);
-  // Проверяем, есть ли пользователь в топе
-  const isInTop = topExpFull.some(user => user.userId === MyRating.userId);
+  }, [setTopExpFull, setTopStarsFull, setTopExpMonth, setTopStarsMonth]);
 
-  if (isLoading) return <Loader />; 
+  if (isLoading) return <Loader />;
+
   return (
     <div className="container">
       <h1 className="text-center mb-3">Рейтинг пользователей</h1>
@@ -61,74 +131,96 @@ const Rating = () => {
         <div className="tabs_container_dark">
           <Tab id="expfull">
             <div className={styles.rating}>
-              <RatingItem key={0} index={1} {...topExpFull[0]} />
-              <div className={styles.ratingScroll}>
-                {topExpFull?.slice(1).map((item, index) => (
-                  <RatingItem key={item.id} index={index + 2} {...item} />
-                ))}
-              </div>
-              {!isInTop && (
+              {topExpFull.length > 0 && (
+                <>
+                  <RatingItem key={topExpFull[0].userId} index={1} {...topExpFull[0]} />
+                  <div className={styles.ratingScroll}>
+                    {topExpFull.slice(1).map((item, idx) => (
+                      <RatingItem 
+                        key={`${item.userId}-${idx}`} 
+                        index={idx + 2} 
+                        {...item} 
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+              {currentUserRatings.expfull.index > 10 && !topExpFull.some(user => user.userId === id) && currentUserRatings.expfull && (
                 <div className={styles.ratingItemLast}>
-                  <RatingItem index={MyRating.index} {...MyRating} />
+                  <RatingItem key={currentUserRatings.expfull.userId} {...currentUserRatings.expfull} />
                 </div>
               )}
             </div>
           </Tab>
           <Tab id="starsfull">
             <div className={styles.rating}>
-              <RatingItem key={0} index={1} {...topStarsFull[0]} />
-              <div className={styles.ratingScroll}>
-                {topStarsFull?.slice(1).map((item, index) => (
-                  <RatingItem key={item.id} index={index + 2} {...item} />
-                ))}
-              </div>
-              {!isInTop && (
+              {topStarsFull.length > 0 && (
+                <>
+                  <RatingItem key={topStarsFull[0].userId} index={1} {...topStarsFull[0]} />
+                  <div className={styles.ratingScroll}>
+                    {topStarsFull.slice(1).map((item, idx) => (
+                      <RatingItem 
+                        key={`${item.userId}-${idx}`} 
+                        index={idx + 2} 
+                        {...item} 
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+              {currentUserRatings.starsfull.index > 10 && !topStarsFull.some(user => user.userId === id) && currentUserRatings.starsfull && (
                 <div className={styles.ratingItemLast}>
-                  <RatingItem index={MyRating.index} {...MyRating} />
+                  <RatingItem key={currentUserRatings.starsfull.userId} {...currentUserRatings.starsfull} />
                 </div>
               )}
             </div>
           </Tab>
           <Tab id="expshort">
             <div className={styles.rating}>
-              <RatingItem key={0} index={1} {...topStarsFull[0]} />
-              <div className={styles.ratingScroll}>
-                {topExpMonth?.slice(1).map((item, index) => (
-                  <RatingItem key={item.id} index={index + 2} {...item} />
-                ))}
-              </div>
-              {!isInTop && (
+              {topExpMonth.length > 0 && (
+                <>
+                  <RatingItem key={topExpMonth[0].userId} index={1} {...topExpMonth[0]} />
+                  <div className={styles.ratingScroll}>
+                    {topExpMonth.slice(1).map((item, idx) => (
+                      <RatingItem 
+                        key={`${item.userId}-${idx}`} 
+                        index={idx + 2} 
+                        {...item} 
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+              {currentUserRatings.expshort.index > 10 && !topExpMonth.some(user => user.userId === id) && currentUserRatings.expshort && (
                 <div className={styles.ratingItemLast}>
-                  <RatingItem index={MyRating.index} {...MyRating} />
+                  <RatingItem key={currentUserRatings.expshort.userId} {...currentUserRatings.expshort} />
                 </div>
               )}
             </div>
           </Tab>
           <Tab id="starsshort">
             <div className={styles.rating}>
-              <RatingItem key={0} index={1} {...topStarsFull[0]} />
-              <div className={styles.ratingScroll}>
-                {topStarsMonth?.slice(1).map((item, index) => (
-                  <RatingItem key={item.id} index={index + 2} {...item} />
-                ))}
-              </div>
-              {!isInTop && (
+              {topStarsMonth.length > 0 && (
+                <>
+                  <RatingItem key={topStarsMonth[0].userId} index={1} {...topStarsMonth[0]} />
+                  <div className={styles.ratingScroll}>
+                    {topStarsMonth.slice(1).map((item, idx) => (
+                      <RatingItem 
+                        key={`${item.userId}-${idx}`} 
+                        index={idx + 2} 
+                        {...item} 
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+              {currentUserRatings.starsshort.index > 10 && !topStarsMonth.some(user => user.userId === id) && currentUserRatings.starsshort && (
                 <div className={styles.ratingItemLast}>
-                  <RatingItem index={MyRating.index} {...MyRating} />
+                  <RatingItem key={currentUserRatings.starsshort.userId} {...currentUserRatings.starsshort} />
                 </div>
               )}
             </div>
           </Tab>
-          {/* <Tab id="expshort">
-            {topExpMonth.map((item, index) => (
-              <RatingItem key={item.id} index={index + 1} {...item} />
-            ))}
-          </Tab>
-          <Tab id="starsshort">
-            {topStarsMonth.map((item, index) => (
-              <RatingItem key={item.id} index={index + 1} {...item} />
-            ))}
-          </Tab> */}
         </div>
       </Tabs>
     </div>
@@ -137,15 +229,22 @@ const Rating = () => {
 
 export default Rating;
 
-
-const RatingItem = ({ index, photo, username, total_experience, userId, textEffectId }) => {
+const RatingItem = ({ index, photo, username, total_experience, total_stars, userId, textEffectId }) => {
   const DEFAULT_AVATAR_SRC = 'https://www.gravatar.com/avatar/?d=mp';
-  const [imgSrc, setImgSrc] = useState(photo || DEFAULT_AVATAR_SRC); // Изначально пытаемся загрузить photo
+  const [imgSrc, setImgSrc] = useState(photo || DEFAULT_AVATAR_SRC);
   const isTop = index <= 1;
 
-  // Обработчик ошибки загрузки изображения
   const handleImageError = () => {
-    setImgSrc(DEFAULT_AVATAR_SRC); // Если фото не загрузилось, подставляем дефолт
+    setImgSrc(DEFAULT_AVATAR_SRC);
+  };
+
+  const renderStats = () => {
+    if (total_experience > 0) {
+      return <div className={styles.userRes}>EXP {total_experience}</div>;
+    } else if (total_stars > 0) {
+      return <div className={styles.userRes}>Stars {total_stars}</div>;
+    }
+    return null;
   };
 
   return (
@@ -157,14 +256,14 @@ const RatingItem = ({ index, photo, username, total_experience, userId, textEffe
           <img
             src={imgSrc}
             alt="аватарка"
-            onError={handleImageError} // Срабатывает, если изображение не загрузилось
+            onError={handleImageError}
           />
         </div>
         <span className={`${styles.userName} ${GetStyleClassById(textEffectId) || ''}`}>
           {username}
         </span>
       </Link>
-      <div className={styles.userRes}>EXP {total_experience}</div>
+      {renderStats()}
     </div>
   );
 };

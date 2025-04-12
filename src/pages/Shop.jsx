@@ -4,7 +4,7 @@ import Tabs, { Tab, TabHeader } from '../components/UI/Tabs/Tabs';
 import Button from '../components/UI/Button/Button';
 import "../styles/nicknameStyles.css";
 import Select from '../components/UI/Select/Select.jsx';
-import { useShopStore } from '../store/store.js';
+import { useShopStore, useUserStore } from '../store/store.js';
 import ItemCounter from '../components/Shared/ItemCounter/ItemCounter.jsx';
 import { useNavigate } from 'react-router-dom';
 import { ALL_STYLES, GetStyleComponentById } from '../data/ALL_STYLES.js';
@@ -28,6 +28,7 @@ const buyItem = (item) => {
 
 const Shop = () => {
   const { nicknameStyles, profileStyle, setNicknameStyles, setProfileStyle } = useShopStore();
+  const {name} = useUserStore();
   const { isLoading, shopStyles } = useShop(shopAPI);
   console.log(isLoading, shopStyles);
   const tabs = [
@@ -69,7 +70,7 @@ const Shop = () => {
                   <div key={style.id} className="col-4">
                     <div className={styles.shopItem + " dark-primary-color"}>
                       <div className={styles.shopItemName}>
-                        <span className={s?.className || ""}>USER NAME</span>
+                        <span className={s?.className || ""}>{name}</span>
                       </div>
                       <div>
                         <h4>{s?.name || "Неизвестный стиль"}</h4>

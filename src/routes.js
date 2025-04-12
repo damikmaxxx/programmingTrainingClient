@@ -11,7 +11,7 @@ import {
 
 import Profile from './pages/Profile';
 import Projects from './pages/Projects';
-import Map from './pages/Map';
+import Map, { MapWrapper } from './pages/Map';
 import Shop from './pages/Shop';
 import Rating from './pages/Rating';
 import Registration from './pages/Registration';
@@ -113,6 +113,16 @@ export const notFoundRoute = [
     Component: NotFound,
     layoutProps: {
       dark: true,
+    },
+  },
+];
+
+export const adminRoutes = [
+  {
+    path: `${MAP_ROUTE}/admin`,
+    Component:  MapWrapper,
+    layoutProps: {
+      noMainWrapper: true,
     },
   },
 ];
