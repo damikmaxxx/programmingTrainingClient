@@ -841,7 +841,7 @@ a.button {
 .projects__project h3 {
 	height: 60px;
 	z-index: 25;
-	padding-right: 10px;
+	padding-right: 80px;
 	overflow: hidden;
 }
 

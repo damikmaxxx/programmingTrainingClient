@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { userAPI } from '../api/api.js'; // Импортируем API для получения стилей
+import { userAPI } from '../api/api.js';
 import { ALL_STYLES } from '../data/ALL_STYLES.js';
 
 const useUserStyles = (userProfileStyle, userNicknameStyle) => {
@@ -18,38 +18,52 @@ const useUserStyles = (userProfileStyle, userNicknameStyle) => {
       try {
         const userStyles = await userAPI.getUserStyles();
         if (userStyles) {
-          // Фильтруем стили по категориям
-          console.log(userStyles);
+          // Опция "Без стиля"
+          const noStyleOption = { value: "0", label: "Без стиля" };
 
+          // Фильтруем и мапим стили для профиля
           const profileStyles = userStyles
             .filter(style => style.category === 'background_profile')
             .map(style => ({
-              value: style.style_id,
-              label: ALL_STYLES.find(s => s.id === style.style_id)?.name,
+              value: style.style_id.toString(),
+              label: ALL_STYLES.find(s => s.id === style.style_id)?.name || 'Неизвестный стиль',
             }));
+
+          // Фильтруем и мапим стили для ника
           const nicknameStyles = userStyles
             .filter(style => style.category === 'nickname')
             .map(style => ({
-              value: style.style_id,
-              label: ALL_STYLES.find(s => s.id === style.style_id)?.name,
+              value: style.style_id.toString(),
+              label: ALL_STYLES.find(s => s.id === style.style_id)?.name || 'Неизвестный стиль',
             }));
-          console.log(profileStyles, nicknameStyles);
-          // Добавляем опцию "Без стиля" в начало
-          const noStyleOption = { value: userStyles.find(style => style.is_active === true).style_id, label: "Без стиля" };
+
+          // Добавляем "Без стиля" в начало массивов
           const updatedProfileStyles = [noStyleOption, ...profileStyles];
           const updatedNicknameStyles = [noStyleOption, ...nicknameStyles];
-          console.log(noStyleOption);
-          // Находим активные стили как объекты { value, labe l }
-          const activeProfile = userStyles.find(style => style.category === 'background_profile' && style.is_active);
-          const activeNickname = userStyles.find(style => style.category === 'nickname' && style.is_active);
 
+          // Находим активный стиль для профиля
+          const activeProfile = userStyles.find(
+            style => style.category === 'background_profile' && style.is_active
+          );
           const activeProfileOption = activeProfile
-            ? { value: activeProfile.style, label: activeProfile.style }
-            : noStyleOption;
-          const activeNicknameOption = activeNickname
-            ? { value: activeNickname.style, label: activeNickname.style }
+            ? {
+                value: activeProfile.style_id.toString(),
+                label: ALL_STYLES.find(s => s.id === activeProfile.style_id)?.name || 'Неизвестный стиль',
+              }
             : noStyleOption;
 
+          // Находим активный стиль для ника
+          const activeNickname = userStyles.find(
+            style => style.category === 'nickname' && style.is_active
+          );
+          const activeNicknameOption = activeNickname
+            ? {
+                value: activeNickname.style_id.toString(),
+                label: ALL_STYLES.find(s => s.id === activeNickname.style_id)?.name || 'Неизвестный стиль',
+              }
+            : noStyleOption;
+
+          // Обновляем состояния
           setProfileStylesOptions(updatedProfileStyles);
           setNicknameStylesOptions(updatedNicknameStyles);
           setDefaultProfileStyle(activeProfileOption);
@@ -57,6 +71,12 @@ const useUserStyles = (userProfileStyle, userNicknameStyle) => {
         }
       } catch (error) {
         console.error('Ошибка при получении стилей:', error);
+        // Устанавливаем "Без стиля" в случае ошибки
+        const noStyleOption = { value: "0", label: "Без стиля" };
+        setProfileStylesOptions([noStyleOption]);
+        setNicknameStylesOptions([noStyleOption]);
+        setDefaultProfileStyle(noStyleOption);
+        setDefaultNicknameStyle(noStyleOption);
       } finally {
         setLoading(false);
       }

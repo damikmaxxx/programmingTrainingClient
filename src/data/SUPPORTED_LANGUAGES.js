@@ -14,5 +14,9 @@ export const SUPPORTED_LANGUAGES = [
     {
         label: "Java",
         value: "java",
+    },
+    {
+        label: "Go",
+        value: "go",
     }
 ]

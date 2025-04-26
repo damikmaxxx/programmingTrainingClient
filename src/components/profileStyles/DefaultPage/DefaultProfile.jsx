@@ -11,10 +11,11 @@ import ProfileEditModal from '../../Shared/ProfileEditModal/ProfileEditModal';
 import { userAPI } from '../../../api/api';
 import { useUserStore } from '../../../store/store';
 import { GetStyleClassById } from '../../../data/ALL_STYLES';
+import { STYLE_CATEGORY_NICKNAME, STYLE_CATEGORY_BACKGROUND_PROFILE } from '../../../api/user';
 
 ChartJS.register(...registerables);
 
-export default function DefaultProfile({ avatar, stars, recentProjects, description, timeExpDiagram, skills, exp, projectTimes, bgStyles,nicknameStyleId, selectedStyleId }) {
+export default function DefaultProfile({ avatar, stars, recentProjects, description, timeExpDiagram, skills, exp, projectTimes, bgStyles, nicknameStyleId, selectedStyleId }) {
   const descriptionMin = description?.length > 150 ? description.slice(0, 150) + '...' : description;
   const { level, expOnCurrentLevel, progressPercentage, expToNextLevel } = getLevelInfo(exp);
   const { name } = useUserStore();
@@ -54,61 +55,62 @@ export default function DefaultProfile({ avatar, stars, recentProjects, descript
     ],
   };
 
-// Если skills пустой, задаём пустой массив
-const normalizedSkills = skills || [];
+  // Если skills пустой, задаём пустой массив
+  const normalizedSkills = skills || [];
 
-// Подсчитываем общую сумму опыта
-const totalExperience = normalizedSkills.reduce((sum, skill) => sum + skill.experience, 0);
+  // Подсчитываем общую сумму опыта
+  const totalExperience = normalizedSkills.reduce((sum, skill) => sum + skill.experience, 0);
 
-// Определяем базовое значение для расчёта процентов: минимум 1000
-const baseExperience = Math.max(totalExperience, 1000);
+  // Определяем базовое значение для расчёта процентов: минимум 1000
+  const baseExperience = Math.max(totalExperience, 1000);
 
-// Вычисляем процент для каждого навыка относительно baseExperience
-const skillsWithPercentage = normalizedSkills.map(skill => ({
-  ...skill,
-  percentage: (skill.experience / baseExperience) * 100,
-}));
-console.log(skillsWithPercentage);
+  // Вычисляем процент для каждого навыка относительно baseExperience
+  const skillsWithPercentage = normalizedSkills.map(skill => ({
+    ...skill,
+    percentage: (skill.experience / baseExperience) * 100,
+  }));
+  console.log(skillsWithPercentage);
 
-const radarData = {
-  labels: skillsWithPercentage.map(skill => skill.language), // Используем language
-  datasets: [
-    {
-      label: 'Навыки',
-      data: skillsWithPercentage.map(skill => skill.percentage), // Используем проценты
-      backgroundColor: 'rgba(255, 99, 132, 0.2)',
-      borderColor: 'rgba(255, 99, 132, 1)',
-      borderWidth: 1,
-    },
-  ],
-};
-
-const radarOptions = {
-  scales: {
-    r: {
-      min: 0, // Устанавливаем минимум шкалы
-      max: 100, // Устанавливаем максимум шкалы на 100%
-      ticks: {
-        display: false, // Полностью убираем ticks (включая их визуальные элементы)
+  const radarData = {
+    labels: skillsWithPercentage.map(skill => skill.language), // Используем language
+    datasets: [
+      {
+        label: 'Навыки',
+        data: skillsWithPercentage.map(skill => skill.percentage), // Используем проценты
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1,
       },
-      grid: {
-        color: '#282C34', // Темнее светло-серого, но не слишком тёмный
-        lineWidth: 2,
-      },
-      angleLines: {
-        display: false, // Убираем радиальные линии от центра к меткам
-      },
-      pointLabels: {
-        display: true, // Оставляем метки видимыми
-        font: {
-          size: 16, // Увеличиваем размер шрифта
-          weight: 'bold', // Делаем шрифт жирнее (опционально)
+    ],
+  };
+
+  const radarOptions = {
+    scales: {
+      r: {
+        min: 0, // Устанавливаем минимум шкалы
+        max: 100, // Устанавливаем максимум шкалы на 100%
+        ticks: {
+          display: false, // Полностью убираем ticks (включая их визуальные элементы)
         },
-        color: '#f0f0f0', // Светлый цвет, почти белый, но мягче
+        grid: {
+          color: '#282C34', // Темнее светло-серого, но не слишком тёмный
+          lineWidth: 2,
+        },
+        angleLines: {
+          display: false, // Убираем радиальные линии от центра к меткам
+        },
+        pointLabels: {
+          display: true, // Оставляем метки видимыми
+          font: {
+            size: 16, // Увеличиваем размер шрифта
+            weight: 'bold', // Делаем шрифт жирнее (опционально)
+          },
+          color: '#f0f0f0', // Светлый цвет, почти белый, но мягче
+        },
       },
     },
-  },
-};
+  };
+
   const [showModal, setShowModal] = useState(false);
 
   // Открытие модалки
@@ -147,9 +149,20 @@ const radarOptions = {
       // Обновляем стили профиля и ника
       const profileStyleValue = props.values.profileStyle.value;
       const nicknameStyleValue = props.values.nicknameStyle.value;
-      console.log(profileStyleValue, nicknameStyleValue, props.values.nicknameStyle, props.values.profileStyle);
-      await userAPI.updateUserStyle(profileStyleValue);
-      await userAPI.updateUserStyle(nicknameStyleValue);
+
+      // Для стиля профиля
+      if (profileStyleValue === '0') {
+        await userAPI.updateUserStyle(0, STYLE_CATEGORY_BACKGROUND_PROFILE);
+      } else {
+        await userAPI.updateUserStyle(profileStyleValue);
+      }
+
+      // Для стиля ника
+      if (nicknameStyleValue === '0') {
+        await userAPI.updateUserStyle(0, STYLE_CATEGORY_NICKNAME);
+      } else {
+        await userAPI.updateUserStyle(nicknameStyleValue);
+      }
 
       console.log('Профиль и стили успешно обновлены');
     } catch (error) {
@@ -157,9 +170,11 @@ const radarOptions = {
     }
     closeModal();
   };
-  console.log(nicknameStyleId)
+
+  console.log(nicknameStyleId);
   const classStyle = GetStyleClassById(nicknameStyleId);
-  console.log(classStyle)
+  console.log(classStyle);
+
   return (
     <div className={styles.bg}>
       <div className={styles.bg_styles_wrapper}>
@@ -235,7 +250,6 @@ const radarOptions = {
           <div className={"col-lg-4 " + styles.over}>
             <div className={styles.section}>
               <span className={styles.radarDiagram}><Radar data={radarData} options={radarOptions} /></span>
-
             </div>
           </div>
         </div>

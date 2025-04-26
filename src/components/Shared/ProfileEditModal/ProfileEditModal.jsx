@@ -123,7 +123,7 @@ const ProfileEditModal = ({ showModal, closeModal, handleConfirm, user = {} }) =
                   options={profileStylesOptions}
                   defaultLabel={defaultProfileStyle.label}
                   defaultValue={defaultProfileStyle.value}
-                  onChange={(style) => setFieldValue('profileStyle', style.value)}
+                  onChange={(style) => {console.log(style); setFieldValue('profileStyle', {value: style.value, label: style.label})}}
                 />
                 <ErrorMessage
                   name="profileStyle"
@@ -138,7 +138,7 @@ const ProfileEditModal = ({ showModal, closeModal, handleConfirm, user = {} }) =
                   options={nicknameStylesOptions}
                   defaultLabel={defaultNicknameStyle.label}
                   defaultValue={defaultNicknameStyle.value}
-                  onChange={(style) => setFieldValue('nicknameStyle', style.value)}
+                  onChange={(style) => setFieldValue('nicknameStyle', {value: style.value, label: style.label})}
                 />
                 <ErrorMessage
                   name="nicknameStyle"

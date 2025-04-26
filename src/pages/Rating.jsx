@@ -112,6 +112,7 @@ const Rating = () => {
             index: starsMonth.current_user_ranking.position || 999,
           } : null,
         });
+        console.log('currentUserRatings:', currentUserRatings);
       } catch (error) {
         console.error("Ошибка загрузки рейтинга:", error);
       } finally {

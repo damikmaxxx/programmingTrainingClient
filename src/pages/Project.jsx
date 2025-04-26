@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Select from "../components/UI/Select/Select";
 import Tabs, { Tab, TabHeader } from '../components/UI/Tabs/Tabs';
 import CodeEditor from "../components/UI/CodeEditor/CodeEditor";
-import { useActiveProjectStore } from '../store/store.js';
+import { useActiveProjectStore, useUserStore } from '../store/store.js';
 import Button from "../components/UI/Button/Button.jsx";
 import ProjectSolution from "../components/ProjectSolutions.jsx";
 import useUserProject from '../hooks/useUserProject.js';
@@ -14,9 +14,10 @@ import { SUPPORTED_LANGUAGES } from "../data/SUPPORTED_LANGUAGES.js";
 function Project() {
   const { id } = useParams(); // Может быть undefined, если URL /project без id
   const navigate = useNavigate();
+  const {id:userId} = useUserStore()
   const { setActiveProject } = useActiveProjectStore();
   const { isLoading: isLoadingProject, error, userProject } = useUserProject(id);
-  const [selectedLang, setSelectedLang] = useState("");
+  const [selectedLang, setSelectedLang] = useState({value: "", label: ""});
   const [isMyCodeBlock, setIsMyCodeBlock] = useState(true);
   const [code, setCode] = useState("");
   const [localProject, setLocalProject] = useState(null);
@@ -24,6 +25,7 @@ function Project() {
   const [outputData, setOutputData] = useState("");
   const [activeTab, setActiveTab] = useState("tab1");
   const [isLoading, setIsLoading] = useState(true);
+  const [availableLanguages, setAvailableLanguages] = useState([]);
   // Проверка последнего проекта из localStorage, если id не указан
   useEffect(() => {
     if (!id) {
@@ -46,12 +48,17 @@ function Project() {
       console.log(isLoading);
       setIsLoading(true)
       if (userProject) {
-
+        
         console.log("userProject:", userProject);
         setActiveProject(userProject);
         setLocalProject(userProject);
         setCode(userProject.code || "");
-        setSelectedLang(userProject?.language || "C++");
+        setSelectedLang(userProject?.language || "");
+        setAvailableLanguages(
+          userProject?.available_languages?.map(lang => ({
+            value: lang.compiler_name,
+            label: lang.name
+          })) || [])
         console.log(isLoading);
         setIsLoading(false);
       } else if (error) {
@@ -64,7 +71,7 @@ function Project() {
   const handleSave = async () => {
     try {
       const updatedProject = {
-        language: selectedLang,
+        language: selectedLang.value,
         code,
       };
       await userAPI.updateUserProjectById(id, updatedProject);
@@ -80,8 +87,10 @@ function Project() {
     try {
       const updatedProject = {
         ...localProject,
+        language:   SUPPORTED_LANGUAGES.find(obj => obj.label == selectedLang ).value ,
         is_published: true,
       };
+      console.log(updatedProject)
       await userAPI.updateUserProjectById(id, updatedProject);
       console.log("Проект успешно опубликован!");
       setActiveProject(updatedProject);
@@ -95,12 +104,15 @@ function Project() {
     try {
       setActiveTab("output");
       console.log({
+        userId,
+        "project_id": id,
         "code": code,
         "language": selectedLang,
         "input_data": inputData || null,
         "project": id,
       });
       const result = await userAPI.executeCode(
+        userId,
         code,
         selectedLang,
         inputData || null,
@@ -219,18 +231,21 @@ function Project() {
                     Мое решение
                   </Button>
                 )}
-                <Button
-                  variant="small"
-                  className="me-3"
-                  onClick={() => setIsMyCodeBlock(false)}
-                  disabled={!projectToDisplay.is_published}
-                >
-                  Другие решения
-                </Button>
+                {
+                    <Button
+                    variant="small"
+                    className="me-3"
+                    onClick={() => setIsMyCodeBlock(false)}
+                    disabled={!projectToDisplay.is_published}
+                  >
+                    Другие решения
+                  </Button>
+                }
+
               </div>
               <div className="select">
                 <Select
-                  options={SUPPORTED_LANGUAGES}
+                  options={availableLanguages}
                   defaultLabel={selectedLang}
                   defaultValue={SUPPORTED_LANGUAGES.find(lang => lang.label === selectedLang)?.value}
                   placeholder="Выберите язык"
@@ -260,7 +275,7 @@ function Project() {
             ) : (
               projectToDisplay.is_published && (
                 <div className="task__block__solution">
-                  <ProjectSolution sortedLang={selectedLang} solutions={solutions} />
+                  <ProjectSolution sortedLang={selectedLang} projectId={id} />
                 </div>
               )
             )}

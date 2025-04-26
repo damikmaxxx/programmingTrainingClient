@@ -1,10 +1,12 @@
 import { $authHost } from "./index"; // Используем авторизованный хост
-
+export const STYLE_CATEGORY_NICKNAME = 'nickname';
+export const STYLE_CATEGORY_BACKGROUND_PROFILE = 'background_profile';
 const userAPI = {
   // Получение информации о профиле пользователя
   getProfile: async () => {
     try {
       const { data } = await $authHost.get("/profile/");
+      console.log(data);
       return data;
     } catch (error) {
       console.error(
@@ -82,15 +84,23 @@ const userAPI = {
   },
 
   // Обновление стиля профиля или ника
-  updateUserStyle: async (styleId) => {
+  updateUserStyle: async (styleId, clearCategory = null) => {
     try {
+      // Если styleId = 0 и есть clearCategory, отправляем запрос на деактивацию стиля
+      if (styleId === 0 && clearCategory) {
+        const { data } = await $authHost.put(`/userstyle/0/`, {
+          clear_category: clearCategory, // nickname или background_profile
+        });
+        return data; // { style: "Gold Shine", is_active: false } или ошибка
+      }
+
+      // Обычный запрос на активацию стиля
       const { data } = await $authHost.put(`/userstyle/${styleId}/`);
-      return data;
+      return data; // { style: str, is_active: true } или ошибка
     } catch (error) {
-      console.error(
-        "Ошибка при обновлении стиля:",
-        error.response?.data || error.message
-      );
+      const errorMessage = error.response?.data?.detail || error.response?.data || error.message;
+      console.error('Ошибка при обновлении стиля:', errorMessage);
+      throw new Error(errorMessage); // Бросаем ошибку для обработки в хуке/компоненте
     }
   },
   // 2.1 GET /user-projects/ - Получение списка всех пользовательских проектов
@@ -200,9 +210,10 @@ const userAPI = {
     }
   },
   // 10.1 POST /code-executor/ - Отправка кода на компиляцию
-  executeCode: async (code, language, inputData = null, project = null) => {
+  executeCode: async (user_project, code, language, inputData = null, project = null) => {
     try {
       const requestData = {
+        user_project,
         code,
         language,
         ...(inputData && { input_data: inputData }), // Добавляем input_data, если указано

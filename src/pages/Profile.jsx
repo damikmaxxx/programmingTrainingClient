@@ -6,6 +6,7 @@ import { useUserStore } from '../store/store';
 
 function Profile({ testStyle = false }) {
   const { userData, isLoading, error } = useProfileData(testStyle);
+  
   const {nicknameStyleId} =  useUserStore();
   if (isLoading) return <Loader />;
   if (error) return <div>Ошибка загрузки данных: {error.message}</div>;

@@ -6,6 +6,8 @@ import ItemCounter from '../components/Shared/ItemCounter/ItemCounter.jsx';
 import { projectAPI } from '../api/api.js';
 import Loader from '../components/UI/Loader/Loader.jsx';
 import useProjects from '../hooks/useProjects.js';
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css';
 
 const Projects = () => {
   const [activeTab, setActiveTab] = useState('additional');
@@ -26,8 +28,16 @@ const Projects = () => {
     setActiveTab(tabId);
   };
 
+  // Функция для извлечения только дней из time_remaining
+  const getShortTime = (timeRemaining) => {
+    if (!timeRemaining) return '';
+    const match = timeRemaining.match(/^(\d+)д/);
+    return match ? `${match[1]}д` : timeRemaining;
+  };
+
   const { isLoading, temporaryProjects, startedProjects, completedProjects } = useProjects(projectAPI, activeTab);
-  
+  console.log(temporaryProjects, startedProjects, completedProjects);
+
   return (
     <main className="main--dark">
       <section id="projects">
@@ -53,9 +63,14 @@ const Projects = () => {
                       <div className="col-lg-4" key={project.project_id}>
                         <div className="projects__project">
                           <Link to={`/project/${project.project_id}`} />
-                          <span className="projects__project__time">
-                            <img src="images/clock.svg" alt="" /> {project.time_remaining}
+                          <span
+                            className="projects__project__time"
+                            data-tooltip-id={`time-tooltip-${project.project_id}`}
+                            data-tooltip-content={project.time_remaining}
+                          >
+                            <img src="images/clock.svg" alt="" /> {getShortTime(project.time_remaining)}
                           </span>
+                          <Tooltip id={`time-tooltip-${project.project_id}`} />
                           <h3>{project.name}</h3>
                           <p className="projects__project__description">{project.description}</p>
                           <div className="projects__project__res">
@@ -107,7 +122,8 @@ const Projects = () => {
                         <div className="projects__project">
                           <Link to={`/project/${project.project_id}`} />
                           <span className="projects__project__stars projects__project__stars--1">
-                            <img src="images/star.svg" alt="" />{project.earned_stars}</span>
+                            <img src="images/star.svg" alt="" />{project.earned_stars}
+                          </span>
                           <h3>{project.name}</h3>
                           <p className="projects__project__description">{project.description}</p>
                           <div className="projects__project__res">
