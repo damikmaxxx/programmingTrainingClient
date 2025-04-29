@@ -8,7 +8,8 @@ import { useShopStore, useUserStore } from '../store/store.js';
 import ItemCounter from '../components/Shared/ItemCounter/ItemCounter.jsx';
 import { useNavigate } from 'react-router-dom';
 import { ALL_STYLES, GetStyleComponentById } from '../data/ALL_STYLES.js';
-import { shopAPI } from '../api/api';
+import { shopAPI, userAPI } from '../api/api';
+import { STYLE_CATEGORY_NICKNAME, STYLE_CATEGORY_BACKGROUND_PROFILE } from '../api/api';
 import useShop from '../hooks/useShop.js';
 import Loader from '../components/UI/Loader/Loader.jsx';
 
@@ -22,15 +23,32 @@ const renderPriceAndIcon = (style) => {
   return null;
 };
 
-const buyItem = (item) => {
-  console.log(item);
+// Функция для покупки стиля
+const buyItem = async (item) => {
+  try {
+    const styleData = {
+      style_id: item.id,
+      is_active: false, // По умолчанию стиль не активируется при покупке
+      currency: item.price_in_coin > 0 ? 'coins' : 'stars', // Определяем валюту
+    };
+
+    console.log('Покупка стиля:', styleData);
+
+    const response = await userAPI.buyUserStyle(styleData);
+    console.log('Стиль успешно куплен:', response);
+    
+  } catch (error) {
+    console.error('Ошибка при покупке стиля:', error.message);
+    alert(`Ошибка при покупке: ${error.message}`); // Временное уведомление
+  }
 };
 
 const Shop = () => {
   const { nicknameStyles, profileStyle, setNicknameStyles, setProfileStyle } = useShopStore();
-  const {name} = useUserStore();
+  const { name } = useUserStore();
   const { isLoading, shopStyles } = useShop(shopAPI);
   console.log(isLoading, shopStyles);
+
   const tabs = [
     { id: 'styleNames', label: 'Стили для имени' },
     { id: 'profileThemes', label: 'Темы профиля' },
@@ -122,7 +140,7 @@ const ProfileShopEffects = ({ profileStyle, shopStyles }) => {
     <>
       {shopStyles.background_profile.map((style) => {
         const s = ALL_STYLES.find(s => s.id === style.id);
-        console.log(s)
+        console.log(s);
         const StyleComponent = GetStyleComponentById(style.id);
         if (!StyleComponent) {
           return null;

@@ -231,7 +231,7 @@ function Project() {
                     Мое решение
                   </Button>
                 )}
-                {
+                {isMyCodeBlock  && (
                     <Button
                     variant="small"
                     className="me-3"
@@ -239,7 +239,7 @@ function Project() {
                     disabled={!projectToDisplay.is_published}
                   >
                     Другие решения
-                  </Button>
+                  </Button>)
                 }
 
               </div>

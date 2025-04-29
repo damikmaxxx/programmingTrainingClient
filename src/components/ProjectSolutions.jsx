@@ -21,7 +21,7 @@ const ProjectSolution = ({ projectId, sortedLang = "javascript" }) => {
     handleCommentSubmit,
   } = useProjectSolutions(projectId);
   const [expandedCode, setExpandedCode] = useState(null);
-
+  
   const handleCodeClick = (id) => {
     setExpandedCode((prevExpandedCode) =>
       prevExpandedCode === id ? null : id // Если уже раскрыт, то сворачиваем, иначе раскрываем
@@ -56,12 +56,14 @@ const ProjectSolution = ({ projectId, sortedLang = "javascript" }) => {
             className={`${styles.codeWrapper} ${expandedCode === solution.id ? styles.active : ''}`}
           >
             <pre className={styles.solutionCode}>
+            {solution.code === null ? 
+              <div className={styles.noCode}>Код отсутствует</div> :
+
               <CodeEditor
                 language={sortedLang}
                 initialCode={solution.code}
                 isReadOnly={true}
-                height={'auto'} // Высота меняется динамически
-              />
+              />}
             </pre>
           </div>
           <div className={styles.solutionActions}>

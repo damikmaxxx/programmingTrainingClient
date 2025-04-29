@@ -71,7 +71,7 @@ const userAPI = {
   },
 
   // Добавление нового стиля (покупка)
-  addUserStyle: async (styleData) => {
+  buyUserStyle: async (styleData) => {
     try {
       const { data } = await $authHost.post("/userstyle/", styleData);
       return data;
