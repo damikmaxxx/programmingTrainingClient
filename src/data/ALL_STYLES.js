@@ -7,7 +7,7 @@ export const ALL_STYLES = [
   {
     id: 9,
     name: "Rainbow Animation",
-    priceInCoin: 2600,
+    priceInCoin: 0,
     priceInStars: 0,
     className: "rainbow_animation_nickname",
     category: "nickname"
@@ -15,7 +15,7 @@ export const ALL_STYLES = [
   {
     id: 1,
     name: "Neon Blue",
-    priceInCoin: 500,
+    priceInCoin: 0,
     priceInStars: 0,
     className: "neon_blue_nickname",
     category: "nickname"
@@ -23,7 +23,7 @@ export const ALL_STYLES = [
   {
     id: 2,
     name: "Cyber Red",
-    priceInCoin: 700,
+    priceInCoin: 0,
     priceInStars: 0,
     className: "cyber_red_nickname",
     category: "nickname"
@@ -31,7 +31,7 @@ export const ALL_STYLES = [
   {
     id: 3,
     name: "Glowing Green",
-    priceInCoin: 600,
+    priceInCoin: 0,
     priceInStars: 0,
     className: "glowing_green_nickname",
     category: "nickname"
@@ -40,7 +40,7 @@ export const ALL_STYLES = [
     id: 4,
     name: "Gold Shine",
     priceInCoin: 0,
-    priceInStars: 6,
+    priceInStars: 0,
     className: "gold_shine_nickname",
     category: "nickname"
   },
@@ -48,7 +48,7 @@ export const ALL_STYLES = [
     id: 5,
     name: "Shadow Purple",
     priceInCoin: 0,
-    priceInStars: 3,
+    priceInStars: 0,
     className: "shadow_purple_nickname",
     category: "nickname"
   },
@@ -56,7 +56,7 @@ export const ALL_STYLES = [
     id: 6,
     name: "Electric Pink",
     priceInCoin: 0,
-    priceInStars: 2,
+    priceInStars: 0,
     className: "electric_pink_nickname",
     category: "nickname"
   },
@@ -64,14 +64,14 @@ export const ALL_STYLES = [
     id: 7,
     name: "Frost White",
     priceInCoin: 0,
-    priceInStars: 4,
+    priceInStars: 0,
     className: "frost_white_nickname",
     category: "nickname"
   },
   {
     id: 8,
     name: "Fire Orange",
-    priceInCoin: 2,
+    priceInCoin: 0,
     priceInStars: 0,
     className: "fire_orange_nickname",
     category: "nickname"
@@ -80,7 +80,7 @@ export const ALL_STYLES = [
     id: 10,
     name: "Underline Animation",
     priceInCoin: 0,
-    priceInStars: 15,
+    priceInStars: 0,
     className: "wave_underline_nickname",
     category: "nickname"
   },
@@ -88,7 +88,7 @@ export const ALL_STYLES = [
     id: 11,
     name: "Typing Animation",
     priceInCoin: 0,
-    priceInStars: 2,
+    priceInStars: 0,
     className: "typing_text_nickname",
     category: "nickname"
   },
@@ -96,7 +96,7 @@ export const ALL_STYLES = [
     id: 12,
     name: "Anim Nickname",
     priceInCoin: 0,
-    priceInStars: 7,
+    priceInStars:0,
     className: "anim_nickname",
     category: "nickname"
   },
@@ -105,7 +105,7 @@ export const ALL_STYLES = [
     name: "Fire Style",
     value: "FireStyle",
     priceInCoin: 0,
-    priceInStars: 20,
+    priceInStars: 0,
     component: FireEffect,
     props: {
       speed: { x: 0, y: -50 }, 
@@ -120,7 +120,7 @@ export const ALL_STYLES = [
     name: "Snow Style",
     value: "SnowStyle",
     priceInCoin: 0,
-    priceInStars: 10,
+    priceInStars: 0,
     component: SnowEffect,
     props: {
       speed: { x: 0, y: 0.5 },  
@@ -135,7 +135,7 @@ export const ALL_STYLES = [
     name: "Laser Style",
     value: "LaserStyle",
     priceInCoin: 0,
-    priceInStars: 25,
+    priceInStars: 0,
     component: LaserEffect,
     props: {
       speed: { x: 0.8, y: -1 },  

@@ -33,7 +33,7 @@ const buyItem = async (item) => {
     };
 
     console.log('Покупка стиля:', styleData);
-
+    console.log(item.price_in_coin, item.price_in_stars);
     const response = await userAPI.buyUserStyle(styleData);
     console.log('Стиль успешно куплен:', response);
     
@@ -95,7 +95,7 @@ const Shop = () => {
                         <div className={styles.shopItemPrice}>
                           Цена: {s ? renderPriceAndIcon(style) : "Неизвестно"}
                         </div>
-                        <Button variant="small" onClick={() => s && buyItem(s)}>
+                        <Button variant="small" onClick={() => s && buyItem(style)}>
                           КУПИТЬ
                         </Button>
                       </div>

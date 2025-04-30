@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Select from "../components/UI/Select/Select";
 import Tabs, { Tab, TabHeader } from '../components/UI/Tabs/Tabs';
@@ -14,10 +14,10 @@ import { SUPPORTED_LANGUAGES } from "../data/SUPPORTED_LANGUAGES.js";
 function Project() {
   const { id } = useParams(); // Может быть undefined, если URL /project без id
   const navigate = useNavigate();
-  const {id:userId} = useUserStore()
+  const { id: userId } = useUserStore();
   const { setActiveProject } = useActiveProjectStore();
   const { isLoading: isLoadingProject, error, userProject } = useUserProject(id);
-  const [selectedLang, setSelectedLang] = useState({value: "", label: ""});
+  const [selectedLang, setSelectedLang] = useState({ value: "", label: "" });
   const [isMyCodeBlock, setIsMyCodeBlock] = useState(true);
   const [code, setCode] = useState("");
   const [localProject, setLocalProject] = useState(null);
@@ -26,6 +26,7 @@ function Project() {
   const [activeTab, setActiveTab] = useState("tab1");
   const [isLoading, setIsLoading] = useState(true);
   const [availableLanguages, setAvailableLanguages] = useState([]);
+
   // Проверка последнего проекта из localStorage, если id не указан
   useEffect(() => {
     if (!id) {
@@ -43,23 +44,25 @@ function Project() {
     }
   }, [id, navigate]);
 
+  // Загрузка данных проекта
   useEffect(() => {
     if (!isLoadingProject && id) {
-      console.log(isLoading);
-      setIsLoading(true)
+      setIsLoading(true);
       if (userProject) {
-        
         console.log("userProject:", userProject);
         setActiveProject(userProject);
         setLocalProject(userProject);
         setCode(userProject.code || "");
-        setSelectedLang(userProject?.language || "");
+        setSelectedLang({
+          value: userProject?.language || "",
+          label: SUPPORTED_LANGUAGES.find(lang => lang.value === userProject?.language)?.label || ""
+        });
         setAvailableLanguages(
           userProject?.available_languages?.map(lang => ({
             value: lang.compiler_name,
             label: lang.name
-          })) || [])
-        console.log(isLoading);
+          })) || []
+        );
         setIsLoading(false);
       } else if (error) {
         console.log("Error:", error);
@@ -68,6 +71,7 @@ function Project() {
     }
   }, [isLoadingProject, userProject, error, navigate, setActiveProject, id]);
 
+  // Сохранение проекта
   const handleSave = async () => {
     try {
       const updatedProject = {
@@ -83,14 +87,15 @@ function Project() {
     }
   };
 
+  // Публикация проекта
   const handlePublish = async () => {
     try {
       const updatedProject = {
         ...localProject,
-        language:   SUPPORTED_LANGUAGES.find(obj => obj.label == selectedLang ).value ,
+        language: SUPPORTED_LANGUAGES.find(obj => obj.label === selectedLang.label)?.value,
         is_published: true,
       };
-      console.log(updatedProject)
+      console.log(updatedProject);
       await userAPI.updateUserProjectById(id, updatedProject);
       console.log("Проект успешно опубликован!");
       setActiveProject(updatedProject);
@@ -100,6 +105,7 @@ function Project() {
     }
   };
 
+  // Запуск кода
   const handleRunCode = async () => {
     try {
       setActiveTab("output");
@@ -107,14 +113,14 @@ function Project() {
         userId,
         "project_id": id,
         "code": code,
-        "language": selectedLang,
+        "language": selectedLang.value,
         "input_data": inputData || null,
         "project": id,
       });
       const result = await userAPI.executeCode(
         userId,
         code,
-        selectedLang,
+        selectedLang.value,
         inputData || null,
         id
       );
@@ -123,6 +129,77 @@ function Project() {
     } catch (err) {
       console.error("Ошибка выполнения кода:", err);
       setOutputData("Ошибка: " + (err.response?.data?.error || err.message));
+    }
+  };
+
+  // Проверка решения
+  const handleCheckSolution = async () => {
+    try {
+      setActiveTab("output");
+      const requestData = {
+        user_project: userId,
+        code,
+        language: selectedLang.value,
+        project: id,
+      };
+      console.log("Проверка решения:", requestData);
+      const result = await userAPI.checkSolution(userId, code, selectedLang.value, id);
+      console.log("Результат проверки:", result);
+      setOutputData(
+        result.is_correct
+          ? "Решение правильное!"
+          : `Решение неверное: ${result.error || "Неизвестная ошибка"}`
+      );
+      if (result.is_correct) {
+        // Обновляем проект как завершённый
+        const updatedProject = {
+          ...localProject,
+          is_completed: true,
+          language: selectedLang.value,
+          code,
+        };
+        await userAPI.updateUserProjectById(id, updatedProject);
+        setActiveProject(updatedProject);
+        setLocalProject(updatedProject);
+      }
+    } catch (err) {
+      console.error("Ошибка при проверке решения:", err.response?.data || err.message);
+      setOutputData("Ошибка проверки: " + (err.response?.data?.error || err.message));
+    }
+  };
+
+  // Завершение проекта
+  const handleEndProject = async () => {
+    try {
+      setActiveTab("output");
+      const projectData = {
+        project: id,
+        code,
+        language: selectedLang.value,
+      };
+      console.log("Завершение проекта:", projectData);
+      const result = await userAPI.endUserProject(id, projectData);
+      console.log("Результат завершения:", result);
+      if (result.is_completed) {
+        setOutputData("Решение правильное! Проект завершён.");
+        // Обновляем проект как завершённый
+        const updatedProject = {
+          ...localProject,
+          is_completed: true,
+          language: selectedLang.value,
+          code,
+        };
+        await userAPI.updateUserProjectById(id, updatedProject);
+        setActiveProject(updatedProject);
+        setLocalProject(updatedProject);
+      } else {
+        setOutputData(`Решение неверное: ${result["Project completion status"] || "Неизвестная ошибка"}`);
+      }
+    } catch (err) {
+      console.error("Ошибка при завершении проекта:", err.response?.data || err.message);
+      setOutputData(
+        `Ошибка завершения: ${err.response?.data?.["Project completion status"] || err.message}`
+      );
     }
   };
 
@@ -177,7 +254,6 @@ function Project() {
               <h3>{projectToDisplay.project_name}</h3>
             </div>
             <div className="task__block task__block--fullHeight">
-
               <Tabs tabs={tabs} defaultActiveTab="theory" activeTab={activeTab}>
                 <TabHeader tabs={tabs} />
                 <Tab id="theory">
@@ -223,7 +299,12 @@ function Project() {
                       <Button variant="small" className="me-3" onClick={handleSave} title="Сохранить код (Ctrl + S)">
                         Сохранить
                       </Button>
-                      <Button variant="small" className="me-3">Подтвердить</Button>
+                      <Button variant="small" className="me-3" onClick={handleCheckSolution}>
+                        Подтвердить
+                      </Button>
+                      <Button variant="small" className="me-3" onClick={handleEndProject}>
+                        Завершить проект
+                      </Button>
                     </>
                   )
                 ) : (
@@ -231,32 +312,30 @@ function Project() {
                     Мое решение
                   </Button>
                 )}
-                {isMyCodeBlock  && (
-                    <Button
+                {isMyCodeBlock && projectToDisplay.is_published && (
+                  <Button
                     variant="small"
                     className="me-3"
                     onClick={() => setIsMyCodeBlock(false)}
-                    disabled={!projectToDisplay.is_published}
                   >
                     Другие решения
-                  </Button>)
-                }
-
+                  </Button>
+                )}
               </div>
               <div className="select">
                 <Select
                   options={availableLanguages}
-                  defaultLabel={selectedLang}
-                  defaultValue={SUPPORTED_LANGUAGES.find(lang => lang.label === selectedLang)?.value}
+                  defaultLabel={selectedLang.label}
+                  defaultValue={selectedLang.value}
                   placeholder="Выберите язык"
-                  onChange={({ label }) => setSelectedLang(label)}
+                  onChange={({ value, label }) => setSelectedLang({ value, label })}
                 />
               </div>
             </div>
             {isMyCodeBlock ? (
               <div className="task__block__editor">
                 <CodeEditor
-                  language={SUPPORTED_LANGUAGES.find(lang => lang.label === selectedLang)?.value}
+                  language={selectedLang.value}
                   initialCode={projectToDisplay.code || ""}
                   onChange={(newCode) => setCode(newCode)}
                   onSave={handleSave}

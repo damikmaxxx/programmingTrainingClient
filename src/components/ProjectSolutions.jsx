@@ -6,7 +6,7 @@ import useProjectSolutions from '../hooks/useProjectSolution'; // Импорт �
 import Loader from './UI/Loader/Loader';
 
 const ProjectSolution = ({ projectId, sortedLang = "javascript" }) => {
-  console.log("update projectId", projectId)
+  console.log(sortedLang)
   const {
     solutions,
     setSolutions,
@@ -21,7 +21,7 @@ const ProjectSolution = ({ projectId, sortedLang = "javascript" }) => {
     handleCommentSubmit,
   } = useProjectSolutions(projectId);
   const [expandedCode, setExpandedCode] = useState(null);
-  
+
   const handleCodeClick = (id) => {
     setExpandedCode((prevExpandedCode) =>
       prevExpandedCode === id ? null : id // Если уже раскрыт, то сворачиваем, иначе раскрываем
@@ -56,14 +56,13 @@ const ProjectSolution = ({ projectId, sortedLang = "javascript" }) => {
             className={`${styles.codeWrapper} ${expandedCode === solution.id ? styles.active : ''}`}
           >
             <pre className={styles.solutionCode}>
-            {solution.code === null ? 
-              <div className={styles.noCode}>Код отсутствует</div> :
+              {solution.code === null ?
+                <div className={styles.noCode}>Код отсутствует</div> :
 
-              <CodeEditor
-                language={sortedLang}
-                initialCode={solution.code}
-                isReadOnly={true}
-              />}
+                <CodeEditor
+                  language={sortedLang.value}
+                  isReadOnly={true}
+                />}
             </pre>
           </div>
           <div className={styles.solutionActions}>

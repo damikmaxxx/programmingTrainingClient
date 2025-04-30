@@ -181,9 +181,9 @@ const userAPI = {
   },
 
   // 2.3 PUT /user-projects/{id}/end_project/ - Завершение проекта пользователя
-  endUserProject: async (id) => {
+  endUserProject: async (id, projectData) => {
     try {
-      const { data } = await $authHost.put(`/user-projects/${id}/end-project/`);
+      const { data } = await $authHost.put(`/user-projects/${id}/end_project/`, projectData);
       return data; // Обновлённый статус проекта или сообщение об ошибке
     } catch (error) {
       console.error(
@@ -232,13 +232,15 @@ const userAPI = {
   },
 
   // 10.1 POST /code-executor/check-solution/ - Проверка решения
-  checkSolution: async (code, language, project) => {
+  checkSolution: async (user_project, code, language, project) => {
     try {
       const requestData = {
+        user_project,
         code,
         language,
         project,
       };
+      console.log(requestData);
       const { data } = await $authHost.post(
         "/code-executor/check-solution/",
         requestData
