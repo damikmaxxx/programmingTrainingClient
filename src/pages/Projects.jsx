@@ -60,17 +60,17 @@ const Projects = () => {
                     <Loader fullPage={false} />
                   ) : (
                     temporaryProjects.map((project) => (
-                      <div className="col-lg-4" key={project.id}>
+                      <div className="col-lg-4" key={project.project_id}>
                         <div className="projects__project">
-                          <Link to={`/project/${project.id}`} />
+                          <Link to={`/project/${project.project_id}`} />
                           <span
                             className="projects__project__time"
-                            data-tooltip-id={`time-tooltip-${project.id}`}
+                            data-tooltip-id={`time-tooltip-${project.project_id}`}
                             data-tooltip-content={project.time_remaining}
                           >
                             <img src="images/clock.svg" alt="" /> {getShortTime(project.time_remaining)}
                           </span>
-                          <Tooltip id={`time-tooltip-${project.id}`} />
+                          <Tooltip id={`time-tooltip-${project.project_id}`} />
                           <h3>{project.name}</h3>
                           <p className="projects__project__description">{project.description}</p>
                           <div className="projects__project__res">

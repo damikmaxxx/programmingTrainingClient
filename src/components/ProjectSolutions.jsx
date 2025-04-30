@@ -5,8 +5,7 @@ import CodeEditor from "../components/UI/CodeEditor/CodeEditor";
 import useProjectSolutions from '../hooks/useProjectSolution'; // Импорт вашего хука
 import Loader from './UI/Loader/Loader';
 
-const ProjectSolution = ({ projectId, sortedLang = "javascript" }) => {
-  console.log(sortedLang)
+const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
   const {
     solutions,
     setSolutions,
@@ -62,6 +61,7 @@ const ProjectSolution = ({ projectId, sortedLang = "javascript" }) => {
                 <CodeEditor
                   language={sortedLang.value}
                   isReadOnly={true}
+                  initialCode={solution.code}
                 />}
             </pre>
           </div>
