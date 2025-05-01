@@ -38,4 +38,4 @@ export const ACCESS_LEVELS = [
   },
 ];
 
-export const DEFAULT_PROFILE_IMAGE = "https://via.placeholder.com/400";
+export const DEFAULT_USER_IMAGE = "https://www.gravatar.com/avatar/?d=mp";

@@ -5,6 +5,7 @@ import AccordionDropdown from './UI/AccordionDropdown/AccordionDropdown.jsx';
 import { useUserStore } from '../store/store.js';
 import ItemCounter from './Shared/ItemCounter/ItemCounter.jsx';
 import { GetStyleClassById } from '../data/ALL_STYLES.js';
+import { DEFAULT_USER_IMAGE } from '../utils/consts.js';
 function Header() {
   const [activeTab, setActiveTab] = useState(null);
   const tabsLineRef = useRef(null);
@@ -95,7 +96,7 @@ function Header() {
               <>
                 <div onClick={() => toggleAccordion()} className='header-user'>
                   <span className='header-avatar'>
-                    <img src={photo ? photo : "https://www.gravatar.com/avatar/?d=mp"} alt="аватарка" />
+                    <img src={photo ? photo : DEFAULT_USER_IMAGE} alt="аватарка" />
                   </span>
 
                   <span className={classStyle}>{name}</span>

@@ -7,7 +7,7 @@ import { GetStyleClassById } from '../data/ALL_STYLES.js';
 import { useRatingStore, useUserStore } from '../store/store.js';
 import Loader from '../components/UI/Loader/Loader.jsx';
 import { ratingAPI } from '../api/api.js';
-
+import { DEFAULT_USER_IMAGE } from '../utils/consts.js';
 const tabs = [
   { id: 'expfull', label: 'ТОП-10 EXP' },
   { id: 'starsfull', label: 'ТОП-10 STARS' },
@@ -231,12 +231,11 @@ const Rating = () => {
 export default Rating;
 
 const RatingItem = ({ index, photo, username, total_experience, total_stars, userId, textEffectId }) => {
-  const DEFAULT_AVATAR_SRC = 'https://www.gravatar.com/avatar/?d=mp';
-  const [imgSrc, setImgSrc] = useState(photo || DEFAULT_AVATAR_SRC);
+  const [imgSrc, setImgSrc] = useState(photo || {DEFAULT_USER_IMAGE});
   const isTop = index <= 1;
 
   const handleImageError = () => {
-    setImgSrc(DEFAULT_AVATAR_SRC);
+    setImgSrc({DEFAULT_USER_IMAGE});
   };
 
   const renderStats = () => {

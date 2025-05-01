@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Select from "../components/UI/Select/Select";
 import Tabs, { Tab, TabHeader } from '../components/UI/Tabs/Tabs';
@@ -23,10 +23,10 @@ function Project() {
   const [localProject, setLocalProject] = useState(null);
   const [inputData, setInputData] = useState("");
   const [outputData, setOutputData] = useState("");
-  const [activeTab, setActiveTab] = useState("tab1");
   const [isLoading, setIsLoading] = useState(true);
   const [availableLanguages, setAvailableLanguages] = useState([]);
-
+  // const [projectToDisplay, setProjectToDisplay] = useState(localProject || {});
+  const tabsRef = useRef(null);
   // Проверка последнего проекта из localStorage, если id не указан
   useEffect(() => {
     if (!id) {
@@ -73,15 +73,19 @@ function Project() {
 
   // Сохранение проекта
   const handleSave = async () => {
+
     try {
       const updatedProject = {
+        ...localProject,
         language: selectedLang.value,
         code,
       };
       await userAPI.updateUserProjectById(id, updatedProject);
       console.log("Проект успешно сохранён!");
+      console.log("Обновлённый проект:", updatedProject);
       setActiveProject(updatedProject);
       setLocalProject(updatedProject);
+      tabsRef.current.setTab('output');
     } catch (err) {
       console.error("Ошибка при сохранении проекта:", err.response?.data || err.message);
     }
@@ -108,7 +112,7 @@ function Project() {
   // Запуск кода
   const handleRunCode = async () => {
     try {
-      setActiveTab("output");
+      tabsRef.current.setTab('output');
       console.log({
         userId,
         "project_id": id,
@@ -135,7 +139,7 @@ function Project() {
   // Проверка решения
   const handleCheckSolution = async () => {
     try {
-      setActiveTab("output");
+      tabsRef.current.setTab('output');
       const requestData = {
         user_project: userId,
         code,
@@ -171,7 +175,7 @@ function Project() {
   // Завершение проекта
   const handleEndProject = async () => {
     try {
-      setActiveTab("output");
+      tabsRef.current.setTab('output');
       const projectData = {
         project: id,
         code,
@@ -208,42 +212,9 @@ function Project() {
     { id: "description", label: "Описание задания" },
     { id: "output", label: "Результат" },
   ];
-
-  const solutions = [
-    {
-      id: 1,
-      author: 'User1',
-      code: `function calculatePrimeFactors(number) {
-        let factors = [];
-        let divisor = 2;
-        while (number >= divisor * divisor) {
-          if (number % divisor === 0) {
-            factors.push(divisor);
-            number = number / divisor;
-          } else {
-            divisor++;
-          }
-        }
-        if (number > 1) {
-          factors.push(number);
-        }
-        return factors;
-      }`,
-      stars: 10,
-      liked: false,
-      showComments: false,
-      comments: [
-        { author: 'Veselchak', text: 'Отличное решение!', date: '2025-02-22' },
-        { author: 'Dokopatel', text: 'Можно еще оптимизировать.', date: '2025-02-21' },
-      ],
-    },
-  ];
-
   if (isLoading || isLoadingProject || (!id && !localProject)) {
     return <Loader />;
   }
-
-  const projectToDisplay = localProject || {};
 
   return (
     <div className="container container-big">
@@ -251,21 +222,21 @@ function Project() {
         <div className="col-lg-4">
           <div className="task__block--height">
             <div className="task__block task__block--title">
-              <h3>{projectToDisplay.project_name}</h3>
+              <h3>{localProject.project_name}</h3>
             </div>
             <div className="task__block task__block--fullHeight">
-              <Tabs tabs={tabs} defaultActiveTab="theory" activeTab={activeTab}>
+              <Tabs ref={tabsRef} tabs={tabs} defaultActiveTab="theory">
                 <TabHeader tabs={tabs} />
                 <Tab id="theory">
                   <div className="task__block__section">
                     <h5>Теория:</h5>
-                    <div dangerouslySetInnerHTML={{ __html: projectToDisplay.project_theory || "Теория отсутствует" }} />
+                    <div dangerouslySetInnerHTML={{ __html: localProject.project_theory || "Теория отсутствует" }} />
                   </div>
                 </Tab>
                 <Tab id="description">
                   <div className="task__block__section">
                     <h5>Описание задания:</h5>
-                    <div dangerouslySetInnerHTML={{ __html: projectToDisplay.project_description || "Описание отсутствует" }} />
+                    <div dangerouslySetInnerHTML={{ __html: localProject.project_description || "Описание отсутствует" }} />
                   </div>
                 </Tab>
                 <Tab id="output">
@@ -285,8 +256,8 @@ function Project() {
             <div className="task__block__tools">
               <div className="task__block__tools__button">
                 {isMyCodeBlock ? (
-                  projectToDisplay.is_completed ? (
-                    !projectToDisplay.is_published && (
+                  localProject.is_completed ? (
+                    !localProject.is_published && (
                       <Button variant="small" className="me-3" onClick={handlePublish}>
                         Опубликовать
                       </Button>
@@ -312,7 +283,7 @@ function Project() {
                     Мое решение
                   </Button>
                 )}
-                {isMyCodeBlock && projectToDisplay.is_published && (
+                {isMyCodeBlock && localProject.is_published && (
                   <Button
                     variant="small"
                     className="me-3"
@@ -336,10 +307,10 @@ function Project() {
               <div className="task__block__editor">
                 <CodeEditor
                   language={selectedLang.value}
-                  initialCode={projectToDisplay.code || ""}
+                  initialCode={localProject.code || ""}
                   onChange={(newCode) => setCode(newCode)}
                   onSave={handleSave}
-                  isReadOnly={projectToDisplay.is_completed}
+                  isReadOnly={localProject.is_completed}
                 />
                 <div className="output mt-3 p-2 bg-dark text-light rounded">
                   <h5>Входные данные:</h5>
@@ -352,7 +323,7 @@ function Project() {
                 </div>
               </div>
             ) : (
-              projectToDisplay.is_published && (
+              localProject.is_published && (
                 <div className="task__block__solution">
                   <ProjectSolution sortedLang={selectedLang} projectId={id} />
                 </div>

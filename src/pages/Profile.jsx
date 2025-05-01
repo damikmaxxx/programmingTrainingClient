@@ -5,13 +5,13 @@ import useProfileData from '../hooks/useProfileData';
 import { useUserStore } from '../store/store';
 
 function Profile({ testStyle = false }) {
-  const { userData, isLoading, error } = useProfileData(testStyle);
-  
+  const { userData,isOwnProfile, isLoading, error } = useProfileData(testStyle);
   const {nicknameStyleId} =  useUserStore();
   if (isLoading) return <Loader />;
   if (error) return <div>Ошибка загрузки данных: {error.message}</div>;
-  console.log(nicknameStyleId);
+  console.log(userData);
   return (
+    <>
     <DefaultProfile
       avatar={userData.avatar}
       name={userData.name}
@@ -24,7 +24,9 @@ function Profile({ testStyle = false }) {
       timeExpDiagram={userData.timeExpDiagram}
       selectedStyleId={userData.selectedStyleId}
       nicknameStyleId={nicknameStyleId}
+      isOwnProfile={isOwnProfile}
     />
+    </>
   );
 }
 

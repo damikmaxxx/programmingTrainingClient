@@ -12,6 +12,8 @@ import { shopAPI, userAPI } from '../api/api';
 import { STYLE_CATEGORY_NICKNAME, STYLE_CATEGORY_BACKGROUND_PROFILE } from '../api/api';
 import useShop from '../hooks/useShop.js';
 import Loader from '../components/UI/Loader/Loader.jsx';
+import { useNotification } from '../components/Shared/NotificationProvider/NotificationProvider';
+import { handleServerErrors } from '../utils/handleServerErrors/handleServerErrors';
 
 // Функция для отображения правильной цены и иконки в зависимости от типа
 const renderPriceAndIcon = (style) => {
@@ -24,7 +26,7 @@ const renderPriceAndIcon = (style) => {
 };
 
 // Функция для покупки стиля
-const buyItem = async (item) => {
+const buyItem = async (item, notify) => {
   try {
     const styleData = {
       style_id: item.id,
@@ -36,10 +38,17 @@ const buyItem = async (item) => {
     console.log(item.price_in_coin, item.price_in_stars);
     const response = await userAPI.buyUserStyle(styleData);
     console.log('Стиль успешно куплен:', response);
-    
+    notify('Стиль успешно куплен!', 'success');
   } catch (error) {
-    console.error('Ошибка при покупке стиля:', error.message);
-    alert(`Ошибка при покупке: ${error.message}`); // Временное уведомление
+    console.error('Ошибка при покупке стиля:', error);
+    handleServerErrors(error.response?.data, notify, {
+      defaultMessage: 'Ошибка при покупке стиля. Попробуйте снова.',
+      fieldNames: {
+        style_id: 'Стиль',
+        currency: 'Валюта',
+        detail: 'Ошибка',
+      },
+    });
   }
 };
 
@@ -47,6 +56,7 @@ const Shop = () => {
   const { nicknameStyles, profileStyle, setNicknameStyles, setProfileStyle } = useShopStore();
   const { name } = useUserStore();
   const { isLoading, shopStyles } = useShop(shopAPI);
+  const { notify } = useNotification();
   console.log(isLoading, shopStyles);
 
   const tabs = [
@@ -95,7 +105,7 @@ const Shop = () => {
                         <div className={styles.shopItemPrice}>
                           Цена: {s ? renderPriceAndIcon(style) : "Неизвестно"}
                         </div>
-                        <Button variant="small" onClick={() => s && buyItem(style)}>
+                        <Button variant="small" onClick={() => s && buyItem(style, notify)}>
                           КУПИТЬ
                         </Button>
                       </div>
@@ -111,7 +121,7 @@ const Shop = () => {
             {isLoading ? (
               <Loader fullPage={false} />
             ) : (
-              <ProfileShopEffects profileStyle={profileStyle} shopStyles={shopStyles} />
+              <ProfileShopEffects profileStyle={profileStyle} shopStyles={shopStyles} notify={notify} />
             )}
           </div>
         </Tab>
@@ -129,7 +139,7 @@ const Shop = () => {
   );
 };
 
-const ProfileShopEffects = ({ profileStyle, shopStyles }) => {
+const ProfileShopEffects = ({ profileStyle, shopStyles, notify }) => {
   const navigate = useNavigate();
 
   const checkStyle = (item) => {
@@ -159,7 +169,7 @@ const ProfileShopEffects = ({ profileStyle, shopStyles }) => {
                   Цена: {renderPriceAndIcon(style)}
                 </div>
                 <span>
-                  <Button className="me-3" variant="small" onClick={() => buyItem(s)}>
+                  <Button className="me-3" variant="small" onClick={() => buyItem(s, notify)}>
                     КУПИТЬ
                   </Button>
                   <Button variant="small" onClick={() => checkStyle(s)}>

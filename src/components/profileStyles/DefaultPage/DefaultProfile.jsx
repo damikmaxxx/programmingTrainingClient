@@ -12,13 +12,15 @@ import { userAPI } from '../../../api/api';
 import { useUserStore } from '../../../store/store';
 import { GetStyleClassById } from '../../../data/ALL_STYLES';
 import { STYLE_CATEGORY_NICKNAME, STYLE_CATEGORY_BACKGROUND_PROFILE } from '../../../api/user';
-
+import { useNotification } from '../../Shared/NotificationProvider/NotificationProvider';
+import { handleServerErrors } from '../../../utils/handleServerErrors/handleServerErrors';
+import { DEFAULT_USER_IMAGE } from '../../../utils/consts';
 ChartJS.register(...registerables);
 
-export default function DefaultProfile({ avatar, stars, recentProjects, description, timeExpDiagram, skills, exp, projectTimes, bgStyles, nicknameStyleId, selectedStyleId }) {
+export default function DefaultProfile({name, avatar, stars, recentProjects, description, timeExpDiagram, skills, exp, projectTimes, bgStyles, nicknameStyleId, selectedStyleId, isOwnProfile }) {
   const descriptionMin = description?.length > 150 ? description.slice(0, 150) + '...' : description;
   const { level, expOnCurrentLevel, progressPercentage, expToNextLevel } = getLevelInfo(exp);
-  const { name } = useUserStore();
+  const { notify } = useNotification();
   console.log(skills);
   console.log(timeExpDiagram);
 
@@ -163,10 +165,17 @@ export default function DefaultProfile({ avatar, stars, recentProjects, descript
       } else {
         await userAPI.updateUserStyle(nicknameStyleValue);
       }
-
-      console.log('Профиль и стили успешно обновлены');
     } catch (error) {
       console.error('Ошибка при обновлении профиля или стилей:', error.response?.data || error.message);
+      handleServerErrors(error.response?.data, notify, {
+        defaultMessage: 'Ошибка при обновлении профиля. Попробуйте снова.',
+        fieldNames: {
+          username: 'Имя пользователя',
+          photo: 'Аватар',
+          description: 'Описание',
+          detail: 'Ошибка',
+        },
+      });
     }
     closeModal();
   };
@@ -194,18 +203,22 @@ export default function DefaultProfile({ avatar, stars, recentProjects, descript
           <div className={"col-lg-8 " + styles.over}>
             <div className={`${styles.section} mb-3`}>
               <div className={styles.headerInfo}>
-                <img className={styles.avatar} src={avatar} alt="Аватар" />
+                <img className={styles.avatar} src={avatar} alt="Аватар" onError={(e) => (e.target.src = DEFAULT_USER_IMAGE)}/>
                 <div className={styles.info}>
                   <h2 className={styles.name + " " + classStyle}>{name}</h2>
                   <p className={styles.description}>{descriptionMin}</p>
-                  <div className={styles.statsContainer}>
-                    <ItemCounter type={"coin"} />
-                    <ItemCounter type={"star"} />
-                  </div>
+                  {isOwnProfile && (
+                    <div className={styles.statsContainer}>
+                      <ItemCounter type="coin" />
+                      <ItemCounter type="star" count={stars} />
+                    </div>
+                  )}
                 </div>
-                <button className={styles.editIcon} onClick={() => openModal()}>
-                  <FaEdit />
-                </button>
+                {isOwnProfile && (
+                  <button className={styles.editIcon} onClick={() => openModal()}>
+                    <FaEdit />
+                  </button>
+                )}
               </div>
             </div>
           </div>

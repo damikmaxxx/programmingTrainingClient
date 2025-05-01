@@ -5,6 +5,9 @@ import { Link } from 'react-router-dom';
 import styles from './Login.module.css';
 import { authAPI } from '../api/api';
 import { useUserStore } from '../store/user/userStore';
+import { useNotification } from '../components/Shared/NotificationProvider/NotificationProvider';
+import { handleServerErrors } from '../utils/handleServerErrors/handleServerErrors';
+
 // Валидация через Yup
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -13,18 +16,35 @@ const LoginSchema = Yup.object().shape({
 });
 
 const Login = () => {
-  const { setAuth,setUser } = useUserStore()
-  const handleSubmit = async (values, { setSubmitting, setErrors }) => {
+  const { setAuth, setUser } = useUserStore();
+  const { notify } = useNotification();
+
+  const handleSubmit = async (values, { setSubmitting }) => {
     setSubmitting(true);
     const { email, password } = values;
-    const response = await authAPI.login({ email, password }, async () => {
+
+    try {
+      await authAPI.login({ email, password }, async () => {
+        setAuth(true);
+        const { username, coins, stars, nickname_id } = await authAPI.getUserMinInfo();
+        console.log('User info:', { username, coins, stars, nickname_id });
+        setUser({ name: username, coins, stars, nicknameStyleId: nickname_id });
+        notify('Вход успешен!', 'success');
+      });
+    } catch (error) {
+      handleServerErrors(error, notify, {
+        defaultMessage: 'Ошибка при входе. Попробуйте снова.',
+        fieldNames: {
+          email: 'Email',
+          password: 'Пароль',
+        },
+      });
+      console.error('Login error:', error);
+    } finally {
       setSubmitting(false);
-      setAuth(true)
-      const { username, coins, stars, nickname_id } = await authAPI.getUserMinInfo();
-      console.log(nickname_id)
-      setUser({ name: username, coins, stars, nicknameStyleId: nickname_id });
-    });
+    }
   };
+
   return (
     <div className={styles.loginContainer}>
       <Formik
@@ -36,7 +56,7 @@ const Login = () => {
         onSubmit={handleSubmit}
       >
         {({ isSubmitting }) => (
-          <Form className={styles.loginForm + " dark-primary-color"}>
+          <Form className={`${styles.loginForm} dark-primary-color`}>
             <div className={styles.fieldGroup}>
               <label htmlFor="email" className={styles.label}>
                 Email

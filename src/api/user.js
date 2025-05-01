@@ -3,16 +3,18 @@ export const STYLE_CATEGORY_NICKNAME = 'nickname';
 export const STYLE_CATEGORY_BACKGROUND_PROFILE = 'background_profile';
 const userAPI = {
   // Получение информации о профиле пользователя
-  getProfile: async () => {
+  getProfile: async (id = null) => {
     try {
-      const { data } = await $authHost.get("/profile/");
-      console.log(data);
+      const url = id ? `/profile/${id}/` : '/profile/';
+      const { data } = await $authHost.get(url);
+      console.log('Profile data:', data);
       return data;
     } catch (error) {
       console.error(
-        "Ошибка при получении профиля пользователя:",
+        `Ошибка при получении профиля ${id ? `пользователя с ID ${id}` : 'текущего пользователя'}:`,
         error.response?.data || error.message
       );
+      throw error; // Пробрасываем ошибку для обработки в вызывающем коде
     }
   },
 
@@ -31,28 +33,34 @@ const userAPI = {
   },
 
   // Получение информации о прогрессе пользователя
-  getUserProgress: async () => {
+  getUserProgress: async (id = null) => {
     try {
-      const { data } = await $authHost.get("/user-graph/");
+      const url = id ? `/user-graph/${id}/` : '/user-graph/';
+      const { data } = await $authHost.get(url);
+      console.log('Progress data:', data);
       return data;
     } catch (error) {
       console.error(
-        "Ошибка при получении информации о прогрессе пользователя:",
+        `Ошибка при получении прогресса ${id ? `пользователя с ID ${id}` : 'текущего пользователя'}:`,
         error.response?.data || error.message
       );
+      throw error; // Пробрасываем ошибку для обработки
     }
   },
-  // Получение списка навыков пользователя (GET /user-skills/)
-  getUserSkills: async () => {
+
+  // Получение списка навыков пользователя
+  getUserSkills: async (id = null) => {
     try {
-      const { data } = await $authHost.get("/user-skills/");
+      const url = id ? `/user-skills/${id}/` : '/user-skills/';
+      const { data } = await $authHost.get(url);
+      console.log('Skills data:', data);
       return data; // Возвращает массив навыков [{ user, language, experience }, ...]
     } catch (error) {
       console.error(
-        "Ошибка при получении навыков пользователя:",
+        `Ошибка при получении навыков ${id ? `пользователя с ID ${id}` : 'текущего пользователя'}:`,
         error.response?.data || error.message
       );
-      throw error;
+      throw error; // Пробрасываем ошибку для обработки
     }
   },
 

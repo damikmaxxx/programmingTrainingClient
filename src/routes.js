@@ -29,6 +29,13 @@ export const authRoutes = [
     },
   },
   {
+    path: `${PROFILE_ROUTE}/:id`, // Новый маршрут для профиля другого пользователя
+    Component: Profile,
+    layoutProps: {
+      mainClear: true,
+    },
+  },
+  {
     path: `${PROFILE_ROUTE}/test-style/:id`,
     Component: (props) => <Profile {...props} testStyle={true} />,
     layoutProps: {

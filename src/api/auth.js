@@ -15,11 +15,8 @@ const authAPI = {
 
       return data;
     } catch (error) {
-      console.error(
-        "Ошибка авторизации:",
-        error.response?.data || error.message
-      );
-      throw new Error(error.response?.data?.message || "Ошибка авторизации");
+      console.error("Ошибка входа:", error.response?.data, error.message);
+      throw error.response?.data; // Возвращаем весь объект ошибок
     }
   },
 
@@ -37,11 +34,8 @@ const authAPI = {
       }
       return data;
     } catch (error) {
-      console.error(
-        "Ошибка регистрации:",
-        error.response?.data || error.message
-      );
-      throw new Error(error.response?.data?.message || "Ошибка регистрации");
+      console.error("Ошибка регистрации:", error.response?.data, error.message);
+      throw error.response?.data; // Возвращаем весь объект ошибок
     }
   },
 

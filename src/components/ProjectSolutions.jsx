@@ -4,7 +4,7 @@ import { FaComment, FaStar, FaChevronUp, FaChevronDown, FaPaperPlane } from 'rea
 import CodeEditor from "../components/UI/CodeEditor/CodeEditor";
 import useProjectSolutions from '../hooks/useProjectSolution'; // Импорт вашего хука
 import Loader from './UI/Loader/Loader';
-
+import { DEFAULT_USER_IMAGE } from '../utils/consts'; // Импорт констант
 const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
   const {
     solutions,
@@ -20,7 +20,19 @@ const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
     handleCommentSubmit,
   } = useProjectSolutions(projectId);
   const [expandedCode, setExpandedCode] = useState(null);
-
+  console.log({
+    solutions,
+    setSolutions,
+    loading,
+    error,
+    newComment,
+    setNewComment,
+    visibleComments,
+    showMoreComments,
+    toggleComments,
+    handleLike,
+    handleCommentSubmit,
+  })
   const handleCodeClick = (id) => {
     setExpandedCode((prevExpandedCode) =>
       prevExpandedCode === id ? null : id // Если уже раскрыт, то сворачиваем, иначе раскрываем
@@ -41,7 +53,7 @@ const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
         <div key={solution.id} className={styles.solutionCard + " dark-primary-color"}>
           <div className={styles.solutionHeader}>
             <div className={styles.solutionHeader_info}>
-              <div className={styles.commentAva}><img src="https://www.gravatar.com/avatar/?d=mp" alt="аватарка" /></div>
+              <div className={styles.commentAva}><img src={DEFAULT_USER_IMAGE} alt="аватарка" /></div>
               <span className={styles.author}>{solution.author}</span>
             </div>
             <div
@@ -81,7 +93,7 @@ const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
             <div className={styles.commentsSection}>
               {solution?.comments?.slice(0, visibleComments[solution.id] || 5).map((comment, index) => (
                 <div key={index} className={styles.comment}>
-                  <div className={styles.commentAva}><img src="https://www.gravatar.com/avatar/?d=mp" alt="аватарка" /></div>
+                  <div className={styles.commentAva}><img src={DEFAULT_USER_IMAGE} alt="аватарка" /></div>
                   <div className={styles.commentContainer}>
                     <div className={styles.commentHeader}>
                       <span className={styles.commentAuthor}>{comment.author}</span>
@@ -100,7 +112,7 @@ const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
             {/* Инпут для добавления нового комментария */}
             <div className={styles.newComment}>
               <div className={styles.newComment_img}>
-                <img src="https://www.gravatar.com/avatar/?d=mp" alt="аватарка" />
+                <img src={DEFAULT_USER_IMAGE} alt="аватарка" />
               </div>
               <textarea
                 className={styles.newComment__input}

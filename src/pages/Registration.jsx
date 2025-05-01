@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import styles from './Registration.module.css';
 import { authAPI } from '../api/api';
 import { useUserStore } from '../store/user/userStore';
+import { useNotification } from '../components/Shared/NotificationProvider/NotificationProvider';
+import { handleServerErrors } from '../utils/handleServerErrors/handleServerErrors';
 
 // Схема валидации с использованием Yup
 const RegistrationSchema = Yup.object().shape({
@@ -23,19 +25,36 @@ const RegistrationSchema = Yup.object().shape({
 });
 
 const Registration = () => {
-  const { setAuth,setUser } = useUserStore()
+  const { setAuth, setUser } = useUserStore();
+  const { notify } = useNotification();
+
   const handleSubmit = async (values, { setSubmitting }) => {
     setSubmitting(true);
     const { confirmPassword, ...registrationValues } = values;
-    const { email, password } = values;
-    const response = await authAPI.register(registrationValues, async () => {
+
+    try {
+      await authAPI.register(registrationValues, async () => {
+        setAuth(true);
+        const { username, coins, stars, nickname_id } = await authAPI.getUserMinInfo();
+        console.log('User info:', { username, coins, stars, nickname_id });
+        setUser({ name: username, coins, stars, nicknameStyleId: nickname_id });
+        notify('Регистрация успешна!', 'success');
+      });
+    } catch (error) {
+      handleServerErrors(error, notify, {
+        defaultMessage: 'Ошибка при регистрации. Попробуйте снова.',
+        fieldNames: {
+          email: 'Email',
+          password: 'Пароль',
+          username: 'Имя пользователя',
+        },
+      });
+      console.error('Registration error:', error);
+    } finally {
       setSubmitting(false);
-      setAuth(true)
-      const { username, coins, stars, nickname_id } = await authAPI.getUserMinInfo();
-      console.log(nickname_id)
-      setUser({ name: username, coins, stars, nicknameStyleId: nickname_id });
-    });
+    }
   };
+
   return (
     <div className={styles.formContainer}>
       <Formik

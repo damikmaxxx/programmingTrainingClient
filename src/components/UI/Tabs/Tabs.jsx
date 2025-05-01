@@ -1,17 +1,17 @@
-import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
+import React, { createContext, useState, useContext, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import styles from './Tabs.module.css';
 
 // Контекст для управления активной вкладкой
 const TabContext = createContext();
 
-const Tabs = ({ 
+const Tabs = forwardRef(({
   tabs = [], 
   defaultActiveTab = tabs[0]?.id, 
   children, 
   onTabChange, 
   activeTab: controlledActiveTab, // Внешний activeTab
   setActiveTab: setControlledActiveTab // Внешний setActiveTab
-}) => {
+}, ref) => {
   // Используем внутреннее состояние, только если внешнее не предоставлено
   const [internalActiveTab, setInternalActiveTab] = useState(defaultActiveTab);
   
@@ -20,12 +20,22 @@ const Tabs = ({
   const activeTab = isControlled ? controlledActiveTab : internalActiveTab;
   const setActiveTab = isControlled ? setControlledActiveTab : setInternalActiveTab;
 
+  // Экспортируем метод для смены активной вкладки через ref
+  useImperativeHandle(ref, () => ({
+    setTab: (tabId) => {
+      setActiveTab(tabId);
+      if (onTabChange) {
+        onTabChange(tabId); // Вызываем callback, если он есть
+      }
+    }
+  }), [setActiveTab, onTabChange]);
+
   return (
     <TabContext.Provider value={{ activeTab, setActiveTab, onTabChange }}>
       {children}
     </TabContext.Provider>
   );
-};
+});
 
 const TabHeader = ({ tabs }) => {
   const { activeTab, setActiveTab, onTabChange } = useContext(TabContext);
