@@ -25,7 +25,7 @@ export default function DefaultProfile({name, avatar, stars, recentProjects, des
   console.log(timeExpDiagram);
 
   // Группировка данных по датам и усреднение значений опыта
-  const groupedData = timeExpDiagram.reduce((acc, { date, experience }) => {
+  const groupedData = timeExpDiagram?.reduce((acc, { date, experience }) => {
     if (!acc[date]) {
       acc[date] = [];
     }

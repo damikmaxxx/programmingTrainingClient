@@ -1,42 +1,49 @@
 import { useState, useEffect } from "react";
 import { projectAPI } from "../api/api";
+
+import { useNotification } from "../components/Shared/NotificationProvider/NotificationProvider";
+import { handleServerErrors } from "../utils/handleServerErrors/handleServerErrors";
+
 const useProjectSolutions = (projectId) => {
   const [solutions, setSolutions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newComment, setNewComment] = useState("");
   const [visibleComments, setVisibleComments] = useState({});
-
+  const { notify } = useNotification();
+  async function fetchSolutions() {
+    try {
+      setLoading(true);
+      const data = await projectAPI.getProjectComments(projectId);
+      console.log(data);
+      // Форматируем данные для компонента
+      const formattedSolutions = data.map((solution) => ({
+        id: solution.user_project,
+        author: solution.user,
+        code: solution.code,
+        stars: solution.earned_stars,
+        photo: solution.photo,
+        liked: false, // Лайк не поставлен по умолчанию
+        comments: solution.comments.map((comment) => ({
+          author: comment.user,
+          text: comment.text,
+          photo: comment.photo,
+          date: new Date().toLocaleString(), // Сервер не даёт дату, берём текущую
+        })),
+        showComments: false,
+        project: solution.project,
+      }));
+      setSolutions(formattedSolutions);
+    } catch (err) {
+      setError(err.response?.data?.error || "Ошибка загрузки решений");
+    } finally {
+      setLoading(false);
+    }
+  }
   // Загрузка решений и комментариев
   useEffect(() => {
     console.log("update projectId", projectId);
-    async function fetchSolutions() {
-      try {
-        setLoading(true);
-        const data = await projectAPI.getProjectComments(projectId);
-        console.log(data);
-        // Форматируем данные для компонента
-        const formattedSolutions = data.map((solution) => ({
-          id: solution.user_project,
-          author: solution.user,
-          code: solution.code,
-          stars: solution.earned_stars,
-          liked: false, // Лайк не поставлен по умолчанию
-          comments: solution.comments.map((comment) => ({
-            author: comment.user,
-            text: comment.text,
-            date: new Date().toLocaleString(), // Сервер не даёт дату, берём текущую
-          })),
-          showComments: false,
-          project: solution.project,
-        }));
-        setSolutions(formattedSolutions);
-      } catch (err) {
-        setError(err.response?.data?.error || "Ошибка загрузки решений");
-      } finally {
-        setLoading(false);
-      }
-    }
+
     if (projectId) {
       fetchSolutions();
     }
@@ -99,7 +106,6 @@ const useProjectSolutions = (projectId) => {
                   {
                     author: response.user,
                     text: response.text,
-                    date: new Date().toLocaleString(),
                   },
                 ],
               }
@@ -107,10 +113,17 @@ const useProjectSolutions = (projectId) => {
         )
       );
       setNewComment("");
+      notify("Комментарий успешно добавлен!", "success");
+      fetchSolutions()
     } catch (err) {
-      setError(
-        err.response?.data?.error || "Ошибка при добавлении комментария"
-      );
+      setError(err.response?.data || "Ошибка при добавлении комментария");
+      handleServerErrors(err.response?.data, notify, {
+        defaultMessage: "Ошибка при добавлении комментария. Попробуйте снова.",
+        fieldNames: {
+          text: "Комментарий",
+          detail: "Ошибка",
+        },
+      });
     }
   };
   console.log({

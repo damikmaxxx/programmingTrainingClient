@@ -10,6 +10,8 @@ import useUserProject from '../hooks/useUserProject.js';
 import { userAPI } from '../api/api';
 import Loader from "../components/UI/Loader/Loader.jsx";
 import { SUPPORTED_LANGUAGES } from "../data/SUPPORTED_LANGUAGES.js";
+import { useNotification } from "../components/Shared/NotificationProvider/NotificationProvider";
+import { handleServerErrors } from "../utils/handleServerErrors/handleServerErrors";
 
 function Project() {
   const { id } = useParams(); // Может быть undefined, если URL /project без id
@@ -25,8 +27,9 @@ function Project() {
   const [outputData, setOutputData] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [availableLanguages, setAvailableLanguages] = useState([]);
-  // const [projectToDisplay, setProjectToDisplay] = useState(localProject || {});
+  const { notify } = useNotification();
   const tabsRef = useRef(null);
+
   // Проверка последнего проекта из localStorage, если id не указан
   useEffect(() => {
     if (!id) {
@@ -73,7 +76,6 @@ function Project() {
 
   // Сохранение проекта
   const handleSave = async () => {
-
     try {
       const updatedProject = {
         ...localProject,
@@ -81,6 +83,7 @@ function Project() {
         code,
       };
       await userAPI.updateUserProjectById(id, updatedProject);
+      notify("Проект успешно сохранён!", "success");
       console.log("Проект успешно сохранён!");
       console.log("Обновлённый проект:", updatedProject);
       setActiveProject(updatedProject);
@@ -88,6 +91,14 @@ function Project() {
       tabsRef.current.setTab('output');
     } catch (err) {
       console.error("Ошибка при сохранении проекта:", err.response?.data || err.message);
+      handleServerErrors(err.response?.data, notify, {
+        defaultMessage: "Ошибка при сохранении проекта. Попробуйте снова.",
+        fieldNames: {
+          code: "Код",
+          language: "Язык",
+          detail: "Ошибка",
+        },
+      });
     }
   };
 
@@ -101,11 +112,20 @@ function Project() {
       };
       console.log(updatedProject);
       await userAPI.updateUserProjectById(id, updatedProject);
+      notify("Проект успешно опубликован!", "success");
       console.log("Проект успешно опубликован!");
       setActiveProject(updatedProject);
       setLocalProject(updatedProject);
     } catch (err) {
       console.error("Ошибка при публикации проекта:", err.response?.data || err.message);
+      handleServerErrors(err.response?.data, notify, {
+        defaultMessage: "Ошибка при публикации проекта. Попробуйте снова.",
+        fieldNames: {
+          code: "Код",
+          language: "Язык",
+          detail: "Ошибка",
+        },
+      });
     }
   };
 
@@ -149,12 +169,19 @@ function Project() {
       console.log("Проверка решения:", requestData);
       const result = await userAPI.checkSolution(userId, code, selectedLang.value, id);
       console.log("Результат проверки:", result);
+      const isCorrect = result.is_correct;
       setOutputData(
-        result.is_correct
+        isCorrect
           ? "Решение правильное!"
           : `Решение неверное: ${result.error || "Неизвестная ошибка"}`
       );
-      if (result.is_correct) {
+      notify(
+        isCorrect
+          ? "Решение правильное!"
+          : `Решение неверное: ${result.error || "Неизвестная ошибка"}`,
+        isCorrect ? "success" : "error"
+      );
+      if (isCorrect) {
         // Обновляем проект как завершённый
         const updatedProject = {
           ...localProject,
@@ -169,6 +196,14 @@ function Project() {
     } catch (err) {
       console.error("Ошибка при проверке решения:", err.response?.data || err.message);
       setOutputData("Ошибка проверки: " + (err.response?.data?.error || err.message));
+      handleServerErrors(err.response?.data, notify, {
+        defaultMessage: "Ошибка при проверке решения. Попробуйте снова.",
+        fieldNames: {
+          code: "Код",
+          language: "Язык",
+          detail: "Ошибка",
+        },
+      });
     }
   };
 
@@ -186,6 +221,7 @@ function Project() {
       console.log("Результат завершения:", result);
       if (result.is_completed) {
         setOutputData("Решение правильное! Проект завершён.");
+        notify("Проект успешно завершён!", "success");
         // Обновляем проект как завершённый
         const updatedProject = {
           ...localProject,
@@ -198,12 +234,24 @@ function Project() {
         setLocalProject(updatedProject);
       } else {
         setOutputData(`Решение неверное: ${result["Project completion status"] || "Неизвестная ошибка"}`);
+        notify(
+          `Решение неверное: ${result["Project completion status"] || "Неизвестная ошибка"}`,
+          "error"
+        );
       }
     } catch (err) {
       console.error("Ошибка при завершении проекта:", err.response?.data || err.message);
       setOutputData(
         `Ошибка завершения: ${err.response?.data?.["Project completion status"] || err.message}`
       );
+      handleServerErrors(err.response?.data, notify, {
+        defaultMessage: "Ошибка при завершении проекта. Попробуйте снова.",
+        fieldNames: {
+          code: "Код",
+          language: "Язык",
+          detail: "Ошибка",
+        },
+      });
     }
   };
 

@@ -7,7 +7,10 @@ const shopAPI = {
       const { data } = await $authHost.get("/shop/");
       return data; // Ожидаем массив объектов [{ name, price_in_coin, price_in_stars, category }]
     } catch (error) {
-      console.error("Ошибка при получении списка стилей:", error.response?.data || error.message);
+      console.error(
+        "Ошибка при получении списка стилей:",
+        error.response?.data || error.message
+      );
       throw error; // Пробрасываем ошибку для обработки в компоненте
     }
   },
@@ -18,7 +21,10 @@ const shopAPI = {
       const { data } = await $authHost.get(`/shop/${id}/`);
       return data; // Ожидаем объект { name, price_in_coin, price_in_stars, category }
     } catch (error) {
-      console.error(`Ошибка при получении стиля с ID ${id}:`, error.response?.data || error.message);
+      console.error(
+        `Ошибка при получении стиля с ID ${id}:`,
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -44,11 +50,17 @@ const shopAPI = {
       if (filters.category) {
         queryParams.append("category", filters.category);
       }
+      if (filters.ordering) {
+        queryParams.append("ordering", filters.ordering);
+      }
 
       const { data } = await $authHost.get(`/shop/?${queryParams.toString()}`);
       return data; // Ожидаем массив объектов [{ name, price_in_coin, price_in_stars, category }]
     } catch (error) {
-      console.error("Ошибка при получении отфильтрованных стилей:", error.response?.data || error.message);
+      console.error(
+        "Ошибка при получении отфильтрованных стилей:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },

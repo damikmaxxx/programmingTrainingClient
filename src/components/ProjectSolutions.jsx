@@ -5,7 +5,9 @@ import CodeEditor from "../components/UI/CodeEditor/CodeEditor";
 import useProjectSolutions from '../hooks/useProjectSolution'; // Импорт вашего хука
 import Loader from './UI/Loader/Loader';
 import { DEFAULT_USER_IMAGE } from '../utils/consts'; // Импорт констант
+import { useUserStore } from '../store/store'; // Импорт вашего хранилища
 const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
+  const { photo } = useUserStore();
   const {
     solutions,
     setSolutions,
@@ -53,7 +55,7 @@ const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
         <div key={solution.id} className={styles.solutionCard + " dark-primary-color"}>
           <div className={styles.solutionHeader}>
             <div className={styles.solutionHeader_info}>
-              <div className={styles.commentAva}><img src={DEFAULT_USER_IMAGE} alt="аватарка" /></div>
+              <div className={styles.commentAva}><img src={solution.photo || DEFAULT_USER_IMAGE} alt="аватарка" /></div>
               <span className={styles.author}>{solution.author}</span>
             </div>
             <div
@@ -93,11 +95,11 @@ const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
             <div className={styles.commentsSection}>
               {solution?.comments?.slice(0, visibleComments[solution.id] || 5).map((comment, index) => (
                 <div key={index} className={styles.comment}>
-                  <div className={styles.commentAva}><img src={DEFAULT_USER_IMAGE} alt="аватарка" /></div>
+                  <div className={styles.commentAva}><img src={comment.photo || DEFAULT_USER_IMAGE} alt="аватарка" /></div>
                   <div className={styles.commentContainer}>
                     <div className={styles.commentHeader}>
                       <span className={styles.commentAuthor}>{comment.author}</span>
-                      <span className={styles.commentDate}>{comment.date}</span>
+                      {/* <span className={styles.commentDate}>{comment.date}</span> */}
                     </div>
                     <div className={styles.commentText}>{comment.text}</div>
                   </div>
@@ -112,7 +114,7 @@ const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
             {/* Инпут для добавления нового комментария */}
             <div className={styles.newComment}>
               <div className={styles.newComment_img}>
-                <img src={DEFAULT_USER_IMAGE} alt="аватарка" />
+                <img src={photo || DEFAULT_USER_IMAGE} alt="аватарка" />
               </div>
               <textarea
                 className={styles.newComment__input}

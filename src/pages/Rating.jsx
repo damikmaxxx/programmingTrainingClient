@@ -72,7 +72,7 @@ const Rating = () => {
           total_experience: 0,
           total_stars: user.total_stars || 0,
         })));
-
+        console.log(expFull, starsFull, expMonth, starsMonth);
         // Сохраняем рейтинговые данные текущего пользователя для каждой вкладки
         setCurrentUserRatings({
           expfull: expFull.current_user_ranking ? {
@@ -82,7 +82,7 @@ const Rating = () => {
             textEffectId: expFull.current_user_ranking.nickname_id,
             total_experience: expFull.current_user_ranking.total_experience || 0,
             total_stars: 0,
-            index: expFull.current_user_ranking.position || 999,
+            index: expFull.current_user_ranking.position || 999999,
           } : null,
           starsfull: starsFull.current_user_ranking ? {
             userId: starsFull.current_user_ranking.user_id,
@@ -91,7 +91,7 @@ const Rating = () => {
             textEffectId: starsFull.current_user_ranking.nickname_id,
             total_experience: 0,
             total_stars: starsFull.current_user_ranking.total_stars || 0,
-            index: starsFull.current_user_ranking.position || 999,
+            index: starsFull.current_user_ranking.position || 999999,
           } : null,
           expshort: expMonth.current_user_ranking ? {
             userId: expMonth.current_user_ranking.user_id,
@@ -100,7 +100,7 @@ const Rating = () => {
             textEffectId: expMonth.current_user_ranking.nickname_id,
             total_experience: expMonth.current_user_ranking.total_experience || 0,
             total_stars: 0,
-            index: expMonth.current_user_ranking.position || 999,
+            index: expMonth.current_user_ranking.position || 999999,
           } : null,
           starsshort: starsMonth.current_user_ranking ? {
             userId: starsMonth.current_user_ranking.user_id,
@@ -109,7 +109,7 @@ const Rating = () => {
             textEffectId: starsMonth.current_user_ranking.nickname_id,
             total_experience: 0,
             total_stars: starsMonth.current_user_ranking.total_stars || 0,
-            index: starsMonth.current_user_ranking.position || 999,
+            index: starsMonth.current_user_ranking.position || 999999,
           } : null,
         });
         console.log('currentUserRatings:', currentUserRatings);
@@ -231,11 +231,13 @@ const Rating = () => {
 export default Rating;
 
 const RatingItem = ({ index, photo, username, total_experience, total_stars, userId, textEffectId }) => {
-  const [imgSrc, setImgSrc] = useState(photo || {DEFAULT_USER_IMAGE});
+  console.log(photo);
+  const [imgSrc, setImgSrc] = useState(photo || DEFAULT_USER_IMAGE);
+  console.log('imgSrc:', imgSrc);
   const isTop = index <= 1;
 
   const handleImageError = () => {
-    setImgSrc({DEFAULT_USER_IMAGE});
+    setImgSrc(DEFAULT_USER_IMAGE);
   };
 
   const renderStats = () => {
@@ -250,7 +252,7 @@ const RatingItem = ({ index, photo, username, total_experience, total_stars, use
   return (
     <div className={styles.ratingItem}>
       <Link to={`/profile/${userId}`} className={styles.userHeader}>
-        <span className={styles.rank}>{index}</span>
+        <span className={styles.rank}>{index === 999999 ? "-" : index }</span>
         <div className={styles.avatar}>
           {isTop ? <img className={styles.crown} src="images/crown.png" alt="top" /> : null}
           <img
