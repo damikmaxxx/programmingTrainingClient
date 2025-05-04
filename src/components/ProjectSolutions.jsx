@@ -6,6 +6,7 @@ import useProjectSolutions from '../hooks/useProjectSolution'; // Импорт �
 import Loader from './UI/Loader/Loader';
 import { DEFAULT_USER_IMAGE } from '../utils/consts'; // Импорт констант
 import { useUserStore } from '../store/store'; // Импорт вашего хранилища
+import { GetStyleClassById } from '../data/ALL_STYLES';
 const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
   const { photo } = useUserStore();
   const {
@@ -49,6 +50,11 @@ const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
     return <div className={styles.error}>{error}</div>;
   }
 
+  const getStyle = (styleId) => {
+    console.log("styleId", styleId);
+    const classStyle = GetStyleClassById(styleId);
+    return classStyle;
+  }
   return (
     <div className={styles.ProjectSolution}>
       {solutions?.map((solution) => (
@@ -56,7 +62,7 @@ const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
           <div className={styles.solutionHeader}>
             <div className={styles.solutionHeader_info}>
               <div className={styles.commentAva}><img src={solution.photo || DEFAULT_USER_IMAGE} alt="аватарка" /></div>
-              <span className={styles.author}>{solution.author}</span>
+              <span className={styles.author+ " " + getStyle(solution.nickname_id)}>{solution.author}</span>
             </div>
             <div
               onClick={() => handleCodeClick(solution.id)}
@@ -98,8 +104,8 @@ const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
                   <div className={styles.commentAva}><img src={comment.photo || DEFAULT_USER_IMAGE} alt="аватарка" /></div>
                   <div className={styles.commentContainer}>
                     <div className={styles.commentHeader}>
-                      <span className={styles.commentAuthor}>{comment.author}</span>
-                      {/* <span className={styles.commentDate}>{comment.date}</span> */}
+                      <span className={styles.commentAuthor + " " + getStyle(comment.nickname_id)}>{comment.author}</span>
+                      <span className={styles.commentDate}>{comment.date}</span>
                     </div>
                     <div className={styles.commentText}>{comment.text}</div>
                   </div>

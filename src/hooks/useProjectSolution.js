@@ -23,11 +23,13 @@ const useProjectSolutions = (projectId) => {
         code: solution.code,
         stars: solution.earned_stars,
         photo: solution.photo,
+        nickname_id: solution.nickname_id,
         liked: false, // Лайк не поставлен по умолчанию
         comments: solution.comments.map((comment) => ({
           author: comment.user,
           text: comment.text,
           photo: comment.photo,
+          nickname_id: comment.nickname_id,
           date: new Date().toLocaleString(), // Сервер не даёт дату, берём текущую
         })),
         showComments: false,
