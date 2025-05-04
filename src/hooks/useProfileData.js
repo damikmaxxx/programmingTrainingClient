@@ -76,6 +76,7 @@ const useProfileData = (testStyle = false) => {
       coins: userData?.coins,
       stars: userData?.stars,
       exp: userData?.experience,
+      nickname_id: userData?.nickname_id,
       description: userData?.description,
       recentProjects: userData?.last_projects,
       skills: userData?.skills,

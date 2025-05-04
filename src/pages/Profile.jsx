@@ -23,7 +23,7 @@ function Profile({ testStyle = false }) {
       skills={userData.skills}
       timeExpDiagram={userData.timeExpDiagram}
       selectedStyleId={userData.selectedStyleId}
-      nicknameStyleId={nicknameStyleId}
+      nicknameStyleId={userData.nickname_id || nicknameStyleId}
       isOwnProfile={isOwnProfile}
     />
     </>
