@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const useShop = (shopAPI) => {
+const useShop = (shopAPI, sortOrder) => {
   const [isLoading, setIsLoading] = useState(false);
   const [stylesByCategory, setStylesByCategory] = useState({
     nickname: [],
@@ -11,7 +11,9 @@ const useShop = (shopAPI) => {
     async function fetchData() {
       setIsLoading(true);
       try {
-        const data = await shopAPI.getStyles();
+        // Используем sortOrder напрямую как ordering
+        const filters = sortOrder ? { ordering: sortOrder } : {};
+        const data = await shopAPI.getFilteredStyles(filters);
         console.log(data);
 
         // Разделяем стили по категориям
@@ -34,7 +36,7 @@ const useShop = (shopAPI) => {
     }
 
     fetchData();
-  }, [shopAPI]);
+  }, [shopAPI, sortOrder]);
 
   return {
     isLoading,

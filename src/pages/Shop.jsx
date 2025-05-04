@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './Shop.module.css';
 import Tabs, { Tab, TabHeader } from '../components/UI/Tabs/Tabs';
 import Button from '../components/UI/Button/Button';
@@ -55,7 +55,8 @@ const buyItem = async (item, notify) => {
 const Shop = () => {
   const { nicknameStyles, profileStyle, setNicknameStyles, setProfileStyle } = useShopStore();
   const { name } = useUserStore();
-  const { isLoading, shopStyles } = useShop(shopAPI);
+  const [sortOrder, setSortOrder] = useState('');
+  const { isLoading, shopStyles } = useShop(shopAPI, sortOrder);
   const { notify } = useNotification();
   console.log(isLoading, shopStyles);
 
@@ -66,9 +67,11 @@ const Shop = () => {
   ];
 
   const sortedModes = [
-    { value: "price", label: "По цене" },
-    { value: "popular", label: "По популярности" },
-    { value: "time", label: "По времени" },
+    { value: "", label: "По умолчанию" },
+    { value: "price_in_stars", label: "По звёздам (возрастание)" },
+    { value: "-price_in_stars", label: "По звёздам (убывание)" },
+    { value: "price_in_coin", label: "По коинам (возрастание)" },
+    { value: "-price_in_coin", label: "По коинам (убывание)" },
   ];
 
   return (
@@ -83,7 +86,12 @@ const Shop = () => {
           <div className="col-lg-3 projects__tabs projects__tabs--sort">
             <h6>Сортировка</h6>
             <div className="select">
-              <Select options={sortedModes} defaultValue="По умолчанию" placeholder="Выбери сортировку" />
+              <Select
+                options={sortedModes}
+                defaultValue="По умолчанию"
+                placeholder="Выбери сортировку"
+                onChange={({ value }) => setSortOrder(value)}
+              />
             </div>
           </div>
         </div>
