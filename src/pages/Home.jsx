@@ -1,37 +1,32 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import styles from "./Home.module.css"
+import styles from './Home.module.css';
+import Button from '../components/UI/Button/Button';
 
 function Home() {
   return (
     <div className="container">
-      <section id={styles.titleSection}>
-        <div className="row">
-          <div className="col-lg-8">
-
-            <h1>Добро пожаловать в мир, где обучение программированию превращается в захватывающее приключение!</h1>
-          </div>
-        </div>
-      </section>
-      {/* Блок с кнопками регистрации и входа */}
-      <section>
-        <Link to="/register">
-          <button>Регистрация</button>
-        </Link>
-        <Link to="/login">
-          <button>Войти</button>
-        </Link>
-      </section>
-
-      {/* Блок с последними обновлениями */}
-      <section>
-        <h2>Последние обновления</h2>
-        <ul>
-          <li>Обновление 1: Описание обновления.</li>
-          <li>Обновление 2: Описание обновления.</li>
-          <li>Обновление 3: Описание обновления.</li>
-          <li>НАДО БЫ СОЗДАТЬ СТРАНИЦУ ЗАГОЛОВОК , КУДА ПОПАДАЮТ НЕЗАРЕГАННЫЕ ПОЛЬЗОВАТЕЛИ И УЖЕ НОВУЮ СТРАНИЦУ С НОВОСТЯМИ ИЛИ ЧЕТО ТАКОЕ</li>
+      <section className={styles.heroSection}>
+        <h1 className={styles.title}>
+        ProgPath: Твой путь к мастерству в программировании!
+        </h1>
+        <p className={styles.description}>
+          ProgPath — это платформа, где ты учишься программировать, решая задачи, обмениваясь решениями и развиваясь в сообществе единомышленников.
+        </p>
+        <ul className={styles.features}>
+          <li className={styles.featureItem}>Решай задачи и практикуйся в программировании</li>
+          <li className={styles.featureItem}>Обменивайся решениями с сообществом</li>
+          <li className={styles.featureItem}>Покупай стили для персонализации профиля</li>
+          <li className={styles.featureItem}>Отслеживай прогресс и получай достижения</li>
         </ul>
+        <div className={styles.buttonGroup}>
+          <Link to="/registration">
+            <Button >Зарегистрироваться</Button>
+          </Link>
+          <Link to="/login">
+            <Button>Войти</Button>
+          </Link>
+        </div>
       </section>
     </div>
   );

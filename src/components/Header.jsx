@@ -69,7 +69,7 @@ function Header() {
       <div className="container">
         <div className="row header-row">
           <div className="col-lg-2 logo">
-            <Link to="/">Questify</Link>
+            <Link to="/">ProgFlow</Link>
           </div>
           <nav className="col-lg-7 nav">
             <ul className={`tabs header__tab ${isTabValid ? "" : "tabs-unactive"}`}>

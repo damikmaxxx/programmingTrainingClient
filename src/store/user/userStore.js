@@ -50,9 +50,9 @@ export const useUserStore = create(devtools((set) => ({
       profileStyleId: 0,
       nicknameStyleId: 0,
       description: "",
-      // recentProjects: [],
-      // skills: [],
-      // timeExpDiagram: { time: [], exp: [] },
+      recentProjects: [],
+      skills: [],
+      timeExpDiagram: { time: [], exp: [] },
     });
   }
 })));
