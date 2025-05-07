@@ -7,7 +7,10 @@ const projectAPI = {
       const { data } = await $authHost.get("/projects/");
       return data;
     } catch (error) {
-      console.error("Ошибка при получении списка проектов:", error.response?.data || error.message);
+      console.error(
+        "Ошибка при получении списка проектов:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -18,7 +21,10 @@ const projectAPI = {
       const { data } = await $authHost.get("/temporary-projects/");
       return data;
     } catch (error) {
-      console.error("Ошибка при получении временных проектов:", error.response?.data || error.message);
+      console.error(
+        "Ошибка при получении временных проектов:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -29,7 +35,10 @@ const projectAPI = {
       const { data } = await $authHost.get("/started-projects/");
       return data; // [{ id, name, description, experience, difficulty, coins }]
     } catch (error) {
-      console.error("Ошибка при получении начатых проектов:", error.response?.data || error.message);
+      console.error(
+        "Ошибка при получении начатых проектов:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -40,7 +49,10 @@ const projectAPI = {
       const { data } = await $authHost.get("/finished-projects/");
       return data; // [{ id, name, description, experience, difficulty, coins }]
     } catch (error) {
-      console.error("Ошибка при получении завершенных проектов:", error.response?.data || error.message);
+      console.error(
+        "Ошибка при получении завершенных проектов:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -51,7 +63,10 @@ const projectAPI = {
       const { data } = await $authHost.get(`/comment/${projectId}/`);
       return data; // [{ user, project, user_project, code, earned_stars, comments: [{ user, text }] }]
     } catch (error) {
-      console.error("Ошибка при получении комментариев к проекту:", error.response?.data || error.message);
+      console.error(
+        "Ошибка при получении комментариев к проекту:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -59,10 +74,15 @@ const projectAPI = {
   // Установка лайка на проект пользователя
   setLike: async (userProjectId) => {
     try {
-      const { data } = await $authHost.post("/set-like/", { user_project_id: userProjectId });
+      const { data } = await $authHost.post("/set-like/", {
+        user_project_id: userProjectId,
+      });
       return data; // { message, data: { user, project, earned_stars, liker } }
     } catch (error) {
-      console.error("Ошибка при установке лайка:", error.response?.data || error.message);
+      console.error(
+        "Ошибка при установке лайка:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -76,7 +96,34 @@ const projectAPI = {
       });
       return data; // { user, user_project, text }
     } catch (error) {
-      console.error("Ошибка при добавлении комментария:", error.response?.data || error.message);
+      console.error(
+        "Ошибка при добавлении комментария:",
+        error.response?.data || error.message
+      );
+      throw error;
+    }
+  },
+  // Удаление комментария
+  deleteComment: async (commentId) => {
+    try {
+      await $authHost.delete(`/delete-comment/${commentId}/`);
+    } catch (error) {
+      console.error(
+        "Ошибка при удалении комментария:",
+        error.response?.data || error.message
+      );
+      throw error;
+    }
+  },
+  // Удаление комментария
+  deleteComment: async (commentId) => {
+    try {
+      await $authHost.delete(`/delete-comment/${commentId}/`);
+    } catch (error) {
+      console.error(
+        "Ошибка при удалении комментария:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },

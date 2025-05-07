@@ -26,11 +26,12 @@ const useProjectSolutions = (projectId) => {
         nickname_id: solution.nickname_id,
         liked: false, // Лайк не поставлен по умолчанию
         comments: solution.comments.map((comment) => ({
+          id: comment.comment_id,
           author: comment.user,
           text: comment.text,
           photo: comment.photo,
           nickname_id: comment.nickname_id,
-          date: new Date().toLocaleString(), // Сервер не даёт дату, берём текущую
+          date: comment.date, // Сервер не даёт дату, берём текущую
         })),
         showComments: false,
         project: solution.project,
@@ -116,7 +117,7 @@ const useProjectSolutions = (projectId) => {
       );
       setNewComment("");
       notify("Комментарий успешно добавлен!", "success");
-      fetchSolutions()
+      fetchSolutions();
     } catch (err) {
       setError(err.response?.data || "Ошибка при добавлении комментария");
       handleServerErrors(err.response?.data, notify, {
@@ -128,6 +129,26 @@ const useProjectSolutions = (projectId) => {
       });
     }
   };
+
+  // Удаление комментария (новый метод)
+  const deleteComment = async (commentId) => {
+    console.log("Удаление комментария с ID:", commentId);
+    try {
+      await projectAPI.deleteComment(commentId); // Вызываем API для удаления
+      setSolutions((prev) =>
+        prev.map((solution) => ({
+          ...solution,
+          comments: solution.comments.filter(
+            (comment) => comment.id !== commentId
+          ), // Удаляем комментарий из списка
+        }))
+      );
+    } catch (err) {
+      console.error("Ошибка при удалении комментария:", err);
+      // Здесь можно добавить уведомление через NotificationProvider
+    }
+  };
+
   console.log({
     solutions,
     setSolutions,
@@ -142,6 +163,7 @@ const useProjectSolutions = (projectId) => {
     handleCommentSubmit,
   });
   return {
+    deleteComment,
     solutions,
     setSolutions,
     loading,

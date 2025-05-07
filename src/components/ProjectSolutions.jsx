@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import styles from './ProjectSolution.module.css'; // Импорт стилей
 import { FaComment, FaStar, FaChevronUp, FaChevronDown, FaPaperPlane } from 'react-icons/fa'; // Импорт иконок
 import CodeEditor from "../components/UI/CodeEditor/CodeEditor";
-import useProjectSolutions from '../hooks/useProjectSolution'; // Импорт вашего хука
+import useProjectSolutions from '../hooks/useProjectSolution'; // Импорт хука
 import Loader from './UI/Loader/Loader';
 import { DEFAULT_USER_IMAGE } from '../utils/consts'; // Импорт констант
-import { useUserStore } from '../store/store'; // Импорт вашего хранилища
+import { useUserStore } from '../store/store'; // Импорт хранилища
 import { GetStyleClassById } from '../data/ALL_STYLES';
-const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
-  const { photo } = useUserStore();
+
+const ProjectSolution = ({ projectId, sortedLang = { value: "python" } }) => {
+  const { photo, name, role } = useUserStore(); // Извлекаем имя и роль пользователя
   const {
     solutions,
     setSolutions,
@@ -21,8 +22,10 @@ const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
     toggleComments,
     handleLike,
     handleCommentSubmit,
+    deleteComment,
   } = useProjectSolutions(projectId);
   const [expandedCode, setExpandedCode] = useState(null);
+
   console.log({
     solutions,
     setSolutions,
@@ -35,7 +38,9 @@ const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
     toggleComments,
     handleLike,
     handleCommentSubmit,
-  })
+    deleteComment,
+  });
+
   const handleCodeClick = (id) => {
     setExpandedCode((prevExpandedCode) =>
       prevExpandedCode === id ? null : id // Если уже раскрыт, то сворачиваем, иначе раскрываем
@@ -54,7 +59,8 @@ const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
     console.log("styleId", styleId);
     const classStyle = GetStyleClassById(styleId);
     return classStyle;
-  }
+  };
+
   return (
     <div className={styles.ProjectSolution}>
       {solutions?.map((solution) => (
@@ -62,7 +68,7 @@ const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
           <div className={styles.solutionHeader}>
             <div className={styles.solutionHeader_info}>
               <div className={styles.commentAva}><img src={solution.photo || DEFAULT_USER_IMAGE} alt="аватарка" /></div>
-              <span className={styles.author+ " " + getStyle(solution.nickname_id)}>{solution.author}</span>
+              <span className={styles.author + " " + getStyle(solution.nickname_id)}>{solution.author}</span>
             </div>
             <div
               onClick={() => handleCodeClick(solution.id)}
@@ -77,7 +83,6 @@ const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
             <pre className={styles.solutionCode}>
               {solution.code === null ?
                 <div className={styles.noCode}>Код отсутствует</div> :
-
                 <CodeEditor
                   language={sortedLang.value}
                   isReadOnly={true}
@@ -109,6 +114,15 @@ const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
                     </div>
                     <div className={styles.commentText}>{comment.text}</div>
                   </div>
+                  {/* Показываем кнопку удаления для комментариев текущего пользователя или если пользователь — админ */}
+                  {(comment.author === name || role === "admin") && (
+                    <button
+                      className={styles.deleteButton}
+                      onClick={() => deleteComment(comment.id)}
+                    >
+                      ×
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
@@ -125,13 +139,13 @@ const ProjectSolution = ({ projectId, sortedLang = {value:"python" }}) => {
               <textarea
                 className={styles.newComment__input}
                 value={newComment}
-                onChange={(e) => setNewComment(e.target.value)} // Обновление состояния при вводе
+                onChange={(e) => setNewComment(e.target.value)}
                 placeholder="Напишите комментарий..."
-                rows={3} // Количество видимых строк
+                rows={3}
               />
               <div
                 className={`${styles.newComment__sendButton} ${newComment.trim() ? styles.active : ''}`}
-                onClick={() => handleCommentSubmit(solution.id)} // Отправка комментария
+                onClick={() => handleCommentSubmit(solution.id)}
               >
                 <FaPaperPlane className={styles.sendIcon} />
               </div>

@@ -44,16 +44,17 @@ const Projects = () => {
         <div className="container">
           <div className="row">
             <Tabs tabs={tabs} defaultActiveTab="additional" onTabChange={handleTabChange}>
+            <div className="col-lg-2"></div>
               <div className="col-lg-8 tabs projects__tabs">
                 <TabHeader tabs={tabs} />
               </div>
               <div className="col-lg-1"></div>
-              <div className="col-lg-3 projects__tabs projects__tabs--sort">
+              {/* <div className="col-lg-3 projects__tabs projects__tabs--sort">
                 <h6>Сортировка</h6>
                 <div className="select">
                   <Select options={sortedModes} defaultValue="По умолчанию" placeholder="Выбери сортировку" />
                 </div>
-              </div>
+              </div> */}
               <Tab id="additional" key="additional">
                 <div className="row tab-content">
                   {isLoading ? (

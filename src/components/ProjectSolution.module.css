@@ -65,6 +65,7 @@
   font-weight: 600;
 }
 .comment {
+  position: relative;
   margin-bottom: 8px;
   padding: 8px;
   background:#282c34;
@@ -97,7 +98,7 @@
 }
 .commentHeader{
   display: flex;
-  justify-content: space-between;
+  gap: 10px;
 }
 .showMoreComments{
   text-align: center;
@@ -243,6 +244,17 @@
 .newComment__sendButton:hover{
   color:var(--primary-color);
 }
+.deleteButton{
+  background: none;
+  border: none;
+  font-size: 25px;
+  cursor: pointer;
+  color: white;
+  font-weight: 600;
+  transition: transform 0.2s ease-in-out;
+}
+
+
 /* .search__glass{
 	opacity: 1;
 	transition: .4s;

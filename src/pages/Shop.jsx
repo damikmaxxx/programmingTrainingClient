@@ -63,7 +63,6 @@ const Shop = () => {
   const tabs = [
     { id: 'styleNames', label: 'Стили для имени' },
     { id: 'profileThemes', label: 'Темы профиля' },
-    { id: 'other', label: 'Другое' },
   ];
 
   const sortedModes = [
@@ -130,15 +129,6 @@ const Shop = () => {
               <Loader fullPage={false} />
             ) : (
               <ProfileShopEffects profileStyle={profileStyle} shopStyles={shopStyles} notify={notify} />
-            )}
-          </div>
-        </Tab>
-        <Tab id="other">
-          <div className="row">
-            {isLoading ? (
-              <Loader fullPage={false} />
-            ) : (
-              <p>СЮДА ЧТО-ТО УНИКАЛЬНОЕ ДОРОГОЕ ИЛИ УДАЛИТЬ</p>
             )}
           </div>
         </Tab>
