@@ -28,6 +28,7 @@ const renderPriceAndIcon = (style) => {
 // Функция для покупки стиля
 const buyItem = async (item, notify) => {
   try {
+    console.log('Покупка стиля:', item);
     const styleData = {
       style_id: item.id,
       is_active: false, // По умолчанию стиль не активируется при покупке
@@ -147,8 +148,13 @@ const ProfileShopEffects = ({ profileStyle, shopStyles, notify }) => {
   return (
     <>
       {shopStyles.background_profile.map((style) => {
-        const s = ALL_STYLES.find(s => s.id === style.id);
-        console.log(s);
+        let ss = ALL_STYLES.find(s => s.id === style.id);
+        console.log(ss,style);
+        const s= {
+          ...ss,
+          price_in_coin: style.price_in_coin,
+          price_in_stars: style.price_in_stars,
+        };
         const StyleComponent = GetStyleComponentById(style.id);
         if (!StyleComponent) {
           return null;

@@ -9,7 +9,7 @@ function Profile({ testStyle = false }) {
   const {nicknameStyleId} =  useUserStore();
   if (isLoading) return <Loader />;
   if (error) return <div>Ошибка загрузки данных: {error.message}</div>;
-  console.log(userData);
+  console.log(testStyle);
   return (
     <>
     <DefaultProfile

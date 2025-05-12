@@ -33,12 +33,23 @@ export default function DefaultProfile({name, avatar, stars, recentProjects, des
     return acc;
   }, {});
   const sortedDates = Object.keys(groupedData).sort((a, b) => new Date(a) - new Date(b));
+  
+  // Вычисляем средние значения опыта
+  const rawExperience = sortedDates.map(date => {
+    const experiences = groupedData[date];
+    return experiences.reduce((sum, exp) => sum + exp, 0) / experiences.length;
+  });
+
+  // Находим максимальное значение опыта
+  const maxRawExperience = Math.max(...rawExperience, 1); // Избегаем деления на 0
+
+  // Масштабируем данные так, чтобы максимум был на 60% от реального максимума
+  const scaleFactor = 0.6; // 60% высоты
+  const scaledExperience = rawExperience.map(exp => exp * scaleFactor);
+
   const groupedTimeExpDiagram = {
     date: sortedDates,
-    experience: sortedDates.map(date => {
-      const experiences = groupedData[date];
-      return experiences.reduce((sum, exp) => sum + exp, 0) / experiences.length;
-    }),
+    experience: scaledExperience,
   };
 
   console.log(groupedTimeExpDiagram);
@@ -57,6 +68,32 @@ export default function DefaultProfile({name, avatar, stars, recentProjects, des
     ],
   };
 
+  // Настройка параметров графика Line
+  const lineOptions = {
+    scales: {
+      y: {
+        min: 0,
+        max: maxRawExperience, // Устанавливаем максимум как реальное максимальное значение
+        ticks: {
+          // Убираем проценты, возвращаем исходный формат
+          callback: function(value) {
+            return value;
+          },
+        },
+        grid: {
+          color: '#282C34',
+          lineWidth: 2,
+        },
+      },
+      x: {
+        grid: {
+          color: '#282C34',
+          lineWidth: 2,
+        },
+      },
+    },
+  };
+
   // Если skills пустой, задаём пустой массив
   const normalizedSkills = skills || [];
 
@@ -64,7 +101,7 @@ export default function DefaultProfile({name, avatar, stars, recentProjects, des
   const totalExperience = normalizedSkills.reduce((sum, skill) => sum + skill.experience, 0);
 
   // Определяем базовое значение для расчёта процентов: минимум 1000
-  const baseExperience = Math.max(totalExperience, 1000);
+  const baseExperience = Math.max(totalExperience, 200);
 
   // Вычисляем процент для каждого навыка относительно baseExperience
   const skillsWithPercentage = normalizedSkills.map(skill => ({
@@ -74,11 +111,11 @@ export default function DefaultProfile({name, avatar, stars, recentProjects, des
   console.log(skillsWithPercentage);
 
   const radarData = {
-    labels: skillsWithPercentage.map(skill => skill.language), // Используем language
+    labels: skillsWithPercentage.map(skill => skill.language),
     datasets: [
       {
         label: 'Навыки',
-        data: skillsWithPercentage.map(skill => skill.percentage), // Используем проценты
+        data: skillsWithPercentage.map(skill => skill.percentage),
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
         borderColor: 'rgba(255, 99, 132, 1)',
         borderWidth: 1,
@@ -89,25 +126,25 @@ export default function DefaultProfile({name, avatar, stars, recentProjects, des
   const radarOptions = {
     scales: {
       r: {
-        min: 0, // Устанавливаем минимум шкалы
-        max: 100, // Устанавливаем максимум шкалы на 100%
+        min: 0,
+        max: 100,
         ticks: {
-          display: false, // Полностью убираем ticks (включая их визуальные элементы)
+          display: false,
         },
         grid: {
-          color: '#282C34', // Темнее светло-серого, но не слишком тёмный
+          color: '#282C34',
           lineWidth: 2,
         },
         angleLines: {
-          display: false, // Убираем радиальные линии от центра к меткам
+          display: false,
         },
         pointLabels: {
-          display: true, // Оставляем метки видимыми
+          display: true,
           font: {
-            size: 16, // Увеличиваем размер шрифта
-            weight: 'bold', // Делаем шрифт жирнее (опционально)
+            size: 16,
+            weight: 'bold',
           },
-          color: '#f0f0f0', // Светлый цвет, почти белый, но мягче
+          color: '#f0f0f0',
         },
       },
     },
@@ -115,10 +152,7 @@ export default function DefaultProfile({name, avatar, stars, recentProjects, des
 
   const [showModal, setShowModal] = useState(false);
 
-  // Открытие модалки
   const openModal = () => setShowModal(true);
-
-  // Закрытие модалки
   const closeModal = () => setShowModal(false);
 
   const BackgroundStyles = () => <div className={styles.bg_styles}></div>;
@@ -145,21 +179,17 @@ export default function DefaultProfile({name, avatar, stars, recentProjects, des
         requestData.description = props.values.description;
       }
 
-      // Обновляем профиль
       await userAPI.updateProfile(requestData);
 
-      // Обновляем стили профиля и ника
       const profileStyleValue = props.values.profileStyle.value;
       const nicknameStyleValue = props.values.nicknameStyle.value;
 
-      // Для стиля профиля
       if (profileStyleValue === '0') {
         await userAPI.updateUserStyle(0, STYLE_CATEGORY_BACKGROUND_PROFILE);
       } else {
         await userAPI.updateUserStyle(profileStyleValue);
       }
 
-      // Для стиля ника
       if (nicknameStyleValue === '0') {
         await userAPI.updateUserStyle(0, STYLE_CATEGORY_NICKNAME);
       } else {
@@ -256,7 +286,9 @@ export default function DefaultProfile({name, avatar, stars, recentProjects, des
         <div className="row">
           <div className={"col-lg-8 " + styles.over}>
             <div className={styles.section}>
-              <span className={styles.lineDiagram}><Line data={lineData} /></span>
+              <span className={styles.lineDiagram}>
+                <Line data={lineData} options={lineOptions} />
+              </span>
               {timeExpDiagram.length !== 0 || <p className={styles.fullInfo}>Нет данных для отображения графика</p>}
             </div>
           </div>
