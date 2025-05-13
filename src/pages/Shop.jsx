@@ -27,6 +27,18 @@ const renderPriceAndIcon = (style) => {
 
 // Функция для покупки стиля
 const buyItem = async (item, notify) => {
+  if (item.category === "map") {
+    const purchasedMaps = JSON.parse(localStorage.getItem('purchasedMaps') || '[]');
+    if (!purchasedMaps.includes(item.id)) {
+      purchasedMaps.push(item.id);
+      localStorage.setItem('purchasedMaps', JSON.stringify(purchasedMaps));
+      notify('Карта успешно куплена!', 'success');
+    } else {
+      notify('Эта карта уже куплена!', 'info');
+    }
+    return; // Прерываем выполнение для карт, так как нет API
+
+  }
   try {
     console.log('Покупка стиля:', item);
     const styleData = {
@@ -64,6 +76,7 @@ const Shop = () => {
   const tabs = [
     { id: 'styleNames', label: 'Стили для имени' },
     { id: 'profileThemes', label: 'Темы профиля' },
+    { id: 'maps', label: 'Карты' },
   ];
 
   const sortedModes = [
@@ -72,6 +85,11 @@ const Shop = () => {
     { value: "-price_in_stars", label: "По звёздам (убывание)" },
     { value: "price_in_coin", label: "По коинам (возрастание)" },
     { value: "-price_in_coin", label: "По коинам (убывание)" },
+  ];
+
+  // Массив с картой, включая иконку Python
+  const maps = [
+    { id: 20, name: 'Изучение Python', price_in_coin: 10, icon: 'https://img.icons8.com/?size=240&id=l75OEUJkPAk4&format=png', category: 'map' },
   ];
 
   return (
@@ -133,6 +151,32 @@ const Shop = () => {
             )}
           </div>
         </Tab>
+        <Tab id="maps">
+          <div className="row">
+            {isLoading ? (
+              <Loader fullPage={false} />
+            ) : (
+              maps.map((map) => (
+                <div key={map.id} className="col-4">
+                  <div className={styles.shopItem + " dark-primary-color"}>
+                    <div className={styles.shopItemName}>
+                      <img src={map.icon} alt="Иконка карты" className={styles.mapIcon} />
+                    </div>
+                    <div>
+                      <h4>{map.name}</h4>
+                      <div className={styles.shopItemPrice}>
+                        Цена: {renderPriceAndIcon(map)}
+                      </div>
+                      <Button variant="small" onClick={() => buyItem(map, notify)}>
+                        КУПИТЬ
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </Tab>
       </Tabs>
     </div>
   );
@@ -149,8 +193,8 @@ const ProfileShopEffects = ({ profileStyle, shopStyles, notify }) => {
     <>
       {shopStyles.background_profile.map((style) => {
         let ss = ALL_STYLES.find(s => s.id === style.id);
-        console.log(ss,style);
-        const s= {
+        console.log(ss, style);
+        const s = {
           ...ss,
           price_in_coin: style.price_in_coin,
           price_in_stars: style.price_in_stars,

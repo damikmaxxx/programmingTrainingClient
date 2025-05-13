@@ -36,7 +36,9 @@ const Map = () => {
     experience: 0,
     coins: 0,
   });
-
+  const [OPENED_MAP_PROJECTS,SET_OPENED_MAP_PROJECTS] = useState([
+    {id:20,projects_id:[16,17,18,19,20],open:false}, 
+  ])
   useEffect(() => {
     async function fetchData() {
       console.log("Запрос данных...");
@@ -44,6 +46,12 @@ const Map = () => {
         const projects = await projectAPI.getProjects();
         const filteredProjects = projects.filter(project => project.is_limited === false);
 
+        const purchasedMaps = JSON.parse(localStorage.getItem('purchasedMaps') || '[]');
+        SET_OPENED_MAP_PROJECTS(OPENED_MAP_PROJECTS.map(project => ({
+          ...project,
+          open: purchasedMaps.includes(project.id),
+        })))
+        console.log("Купленные карты:", SET_OPENED_MAP_PROJECTS);
         const openedProjects = await mapAPI.getUserProjectMap();
         const connection = await mapAPI.getConnections();
         const elements = await mapAPI.getElements();
@@ -105,12 +113,11 @@ const Map = () => {
         html: `<div class="map__element">${name || 'Неизвестно'}</div>`,
       };
     });
-
     const _DOM_ELEMENTS = document.getElementById('domelements');
     const _ACTIVE_SCREEN = document.getElementById('draggablescreen');
 
     const MAP_SETTINGS = { mode: mapMode };
-    const DOM_CONTROLLER = new DOM_ELEMENTS_CONTROLLER(DOM_ELEMENTS_TEMPLATE, domConnection);
+    const DOM_CONTROLLER = new DOM_ELEMENTS_CONTROLLER(DOM_ELEMENTS_TEMPLATE, domConnection,{opened_map_projects: OPENED_MAP_PROJECTS});
     const map_controller = new MAP_CONTROLLER(MAP_SETTINGS, DOM_CONTROLLER, _DOM_ELEMENTS, _ACTIVE_SCREEN);
     map_controller.init();
     map_controller.subcribeUpdateElements((snapshotEl) => {

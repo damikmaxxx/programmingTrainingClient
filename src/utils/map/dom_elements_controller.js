@@ -1,7 +1,7 @@
 import { searchElementsById, getIdFromDomElement } from "./utils.js";
 
 export class DOM_ELEMENTS_CONTROLLER {
-  constructor(elements, connections) {
+  constructor(elements, connections, settings) {
     this.elements = elements;
     this.connections = connections;
     this.dragging_mode = false;
@@ -12,6 +12,7 @@ export class DOM_ELEMENTS_CONTROLLER {
     this.startConnectionEl = null;
     this.SUBSCRIBERS_TO_UPDATE_ELEMENTS = [];
     this.MAP_SETTINGS = {};
+    this.opened_map = settings.opened_map_projects;
   }
   init() {
     if (this.MAP_SETTINGS.mode === this.MODE_HANDLER.CONSTANTS.USER) {
@@ -40,8 +41,18 @@ export class DOM_ELEMENTS_CONTROLLER {
     newElement.style.top = el.position.y + "px";
     newElement.classList.add("element");
     newElement.id = `element_${el.id}`;
-
+    console.log(this.opened_map);
+    // Проверка, входит ли el.id в projects_id и закрыт ли он
+    const mapProject = this.opened_map.find((map) =>
+      map.projects_id.includes(el.id)
+    );
+    if (mapProject && !mapProject.open) {
+      newElement.classList.add("element_not-purchased");
+    }
     // Добавляем класс element_close, если isOpen === false
+    if (el.params && el.params.isOpen === false) {
+      newElement.classList.add("element_close");
+    }
     if (el.params && el.params.isOpen === false) {
       newElement.classList.add("element_close");
     }
@@ -90,7 +101,7 @@ export class DOM_ELEMENTS_CONTROLLER {
     this.elements.forEach((el) => {
       this.createElement(el);
     });
-    if(this.connections?.length === 0 || !this.connections) return;
+    if (this.connections?.length === 0 || !this.connections) return;
     this.connections.forEach((con) => {
       let from = this.elements.find((el) => el.id === con.from);
       let to = this.elements.find((el) => el.id === con.to);
@@ -112,7 +123,7 @@ export class DOM_ELEMENTS_CONTROLLER {
     this.drawDeleteButtons();
     const lines = document.querySelectorAll(".line");
     lines.forEach((line) => line.remove());
-    
+
     this.connections.forEach((con) => {
       let from = this.elements.find((el) => el.id === con.from);
       let to = this.elements.find((el) => el.id === con.to);
@@ -121,7 +132,7 @@ export class DOM_ELEMENTS_CONTROLLER {
   }
   drawConnection(from, to, params, id) {
     console.log(from, to, params, id);
-    if(!from || !to) return;
+    if (!from || !to) return;
     const x1 = from.position.x + from.width / 2;
     const y1 = from.position.y + from.height / 2;
     const x2 = to.position.x + to.width / 2;
@@ -471,7 +482,7 @@ export class DOM_ELEMENTS_CONTROLLER {
     this.useDOM = obj;
   }
   getModeSettings(obj = {}) {
-    console.log(obj)
+    console.log(obj);
     this.MODE_HANDLER = {
       CONSTANTS: obj.constants ?? this.MODE_HANDLER?.CONSTANTS,
       SET_MODE: obj.setMode ?? this.MODE_HANDLER?.SET_MODE,
@@ -485,7 +496,7 @@ export class DOM_ELEMENTS_CONTROLLER {
     this.modeSubscribers = callback;
   }
   getMapSettings(settings) {
-    console.log(settings)
+    console.log(settings);
     this.MAP_SETTINGS = settings;
   }
   subcribeUpdateElements(callback) {
