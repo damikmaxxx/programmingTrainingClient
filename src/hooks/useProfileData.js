@@ -27,7 +27,6 @@ const useProfileData = (testStyle = false) => {
       try {
         // Получаем профиль пользователя
         const fetchedUserData = await userAPI.getProfile(userIdToFetch);
-        console.log('Profile data:', fetchedUserData);
         if (fetchedUserData) {
           // Обновляем Zustand только для текущего пользователя
           if (isOwnProfile) {
@@ -38,7 +37,6 @@ const useProfileData = (testStyle = false) => {
 
         // Получаем данные о прогрессе пользователя
         const fetchedProgressData = await userAPI.getUserProgress(userIdToFetch);
-        console.log('Progress data:', fetchedProgressData);
         if (fetchedProgressData) {
           // Обновляем Zustand только для текущего пользователя
           if (isOwnProfile) {
@@ -49,7 +47,6 @@ const useProfileData = (testStyle = false) => {
 
         // Получаем навыки пользователя
         const fetchedSkillsData = await userAPI.getUserSkills(userIdToFetch);
-        console.log('Skills data:', fetchedSkillsData);
         if (fetchedSkillsData) {
           setUserData(prev => ({ ...prev, skills: fetchedSkillsData }));
         }

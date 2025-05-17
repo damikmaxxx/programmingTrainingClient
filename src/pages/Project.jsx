@@ -38,7 +38,6 @@ function Project() {
       if (item && item !== "undefined") {
         lastProjectId = JSON.parse(item);
       }
-      console.log("lastProjectId:", lastProjectId);
       if (lastProjectId) {
         navigate(`/project/${lastProjectId}`);
       } else {
@@ -52,7 +51,6 @@ function Project() {
     if (!isLoadingProject && id) {
       setIsLoading(true);
       if (userProject) {
-        console.log("userProject:", userProject);
         setActiveProject(userProject);
         setLocalProject(userProject);
         setCode(userProject.code || "");
@@ -68,7 +66,6 @@ function Project() {
         );
         setIsLoading(false);
       } else if (error) {
-        console.log("Error:", error);
         navigate("/not-found");
       }
     }
@@ -84,8 +81,6 @@ function Project() {
       };
       await userAPI.updateUserProjectById(id, updatedProject);
       notify("Проект успешно сохранён!", "success");
-      console.log("Проект успешно сохранён!");
-      console.log("Обновлённый проект:", updatedProject);
       setActiveProject(updatedProject);
       setLocalProject(updatedProject);
       tabsRef.current.setTab('output');
@@ -110,10 +105,8 @@ function Project() {
         language: SUPPORTED_LANGUAGES.find(obj => obj.label === selectedLang.label)?.value,
         is_published: true,
       };
-      console.log(updatedProject);
       await userAPI.updateUserProjectById(id, updatedProject);
       notify("Проект успешно опубликован!", "success");
-      console.log("Проект успешно опубликован!");
       setActiveProject(updatedProject);
       setLocalProject(updatedProject);
     } catch (err) {
@@ -133,14 +126,6 @@ function Project() {
   const handleRunCode = async () => {
     try {
       tabsRef.current.setTab('output');
-      console.log({
-        userId,
-        "project_id": id,
-        "code": code,
-        "language": selectedLang.value,
-        "input_data": inputData || null,
-        "project": id,
-      });
       const result = await userAPI.executeCode(
         userId,
         code,
@@ -148,7 +133,6 @@ function Project() {
         inputData || null,
         id
       );
-      console.log("Результат выполнения:", result);
       setOutputData(result.output || result.error || "Нет вывода");
     } catch (err) {
       console.error("Ошибка выполнения кода:", err);
@@ -166,9 +150,7 @@ function Project() {
         language: selectedLang.value,
         project: id,
       };
-      console.log("Проверка решения:", requestData);
       const result = await userAPI.checkSolution(userId, code, selectedLang.value, id);
-      console.log("Результат проверки:", result);
       const isCorrect = result.is_correct;
       setOutputData(
         isCorrect
@@ -216,9 +198,7 @@ function Project() {
         code,
         language: selectedLang.value,
       };
-      console.log("Завершение проекта:", projectData);
       const result = await userAPI.endUserProject(id, projectData);
-      console.log("Результат завершения:", result);
       if (result.is_completed) {
         setOutputData("Решение правильное! Проект завершён.");
         notify("Проект успешно завершён!", "success");

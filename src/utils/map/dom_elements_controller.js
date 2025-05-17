@@ -31,7 +31,6 @@ export class DOM_ELEMENTS_CONTROLLER {
     ]);
   }
   createElement(el) {
-    console.log(el);
     let tempDiv = document.createElement("div");
 
     tempDiv.innerHTML = el.html;
@@ -41,7 +40,6 @@ export class DOM_ELEMENTS_CONTROLLER {
     newElement.style.top = el.position.y + "px";
     newElement.classList.add("element");
     newElement.id = `element_${el.id}`;
-    console.log(this.opened_map);
     // Проверка, входит ли el.id в projects_id и закрыт ли он
     const mapProject = this.opened_map.find((map) =>
       map.projects_id.includes(el.id)
@@ -94,7 +92,6 @@ export class DOM_ELEMENTS_CONTROLLER {
 
     this.connections.push({ id, from, to, params });
     this.update();
-    console.log(this.connections);
   }
 
   create() {
@@ -131,7 +128,6 @@ export class DOM_ELEMENTS_CONTROLLER {
     });
   }
   drawConnection(from, to, params, id) {
-    console.log(from, to, params, id);
     if (!from || !to) return;
     const x1 = from.position.x + from.width / 2;
     const y1 = from.position.y + from.height / 2;
@@ -145,7 +141,6 @@ export class DOM_ELEMENTS_CONTROLLER {
     }
     if (Math.abs(y2 - y1) < 30 || Math.abs(x2 - x1) < 100) {
       if (y2 - y1 < 30 && y2 - y1 >= -30) {
-        console.log(y2, y1);
         if (x2 - x1 >= 0) {
           adjustedY1 = from.position.y + from.height / 2;
           adjustedX1 = from.position.x + from.width;
@@ -191,7 +186,6 @@ export class DOM_ELEMENTS_CONTROLLER {
           );
         }
         if (y2 - y1 < 0) {
-          console.log(x2, x1);
           adjustedY1 = from.position.y;
           adjustedX1 = from.position.x + from.width / 2;
           adjustedY2 = to.position.y + from.height;
@@ -406,7 +400,6 @@ export class DOM_ELEMENTS_CONTROLLER {
         return;
       activeTarget = event.target.closest(".element");
       if (!activeTarget) return;
-      console.log(activeTarget);
       document
         .querySelectorAll(".active__element")
         .forEach((el) => el.classList.remove("active__element"));
@@ -482,7 +475,6 @@ export class DOM_ELEMENTS_CONTROLLER {
     this.useDOM = obj;
   }
   getModeSettings(obj = {}) {
-    console.log(obj);
     this.MODE_HANDLER = {
       CONSTANTS: obj.constants ?? this.MODE_HANDLER?.CONSTANTS,
       SET_MODE: obj.setMode ?? this.MODE_HANDLER?.SET_MODE,
@@ -496,7 +488,6 @@ export class DOM_ELEMENTS_CONTROLLER {
     this.modeSubscribers = callback;
   }
   getMapSettings(settings) {
-    console.log(settings);
     this.MAP_SETTINGS = settings;
   }
   subcribeUpdateElements(callback) {

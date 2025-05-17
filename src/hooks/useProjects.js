@@ -16,11 +16,9 @@ const useProjects = (projectAPI, activeTab) => {
           setTemporaryProjects(projects);
         } else if (activeTab === 'started') {
           const projects = await projectAPI.getStartedProjects();
-          console.log(projects)
           setStartedProjects(projects);
         } else if (activeTab === 'finished') {
           const projects = await projectAPI.getFinishedProjects();
-          console.log(projects)
           setCompletedProjects(projects);
         }
       } catch (error) {

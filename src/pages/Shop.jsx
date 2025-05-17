@@ -40,17 +40,13 @@ const buyItem = async (item, notify) => {
 
   }
   try {
-    console.log('Покупка стиля:', item);
     const styleData = {
       style_id: item.id,
       is_active: false, // По умолчанию стиль не активируется при покупке
       currency: item.price_in_coin > 0 ? 'coins' : 'stars', // Определяем валюту
     };
 
-    console.log('Покупка стиля:', styleData);
-    console.log(item.price_in_coin, item.price_in_stars);
     const response = await userAPI.buyUserStyle(styleData);
-    console.log('Стиль успешно куплен:', response);
     notify('Стиль успешно куплен!', 'success');
   } catch (error) {
     console.error('Ошибка при покупке стиля:', error);
@@ -71,7 +67,6 @@ const Shop = () => {
   const [sortOrder, setSortOrder] = useState('');
   const { isLoading, shopStyles } = useShop(shopAPI, sortOrder);
   const { notify } = useNotification();
-  console.log(isLoading, shopStyles);
 
   const tabs = [
     { id: 'styleNames', label: 'Стили для имени' },
@@ -193,7 +188,6 @@ const ProfileShopEffects = ({ profileStyle, shopStyles, notify }) => {
     <>
       {shopStyles.background_profile.map((style) => {
         let ss = ALL_STYLES.find(s => s.id === style.id);
-        console.log(ss, style);
         const s = {
           ...ss,
           price_in_coin: style.price_in_coin,

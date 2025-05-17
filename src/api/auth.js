@@ -5,7 +5,6 @@ import { $authHost, $host, setTokens } from "./index";
 const authAPI = {
   login: async ({ email, password }, callback) => {
     try {
-      console.log(email, password);
       const { data } = await $host.post("/token/", { email, password });
       setTokens({ access: data.access, refresh: data.refresh });
 
@@ -49,8 +48,6 @@ const authAPI = {
       callback(true);
       return data;
     } catch (error) {
-      console.log(error);
-      console.log("Refresh token истёк. Необходима повторная авторизация.");
 
       // Удаляем токены из localStorage
       localStorage.removeItem("refresh_token");
@@ -66,18 +63,10 @@ const authAPI = {
         token: accessToken,
       });
 
-      console.log(data, accessToken);
       callback(true);
     } catch (error) {
       const errorCode = error.response?.data?.code;
-      console.log(error);
       await authAPI.updateAccessToken(callback);
-      // if (errorCode === "token_not_valid" || errorCode === "ERR_BAD_REQUEST") {
-      //   await authAPI.updateAccessToken(callback);
-      //   console.log("asdasd");
-      // } else {
-      //   console.error("Ошибка авторизации:", errorCode);
-      // }
     }
   },
   // Новый метод для получения минимальной информации о пользователе
@@ -97,7 +86,6 @@ const authAPI = {
   logout: () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
-    console.log("Пользователь вышел из системы");
   },
 };
 

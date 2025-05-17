@@ -14,7 +14,6 @@ const Select = ({
   placeholder = "", 
   onChange 
 }) => {
-  console.log(defaultValue,defaultLabel)
   if(defaultLabel === "Значение по умолчанию") {
     defaultLabel = defaultValue
   }

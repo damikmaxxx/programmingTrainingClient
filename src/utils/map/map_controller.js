@@ -127,7 +127,6 @@ export class MAP_CONTROLLER {
     document.addEventListener("contextmenu", (event) => event.preventDefault());
   }
   initToolsPanel() {
-    console.log("editButton clicked");
     if (this.MAP_SETTINGS.mode === this.MODE_CONSTANTS.USER) return;
     const editButton = document.getElementById("editButton");
     const toolsPanel = document.getElementById("toolspanel");
@@ -164,7 +163,6 @@ export class MAP_CONTROLLER {
     if (this.MODE_CONSTANTS.COMMANDS.BACK === mode) {
       this.activeMode = this.MODE_HISTORY.pop();
       this.notifySubscribers();
-      console.log(`Активный режим установлен: ${this.activeMode}`);
       return;
     }
     const availableModes = Object.values(this.MODE_CONSTANTS);
@@ -179,7 +177,6 @@ export class MAP_CONTROLLER {
     this.MODE_HISTORY.push(this.activeMode);
     this.activeMode = mode;
     this.notifySubscribers();
-    console.log(`Активный режим установлен: ${this.activeMode}`);
   }
   // ПОДПИСКА НА ИЗМЕНЕНИЕ МОДОВ
   subscribeToUpdateModes(callback, modes = []) {
@@ -221,7 +218,6 @@ export class MAP_CONTROLLER {
     return this.dom_controller.getElementsAndConnections();
   }
   addNewElement(obj) {
-    console.log(obj, this.MAP_SETTINGS.X, this.MAP_SETTINGS.Y);
     obj.position.x -= this.MAP_SETTINGS.X;
     obj.position.y -= this.MAP_SETTINGS.Y;
     this.dom_controller.pushElement(obj);
@@ -232,7 +228,6 @@ export class MAP_CONTROLLER {
 
   changeMode(mode) {  
     this.MAP_SETTINGS.mode = mode;
-    console.log(mode)
     this.dom_controller.getMapSettings(this.MAP_SETTINGS);
   }
 }

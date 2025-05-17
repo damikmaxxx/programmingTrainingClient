@@ -6,7 +6,6 @@ import LaserEffect from './effects/LaserEffect';
 // import { profileThemes } from './data/profileThemes'; // Импорт массива тем
 
 function ProfileEffect({ selectedStyleId, children }) {
-  console.log(selectedStyleId == 13)
   // Функция для выбора компонента эффекта
   const renderEffect = (selectedStyleId) => {
     switch (Number(selectedStyleId)) {

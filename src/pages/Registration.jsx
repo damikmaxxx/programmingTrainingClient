@@ -36,7 +36,6 @@ const Registration = () => {
       await authAPI.register(registrationValues, async () => {
         setAuth(true);
         const { username, coins, stars, nickname_id } = await authAPI.getUserMinInfo();
-        console.log('User info:', { username, coins, stars, nickname_id });
         setUser({ name: username, coins, stars, nicknameStyleId: nickname_id });
         notify('Регистрация успешна!', 'success');
       });

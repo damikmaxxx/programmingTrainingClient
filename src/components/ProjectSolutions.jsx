@@ -26,20 +26,6 @@ const ProjectSolution = ({ projectId, sortedLang = { value: "python" } }) => {
   } = useProjectSolutions(projectId);
   const [expandedCode, setExpandedCode] = useState(null);
 
-  console.log({
-    solutions,
-    setSolutions,
-    loading,
-    error,
-    newComment,
-    setNewComment,
-    visibleComments,
-    showMoreComments,
-    toggleComments,
-    handleLike,
-    handleCommentSubmit,
-    deleteComment,
-  });
 
   const handleCodeClick = (id) => {
     setExpandedCode((prevExpandedCode) =>
@@ -56,7 +42,6 @@ const ProjectSolution = ({ projectId, sortedLang = { value: "python" } }) => {
   }
 
   const getStyle = (styleId) => {
-    console.log("styleId", styleId);
     const classStyle = GetStyleClassById(styleId);
     return classStyle;
   };

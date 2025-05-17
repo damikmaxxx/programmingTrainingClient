@@ -26,16 +26,6 @@ function App() {
         try {
           const { username, coins, stars, nickname_id, photo, is_staff,id } =
             await authAPI.getUserMinInfo();
-          console.log(is_staff);
-          console.log({
-            id,
-            name: username,
-            coins,
-            stars,
-            nicknameStyleId: nickname_id,
-            photo,
-            role: is_staff ? "admin" : "user",
-          });
           setUser({
             id: id,
             name: username,

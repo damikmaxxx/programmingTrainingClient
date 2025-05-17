@@ -7,7 +7,6 @@ const userAPI = {
     try {
       const url = id ? `/profile/${id}/` : '/profile/';
       const { data } = await $authHost.get(url);
-      console.log('Profile data:', data);
       return data;
     } catch (error) {
       console.error(
@@ -22,7 +21,6 @@ const userAPI = {
   updateProfile: async (profileData) => {
     try {
       const { data } = await $authHost.put("/profile/", profileData);
-      console.log(data);
       return data;
     } catch (error) {
       console.error(
@@ -37,7 +35,6 @@ const userAPI = {
     try {
       const url = id ? `/user-graph/${id}/` : '/user-graph/';
       const { data } = await $authHost.get(url);
-      console.log('Progress data:', data);
       return data;
     } catch (error) {
       console.error(
@@ -53,7 +50,6 @@ const userAPI = {
     try {
       const url = id ? `/user-skills/${id}/` : '/user-skills/';
       const { data } = await $authHost.get(url);
-      console.log('Skills data:', data);
       return data; // Возвращает массив навыков [{ user, language, experience }, ...]
     } catch (error) {
       console.error(
@@ -68,7 +64,6 @@ const userAPI = {
   getUserStyles: async () => {
     try {
       const { data } = await $authHost.get("/userstyle/");
-      console.log(data);
       return data;
     } catch (error) {
       console.error(
@@ -138,13 +133,11 @@ const userAPI = {
 
   // 2.2 GET /user-projects/{id}/ - Получение пользовательского проекта по ID
   getUserProjectById: async (id) => {
-    console.log(id);
     try {
       const { data } = await $authHost.post(
         `/user-projects/get_user_project/`,
         { project: id }
       );
-      console.log(data);
       return data; // { project_id, project_name, code, is_completed, is_published, earned_stars, language, finished_date }
     } catch (error) {
       console.error(
@@ -158,12 +151,10 @@ const userAPI = {
   // 2.2 PUT /user-projects/{id}/ - Обновление пользовательского проекта по ID
   updateUserProjectById: async (id, projectData) => {
     try {
-      console.log(id, projectData);
       const { data } = await $authHost.put(
         `/user-projects/${id}/`,
         projectData
       );
-      console.log(data);
       return data; // Обновлённый проект
     } catch (error) {
       console.error(
@@ -227,7 +218,6 @@ const userAPI = {
         ...(inputData && { input_data: inputData }), // Добавляем input_data, если указано
         ...(project && { project }), // Добавляем project, если указано
       };
-      console.log(requestData);
       const { data } = await $authHost.post("/code-executor/", requestData);
       return data; // Ответ от сервера (например, результат выполнения кода)
     } catch (error) {
@@ -248,7 +238,6 @@ const userAPI = {
         language,
         project,
       };
-      console.log(requestData);
       const { data } = await $authHost.post(
         "/code-executor/check-solution/",
         requestData

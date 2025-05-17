@@ -15,7 +15,6 @@ const useProjectSolutions = (projectId) => {
     try {
       setLoading(true);
       const data = await projectAPI.getProjectComments(projectId);
-      console.log(data);
       // Форматируем данные для компонента
       const formattedSolutions = data.map((solution) => ({
         id: solution.user_project,
@@ -45,7 +44,6 @@ const useProjectSolutions = (projectId) => {
   }
   // Загрузка решений и комментариев
   useEffect(() => {
-    console.log("update projectId", projectId);
 
     if (projectId) {
       fetchSolutions();
@@ -75,7 +73,6 @@ const useProjectSolutions = (projectId) => {
   const handleLike = async (userProjectId) => {
     try {
       const response = await projectAPI.setLike(userProjectId);
-      console.log(response);
       if (response.data) {
         setSolutions((prev) =>
           prev.map((solution) =>
@@ -132,7 +129,6 @@ const useProjectSolutions = (projectId) => {
 
   // Удаление комментария (новый метод)
   const deleteComment = async (commentId) => {
-    console.log("Удаление комментария с ID:", commentId);
     try {
       await projectAPI.deleteComment(commentId); // Вызываем API для удаления
       setSolutions((prev) =>
@@ -149,19 +145,6 @@ const useProjectSolutions = (projectId) => {
     }
   };
 
-  console.log({
-    solutions,
-    setSolutions,
-    loading,
-    error,
-    newComment,
-    setNewComment,
-    visibleComments,
-    showMoreComments,
-    toggleComments,
-    handleLike,
-    handleCommentSubmit,
-  });
   return {
     deleteComment,
     solutions,

@@ -1,12 +1,5 @@
 import axios from "axios";
 
-const $host = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
-});
-
-const $authHost = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
-});
 
 // Функция для установки токенов в localStorage
 const setTokens = ({ refresh, access }) => {
@@ -20,6 +13,16 @@ const getCurrentToken = () => {
   const refreshToken = localStorage.getItem("refresh_token");
   return { accessToken, refreshToken };
 };
+
+const $host = axios.create({
+  baseURL: process.env.REACT_APP_API_URL,
+});
+
+const $authHost = axios.create({
+  baseURL: process.env.REACT_APP_API_URL,
+});
+
+
 // Интерсептор для добавления токенов в заголовки
 const authInterceptor = async (config) => {
   const { accessToken, refreshToken } = getCurrentToken();

@@ -24,7 +24,6 @@ const Projects = () => {
   ];
 
   const handleTabChange = (tabId) => {
-    console.log(tabId);
     setActiveTab(tabId);
   };
 
@@ -36,7 +35,6 @@ const Projects = () => {
   };
 
   const { isLoading, temporaryProjects, startedProjects, completedProjects } = useProjects(projectAPI, activeTab);
-  console.log(temporaryProjects, startedProjects, completedProjects);
 
   return (
     <main className="main--dark">

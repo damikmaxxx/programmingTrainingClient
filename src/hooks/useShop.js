@@ -14,7 +14,6 @@ const useShop = (shopAPI, sortOrder) => {
         // Используем sortOrder напрямую как ordering
         const filters = sortOrder ? { ordering: sortOrder } : {};
         const data = await shopAPI.getFilteredStyles(filters);
-        console.log(data);
 
         // Разделяем стили по категориям
         const nicknameStyles = data.filter(style => style.category === 'nickname');

@@ -19,11 +19,6 @@ const ProfileEditModal = ({ showModal, closeModal, handleConfirm, user = {} }) =
     defaultNicknameStyle,
     loading,
   } = useUserStyles(user.profileStyle, user.nicknameStyle);
-  console.log(    profileStylesOptions,
-    nicknameStylesOptions,
-    defaultProfileStyle,
-    defaultNicknameStyle,
-    loading,)
   const handleAvatarChange = (event) => {
     setAvatar(event.target.files[0]);
   };
@@ -62,7 +57,6 @@ const ProfileEditModal = ({ showModal, closeModal, handleConfirm, user = {} }) =
           }}
           validationSchema={ProfileSchema}
           onSubmit={(values) => {
-            console.log({ values, avatar });
             handleConfirm({ values, avatar });
           }}
         >
@@ -123,7 +117,7 @@ const ProfileEditModal = ({ showModal, closeModal, handleConfirm, user = {} }) =
                   options={profileStylesOptions}
                   defaultLabel={defaultProfileStyle.label}
                   defaultValue={defaultProfileStyle.value}
-                  onChange={(style) => {console.log(style); setFieldValue('profileStyle', {value: style.value, label: style.label})}}
+                  onChange={(style) => {setFieldValue('profileStyle', {value: style.value, label: style.label})}}
                 />
                 <ErrorMessage
                   name="profileStyle"

@@ -5,7 +5,6 @@ const ratingAPI = {
   getExperienceRanking: async (period, limit) => {
     try {
       const { data } = await $authHost.get(`/experience-ranking/${period}/${limit}/`);
-      console.log("Рейтинг по опыту:", data);
       return data;
     } catch (error) {
       console.error("Ошибка при получении рейтинга по опыту:", error.response?.data || error.message);

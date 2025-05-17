@@ -35,11 +35,6 @@ const Rating = () => {
           ratingAPI.getExperienceRanking('month', 10),
           ratingAPI.getStarsRanking('month', 10),
         ]);
-        console.log('expFull:', expFull);
-        console.log('starsFull:', starsFull);
-        console.log('expMonth:', expMonth);
-        console.log('starsMonth:', starsMonth);
-
         setTopExpFull(expFull.users.map(user => ({
           userId: user.user_id,
           username: user.username,
@@ -72,7 +67,6 @@ const Rating = () => {
           total_experience: 0,
           total_stars: user.total_stars || 0,
         })));
-        console.log(expFull, starsFull, expMonth, starsMonth);
         // Сохраняем рейтинговые данные текущего пользователя для каждой вкладки
         setCurrentUserRatings({
           expfull: expFull.current_user_ranking ? {
@@ -112,7 +106,6 @@ const Rating = () => {
             index: starsMonth.current_user_ranking.position || 999999,
           } : null,
         });
-        console.log('currentUserRatings:', currentUserRatings);
       } catch (error) {
         console.error("Ошибка загрузки рейтинга:", error);
       } finally {
@@ -231,9 +224,7 @@ const Rating = () => {
 export default Rating;
 
 const RatingItem = ({ index, photo, username, total_experience, total_stars, userId, textEffectId }) => {
-  console.log(photo);
   const [imgSrc, setImgSrc] = useState(photo || DEFAULT_USER_IMAGE);
-  console.log('imgSrc:', imgSrc);
   const isTop = index <= 1;
 
   const handleImageError = () => {

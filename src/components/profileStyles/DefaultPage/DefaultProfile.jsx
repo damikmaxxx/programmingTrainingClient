@@ -21,8 +21,6 @@ export default function DefaultProfile({name, avatar, stars, recentProjects, des
   const descriptionMin = description?.length > 150 ? description.slice(0, 150) + '...' : description;
   const { level, expOnCurrentLevel, progressPercentage, expToNextLevel } = getLevelInfo(exp);
   const { notify } = useNotification();
-  console.log(skills);
-  console.log(timeExpDiagram);
 
   // Группировка данных по датам и усреднение значений опыта
   const groupedData = timeExpDiagram?.reduce((acc, { date, experience }) => {
@@ -52,7 +50,6 @@ export default function DefaultProfile({name, avatar, stars, recentProjects, des
     experience: scaledExperience,
   };
 
-  console.log(groupedTimeExpDiagram);
 
   // Настройка данных для графика Line
   const lineData = {
@@ -108,7 +105,6 @@ export default function DefaultProfile({name, avatar, stars, recentProjects, des
     ...skill,
     percentage: (skill.experience / baseExperience) * 100,
   }));
-  console.log(skillsWithPercentage);
 
   const radarData = {
     labels: skillsWithPercentage.map(skill => skill.language),
@@ -158,7 +154,6 @@ export default function DefaultProfile({name, avatar, stars, recentProjects, des
   const BackgroundStyles = () => <div className={styles.bg_styles}></div>;
 
   const handleConfirm = async (props) => {
-    console.log(props);
 
     try {
       let requestData;
@@ -170,7 +165,6 @@ export default function DefaultProfile({name, avatar, stars, recentProjects, des
         formData.append('description', props.values.description);
         formData.append('photo', props.avatar);
         requestData = formData;
-        console.log(formData.get('username'));
       } else {
         requestData = {};
         if (name !== props.values.nickname) {
@@ -210,9 +204,7 @@ export default function DefaultProfile({name, avatar, stars, recentProjects, des
     closeModal();
   };
 
-  console.log(nicknameStyleId);
   const classStyle = GetStyleClassById(nicknameStyleId);
-  console.log(classStyle);
 
   return (
     <div className={styles.bg}>

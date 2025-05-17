@@ -41,7 +41,6 @@ export function getLevelInfo(totalExp) {
           break;
       }
   }
-  console.log(LEVEL_MAP.find(obj => obj.level === currentLevel+1).exp)
   // Возвращаем результат
   return {
       level: currentLevel, // Текущий уровень

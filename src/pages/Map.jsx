@@ -41,7 +41,6 @@ const Map = () => {
   ])
   useEffect(() => {
     async function fetchData() {
-      console.log("Запрос данных...");
       try {
         const projects = await projectAPI.getProjects();
         const filteredProjects = projects.filter(project => project.is_limited === false);
@@ -51,11 +50,9 @@ const Map = () => {
           ...project,
           open: purchasedMaps.includes(project.id),
         })))
-        console.log("Купленные карты:", SET_OPENED_MAP_PROJECTS);
         const openedProjects = await mapAPI.getUserProjectMap();
         const connection = await mapAPI.getConnections();
         const elements = await mapAPI.getElements();
-        console.log(elements, connection, openedProjects);
         const connectionF = connection
           .filter(item => item.prev_project !== null)
           .map((item, index) => ({
@@ -64,7 +61,6 @@ const Map = () => {
             to: item.project,
             params: { arrow: true, brokenLine: true },
           }));
-        console.log(elements, connection, openedProjects);
         const elementsF = elements.map(item => {
           const projectData = openedProjects.find(proj => proj.project_id === item.project_id);
           return {
@@ -77,7 +73,6 @@ const Map = () => {
             },
           };
         });
-        console.log(elementsF, connectionF, filteredProjects);
         setMapData(elementsF, connectionF);
         setMapProjects(filteredProjects);
 
@@ -188,7 +183,6 @@ const Map = () => {
           experience: 0,
           coins: 0,
         })));
-      console.log(adminProjects);
     } catch (error) {
       console.error("Ошибка при обновлении списка незанятых проектов:", error);
     }
@@ -249,10 +243,8 @@ const Map = () => {
     //   position_x: Math.round(el.position.x),
     //   position_y: Math.round(el.position.y),
     // }));
-    console.log(projectsToSave);
     try {
       const result = await mapAPI.saveMapPositions(projectsToSave);
-      console.log("Карта сохранена:", result);
       const updatedElements = await mapAPI.getElements();
       const elementsF = updatedElements.map(item => ({
         id: item.project_id,
