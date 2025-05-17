@@ -21,7 +21,7 @@ export default function DefaultProfile({name, avatar, stars, recentProjects, des
   const descriptionMin = description?.length > 150 ? description.slice(0, 150) + '...' : description;
   const { level, expOnCurrentLevel, progressPercentage, expToNextLevel } = getLevelInfo(exp);
   const { notify } = useNotification();
-
+  if (!timeExpDiagram) timeExpDiagram = [];
   // Группировка данных по датам и усреднение значений опыта
   const groupedData = timeExpDiagram?.reduce((acc, { date, experience }) => {
     if (!acc[date]) {

@@ -54,5 +54,7 @@ export const useUserStore = create(devtools((set) => ({
       skills: [],
       timeExpDiagram: { time: [], exp: [] },
     });
+
+    localStorage.removeItem("recent_project_id");
   }
 })));
