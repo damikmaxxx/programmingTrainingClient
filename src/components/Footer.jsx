@@ -5,7 +5,7 @@ function Footer() {
 
   return (
     <footer>
-      <p>&copy; {currentYear} ProgFlow. All rights reserved.</p>
+      <p>&copy; {currentYear} ProgPath. All rights reserved.</p>
     </footer>
   );
 }

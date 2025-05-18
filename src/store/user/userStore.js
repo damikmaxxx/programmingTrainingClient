@@ -12,16 +12,10 @@ export const useUserStore = create(devtools((set) => ({
   photo: null,
   profileStyleId:0,
   nicknameStyleId:0,
-
   description: "",
-  recentProjects: ["Калькулятор", "Чат-бот", "Игра на React"],
-  skills: [
-    { name: "JavaScript", percentage: 70 },
-    { name: "Python", percentage: 65 },
-    { name: "React", percentage: 90 }
-  ],
-  timeExpDiagram: [
-  ],
+  recentProjects: [],
+  skills: [],
+  timeExpDiagram: [],
   
   setAuth: (status) => set({ isAuth: status }),
   setAuthData: (data) => set({ authData: data }),
@@ -29,7 +23,6 @@ export const useUserStore = create(devtools((set) => ({
   clearUser: () => set({ id: null, name: '', coins: 0, exp: 0, stars: 0, isAuth: false }),
   setTestProfileStyle: (styleName) => set({ testProfileStyle: styleName }),
   updateTimeExpDiagram: (data) => set({timeExpDiagram: data}),
-  // Метод для обновления всех данных пользователя (например, при редактировании профиля)
   setUserData: (data) => set({ 
     description: data.description,
     recentProjects: data.recentProjects,
