@@ -69,7 +69,7 @@ const ProjectSolution = ({ projectId, sortedLang = { value: "python" } }) => {
               {solution.code === null ?
                 <div className={styles.noCode}>Код отсутствует</div> :
                 <CodeEditor
-                  language={sortedLang.value}
+                  language={solution.language}
                   isReadOnly={true}
                   initialCode={solution.code}
                 />}

@@ -321,6 +321,7 @@ function Project() {
                   </Button>
                 )}
               </div>
+              {isMyCodeBlock && (
               <div className="select">
                 <Select
                   options={availableLanguages}
@@ -330,6 +331,8 @@ function Project() {
                   onChange={({ value, label }) => setSelectedLang({ value, label })}
                 />
               </div>
+              )}
+
             </div>
             {isMyCodeBlock ? (
               <div className="task__block__editor">
