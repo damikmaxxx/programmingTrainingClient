@@ -151,7 +151,8 @@ function Project() {
         project: id,
       };
       const result = await userAPI.checkSolution(userId, code, selectedLang.value, id);
-      const isCorrect = result.is_correct;
+      console.log(result)
+      const isCorrect = result.status;
       setOutputData(
         isCorrect
           ? "Решение правильное!"

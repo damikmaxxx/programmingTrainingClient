@@ -71,7 +71,7 @@ const Shop = () => {
   const tabs = [
     { id: 'styleNames', label: 'Стили для имени' },
     { id: 'profileThemes', label: 'Темы профиля' },
-    { id: 'maps', label: 'Карты' },
+    // { id: 'maps', label: 'Карты' },
   ];
 
   const sortedModes = [
