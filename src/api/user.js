@@ -9,11 +9,7 @@ const userAPI = {
       const { data } = await $authHost.get(url);
       return data;
     } catch (error) {
-      console.error(
-        `Ошибка при получении профиля ${id ? `пользователя с ID ${id}` : 'текущего пользователя'}:`,
-        error.response?.data || error.message
-      );
-      throw error; // Пробрасываем ошибку для обработки в вызывающем коде
+      return error; 
     }
   },
 

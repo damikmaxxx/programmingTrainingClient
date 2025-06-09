@@ -36,8 +36,8 @@ const Map = () => {
     experience: 0,
     coins: 0,
   });
-  const [OPENED_MAP_PROJECTS,SET_OPENED_MAP_PROJECTS] = useState([
-    {id:20,projects_id:[16,17,18,19,20],open:false}, 
+  const [OPENED_MAP_PROJECTS, SET_OPENED_MAP_PROJECTS] = useState([
+    { id: 20, projects_id: [16, 17, 18, 19, 20], open: false },
   ])
   useEffect(() => {
     async function fetchData() {
@@ -112,7 +112,7 @@ const Map = () => {
     const _ACTIVE_SCREEN = document.getElementById('draggablescreen');
 
     const MAP_SETTINGS = { mode: mapMode };
-    const DOM_CONTROLLER = new DOM_ELEMENTS_CONTROLLER(DOM_ELEMENTS_TEMPLATE, domConnection,{opened_map_projects: OPENED_MAP_PROJECTS});
+    const DOM_CONTROLLER = new DOM_ELEMENTS_CONTROLLER(DOM_ELEMENTS_TEMPLATE, domConnection, { opened_map_projects: OPENED_MAP_PROJECTS });
     const map_controller = new MAP_CONTROLLER(MAP_SETTINGS, DOM_CONTROLLER, _DOM_ELEMENTS, _ACTIVE_SCREEN);
     map_controller.init();
     map_controller.subcribeUpdateElements((snapshotEl) => {
@@ -272,7 +272,15 @@ const Map = () => {
   const ProjectInfo = () => (
     <div className={styles.projectInfo}>
       <h3>{activeProjectInfo.name}</h3>
-      <p>{activeProjectInfo.description}</p>
+      <div dangerouslySetInnerHTML={{
+        __html: (() => {
+          const tmp = document.createElement("div");
+          tmp.innerHTML = activeProjectInfo.description || "Теория отсутствует";
+          const text = tmp.textContent || tmp.innerText || "";
+          const truncated = text.length > 200 ? text.slice(0, 200) + "…" : text;
+          return truncated;
+        })()
+      }} />
       <div className={styles.projectInfo_footer}>
         <span className={styles.projectInfo_items}>
           <ItemCounter type="coin" count={activeProjectInfo.coins} />

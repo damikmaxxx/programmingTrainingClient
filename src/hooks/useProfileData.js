@@ -7,8 +7,8 @@ import { handleServerErrors } from '../utils/handleServerErrors/handleServerErro
 import { DEFAULT_USER_IMAGE } from '../utils/consts';
 
 const useProfileData = (testStyle = false) => {
-  const { id: paramId } = useParams(); // ID из URL (может быть ID пользователя или стиля в зависимости от testStyle)
-  const { id: currentUserId, setUser, updateTimeExpDiagram } = useUserStore(); // ID текущего пользователя
+  const { id: paramId } = useParams();
+  const { id: currentUserId, setUser, updateTimeExpDiagram } = useUserStore();
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -74,7 +74,7 @@ const useProfileData = (testStyle = false) => {
 
   return {
     userData: {
-      avatar: userData?.photo || DEFAULT_USER_IMAGE, // Убраны лишние фигурные скобки
+      avatar: userData?.photo || DEFAULT_USER_IMAGE,
       name: userData?.username,
       coins: userData?.coins,
       stars: userData?.stars,

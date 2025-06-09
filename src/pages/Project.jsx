@@ -164,18 +164,18 @@ function Project() {
           : `Решение неверное: ${result.error || "Неизвестная ошибка"}`,
         isCorrect ? "success" : "error"
       );
-      if (isCorrect) {
-        // Обновляем проект как завершённый
-        const updatedProject = {
-          ...localProject,
-          is_completed: true,
-          language: selectedLang.value,
-          code,
-        };
-        await userAPI.updateUserProjectById(id, updatedProject);
-        setActiveProject(updatedProject);
-        setLocalProject(updatedProject);
-      }
+      // if (isCorrect) {
+      //   // Обновляем проект как завершённый
+      //   const updatedProject = {
+      //     ...localProject,
+      //     is_completed: true,
+      //     language: selectedLang.value,
+      //     code,
+      //   };
+      //   await userAPI.updateUserProjectById(id, updatedProject);
+      //   setActiveProject(updatedProject);
+      //   setLocalProject(updatedProject);
+      // }
     } catch (err) {
       console.error("Ошибка при проверке решения:", err.response?.data || err.message);
       setOutputData("Ошибка проверки: " + (err.response?.data?.error || err.message));
